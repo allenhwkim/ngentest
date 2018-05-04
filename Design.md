@@ -1,12 +1,12 @@
 ## Component Unit Test Generator
 
-1. Read Typescript. Read the given component file as a string. e.g. my.component.ts
 1. Read As Javascript, import the given component and compile to NodeJS javascript, 
    https://github.com/sinclairzx81/typescript.api#compile
-1. get list of constructor parameters and types
-1. if parameter is a ElementRef, use Mock
-1. if parameter is a user-defined-service, use mock
-1. if parameter is with @Inject, use  `{ provide: PLATFORM_ID, useValue: 'browser'}`
+1. Read Typescript. Read the given component file as a string. e.g. my.component.ts
+   1. get list of constructor parameters and types
+   1. if parameter is a ElementRef, use Mock
+   1. if parameter is a user-defined-service, use mock
+   1. if parameter is with @Inject, use  `{ provide: PLATFORM_ID, useValue: 'browser'}`
 1. Get user functions of this component, then create tests.
 1. Use this template
 ```ts
@@ -17,10 +17,7 @@ import {
 
 import { <<COMPONENT-NAME>> } from './ngui-inview.component';
 
-class MockElementRef extends ElementRef {
-  constructor() { super(undefined); }
-  nativeElement = {}
-}
+<<MOCK-CLASSES>>
 
 describe('NguiInviewComponent', () => {
   let fixture;
