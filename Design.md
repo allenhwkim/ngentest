@@ -101,6 +101,7 @@ import {
   NO_ERRORS_SCHEMA,
   <<LIST-OF-PROVIDERS>>
 } from '@angular/core';
+import {By} from '@angular/platform-browser';
 
 import { <<DIRECTIVE-NAME>> } from './ngui-inview.directive';
 
