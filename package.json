@@ -1,0 +1,20 @@
+{
+  "name": "ng-gen-test",
+  "version": "0.1.0",
+  "description": "Angular5+ Unit Test Generator For Components, Directive, Services, and Pipes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/allenhwkim/ng-gen-test.git"
+  },
+  "keywords": ["angular", "generate", "unit", "test", "cli"],
+  "author": "Allen Kim <allenhwkim@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/allenhwkim/ng-gen-test/issues"
+  },
+  "homepage": "https://github.com/allenhwkim/ng-gen-test#readme"
+}
