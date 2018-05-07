@@ -1,0 +1,34 @@
+// tslint:disble
+import { async, ComponentFixture, NO_ERRORS_SCHEMA, TestBed } from '@angular/core/testing';
+import { 
+  <<LIST-OF-PROVIDERS>>
+} from '@angular/core';
+
+import { <<COMPONENT-NAME>> } from './ngui-inview.component';
+
+<<MOCK-CLASSES>>
+
+describe('NguiInviewComponent', () => {
+  let fixture;
+  let component;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      // schemas: [NO_ERRORS_SCHEMA],
+      declarations: [
+        <<COMPONENT-NAME>>
+      ],
+      providers: [
+        <<LIST-OF_PROVIDERS>>
+      ]
+    }).compileComponents();
+    fixture = TestBed.createComponent(<<COMPONENT-NAME>>);
+    component = fixture.debugElement.componentInstance;
+  });
+
+  it('should create a component', async(() => {
+    expect(component).toBeTruthy();
+  }));
+  
+  <<FUNCTION-TESTS>>
+});
