@@ -24,7 +24,7 @@ var tsFile = '' + argv._;
 var typescript = fs.readFileSync(path.resolve(tsFile), 'utf8');
 
 parseTypescript(typescript).then(tsParsed => {
-  const angularType = util.getAngularType(tsParsed); // Component, Directive, Injectable, Pipe, or undefined
+  const angularType = util.getAngularType(typescript); // Component, Directive, Injectable, Pipe, or undefined
   const ejsTemplate = util.getEjsTemplate(angularType);
   let ejsData;
   switch(angularType) {
@@ -43,9 +43,10 @@ parseTypescript(typescript).then(tsParsed => {
       break;
   }
 
-  console.log('>>>>>>>>', ejsData);
-  console.log(ejs.render(ejsTemplate, ejsData, {}))
-  // console.log('xxxxxxxxxxxxxxx', tsParsed);
+  process.stdout.write(ejs.render(ejsTemplate, ejsData, {}))
 }).catch(e => {
-  console.error(e);
+  if (e.message === `Cannot read property '1' of null`) {
+    console.error('ERROR: Please make it sure there is no empty constructor or empty block');
+  }
+  console.error(e.stack);
 });

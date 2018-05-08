@@ -18,16 +18,9 @@ module.exports = function getDirectiveData(tsParsed, filePath) {
 
   //
   // Iterate properties
-  // . if @Input, then add to inputs
-  // . if @Output, tnen add to outputs
+  // . if @Input, build input attributes and input properties
+  // . if @Outpu, build output attributes and output properties
   //
-  // input attributes
-  // output attributes
-  // input properties
-  // output properties
-  //     options: any;
-  //     onNguiInview(event): void {/* */}
- //      onNguiOutvie(event): void {/* */}
   for (var key in tsParsed.properties) {
     const prop = tsParsed.properties[key];
     if (prop.body.match(/@Input\(/)) {
@@ -76,7 +69,7 @@ module.exports = function getDirectiveData(tsParsed, filePath) {
           nativeElement = {}
         }`);
       result.providers[param.type] = `{provide: ${param.type}, useClass: Mock${param.type}}`;
-    } else if (importLib.match(/^\.\//)) {  // starts from ./, which is a user-defined provider
+    } else if (importLib.match(/^[\.]+/)) {  // starts from . or .., which is a user-defined provider
       result.imports[importLib].push(param.type);
       result.mocks[param.type] = reIndent(`
         class Mock${param.type} extends ${param.type} {
@@ -117,7 +110,7 @@ module.exports = function getDirectiveData(tsParsed, filePath) {
     let js = `${key}(${parameters})`;
     (method.type !== 'void') && (js = `const result = ${js}`); 
     result.functionTests[key] = reIndent(`
-      it('should run #{key}', async(() => {
+      it('should run #${key}()', async(() => {
         // ${js};
       }));
     `, '  ');

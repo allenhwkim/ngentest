@@ -31,7 +31,6 @@ export class MyDirective implements OnInit, OnDestroy {
     public element: ElementRef,
     public renderer: Renderer2,
     @Inject(PLATFORM_ID) private platformId: any) {
-    console.log('xxxxxxxxxxxxxxxxxxx');
   }
 
   /** Starts IntersectionObserver */

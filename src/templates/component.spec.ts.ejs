@@ -1,28 +1,28 @@
 // tslint:disble
-import { async, ComponentFixture, NO_ERRORS_SCHEMA, TestBed } from '@angular/core/testing';
-import { 
-  <<LIST-OF-PROVIDERS>>
-} from '@angular/core';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { <<COMPONENT-NAME>> } from './ngui-inview.component';
+<% for(var key in imports) { -%>
+import {<%- imports[key].map(el => `${el}`).join(', ') -%>} from '<%- key -%>';
+<% } -%>
+<%-                        -%>
+<% for(var key in mocks) { -%>
+<%- mocks[key] -%>
+<% } -%>
 
-<<MOCK-CLASSES>>
-
-describe('NguiInviewComponent', () => {
+describe('<%= className %>', () => {
   let fixture;
   let component;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      // schemas: [NO_ERRORS_SCHEMA],
       declarations: [
-        <<COMPONENT-NAME>>
+        <%= className %>
       ],
-      providers: [
-        <<LIST-OF_PROVIDERS>>
+      providers: [<% for(var key in providers) { %>
+        <%- providers[key]+ ',' %><% } %>
       ]
     }).compileComponents();
-    fixture = TestBed.createComponent(<<COMPONENT-NAME>>);
+    fixture = TestBed.createComponent(<%= className %>);
     component = fixture.debugElement.componentInstance;
   });
 
@@ -30,5 +30,8 @@ describe('NguiInviewComponent', () => {
     expect(component).toBeTruthy();
   }));
   
-  <<FUNCTION-TESTS>>
+  <% for(var key in functionTests) { -%>
+  <%- functionTests[key] -%>
+  <% } -%>
+  
 });

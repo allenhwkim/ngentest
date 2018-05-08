@@ -1,8 +1,9 @@
+// tslint:disable
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 
 <% for(var key in imports) { -%>
-import {<%- imports[key].map(el => `'${el}'`).join(', ') -%>} from '<%- key -%>';
+import {<%- imports[key].map(el => `${el}`).join(', ') -%>} from '<%- key -%>';
 <% } -%>
 <%-                        -%>
 <% for(var key in mocks) { -%>

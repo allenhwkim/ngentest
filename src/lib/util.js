@@ -1,24 +1,20 @@
 const fs = require('fs');
 const path = require('path'); 
 
-function getAngularType(parsed) {
-  const angularCoreImports = parsed.imports.find(el => el.from === '@angular/core');
-  
-  if (angularCoreImports) {
-    return angularCoreImports.specifiers.includes('Component') ? 'Component': 
-      angularCoreImports.specifiers.includes('Directive') ? 'Directive': 
-      angularCoreImports.specifiers.includes('Injectable') ? 'Injectable': 
-      angularCoreImports.specifiers.includes('Pipe') ? 'Pipe': undefined;
-  }
+function getAngularType(typescript) {
+  return typescript.match(/^@Component\(/m) ? 'Component': 
+    typescript.match(/^@Directive\(/m) ? 'Directive': 
+    typescript.match(/^@Injectable\(/m) ? 'Injectable': 
+    typescript.match(/^@Pipe\(/m) ? 'Pipe':  undefined;
 }
 
 function getEjsTemplate(type) {
   let ejsFile; 
   switch(type) {
-    case 'Component': 
-    case 'Directive': 
-    case 'Pipe': 
-    case 'Injectable': 
+    case 'Component':
+    case 'Directive':
+    case 'Pipe':
+    case 'Injectable':
       const typeLower = type.toLowerCase();
       ejsFile = path.join(__dirname, '../', 'templates', `${typeLower}.spec.ts.ejs`);
       break;

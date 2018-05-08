@@ -13,7 +13,7 @@ module.exports = async function parseTypescript(fileOrTs, className){
     parsed = await parser.parseSource(fileOrTs);
   }
 
-  let ret = { imports: [], properties: {}, constructor: {}, methods: {} };
+  let ret = { imports: [], properties: {}, methods: {} };
   let klass;
   if (className) {
     klass = parsed.declarations.find(decl => decl.name === className);
@@ -30,16 +30,19 @@ module.exports = async function parseTypescript(fileOrTs, className){
 
   // constructor
   let constructor = klass.ctor;
-  ret.constructor.parameters = constructor.parameters.map(param => {
-    return { 
-      name: param.name,
-      type: param.type,
-      body: fileContents.substring(param.start, param.end)
-    };
-  });
-  ret.constructor.body = fileContents
-    .substring(constructor.start, constructor.end)
-    .match(/{([\s\S]+)\}$/m)[1]
+  if (constructor) {
+    ret.constructor = {};
+    ret.constructor.parameters = constructor.parameters.map(param => {
+      return { 
+        name: param.name,
+        type: param.type,
+        body: fileContents.substring(param.start, param.end)
+      };
+    });
+    ret.constructor.body = fileContents
+      .substring(constructor.start, constructor.end)
+      .match(/{([\s\S]+)\}$/m)[1];
+  }
 
   // properties 
   klass.properties.forEach(prop => {

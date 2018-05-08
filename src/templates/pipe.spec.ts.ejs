@@ -1,0 +1,15 @@
+<% for(var key in imports) { -%>
+import {<%- imports[key].map(el => `${el}`).join(', ') -%>} from '<%- key -%>';
+<% } -%>
+
+describe('<%= className %>', () => {
+
+  it('should run #transform', () => {
+    // const pipe = new <%= className -%>();
+    // const result = pipe.transform(<%= 
+        functionTests.transform.parameters.join(', ')
+       -%>);
+    // expect(result).toBe('<<EXPECTED>>');
+  });
+
+});
