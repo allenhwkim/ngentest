@@ -12,7 +12,7 @@ import {<%- imports[key].map(el => `${el}`).join(', ') -%>} from '<%- key -%>';
 
 @Component({
   template: `
-    <div <%- inputs.attributes.join(' ') %> <%- outputs.attributes.join(' ') %>></div>
+    <DIRECTIVE-SELECTOR <%- inputs.attributes.join(' ') %> <%- outputs.attributes.join(' ') %>></DIRECTIVE-SELECTOR>
   `
 })
 class DirectiveTestComponent {
@@ -25,7 +25,7 @@ class DirectiveTestComponent {
 }
 
 describe('<%= className %>', () => {
-  let fixture: ComponentFixture<TestComponent>;
+  let fixture: ComponentFixture<DirectiveTestComponent>;
   let component: DirectiveTestComponent;
   let directiveEl;
   let directive;
@@ -37,7 +37,7 @@ describe('<%= className %>', () => {
         <%- providers[key]+ ',' %><% } %>
       ]
     }).compileComponents();
-    fixture = TestBed.createComponent(TestComponent);
+    fixture = TestBed.createComponent(DirectiveTestComponent);
     component = fixture.componentInstance;
     directiveEl = fixture.debugElement.query(By.directive(<%= className %>));
     directive = directiveEl.injector.get(<%= className %>);

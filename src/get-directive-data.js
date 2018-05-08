@@ -1,3 +1,4 @@
+var path = require('path');
 var getImportLib = require('./lib/util.js').getImportLib;
 var reIndent = require('./lib/util.js').reIndent;
 var windowObjects = require('./lib/window-objects.js');
@@ -6,8 +7,8 @@ module.exports = function getDirectiveData(tsParsed, filePath, angularType) {
   let result = {
     className: tsParsed.name,
     imports: {
-      [`./${filePath}`.replace(/.ts$/,'')]: [tsParsed.name], // the directive itself
-      '@angular/core': ['Directive']
+      [`./${path.basename(filePath)}`.replace(/.ts$/,'')]: [tsParsed.name], // the directive itself
+      '@angular/core': ['Component', 'Directive']
     },
     inputs: {attributes: [], properties: []},
     outputs: {attributes: [], properties: []},
@@ -24,11 +25,13 @@ module.exports = function getDirectiveData(tsParsed, filePath, angularType) {
   for (var key in tsParsed.properties) {
     const prop = tsParsed.properties[key];
     if (prop.body.match(/@Input\(/)) {
-      result.inputs.attributes.push(`[${key}]="${key}"`);
+      const attrName = (prop.body.match(/@Input\(['"](.*?)['"]\)/) || [])[1];
+      result.inputs.attributes.push(`[${attrName || key}]="${key}"`);
       result.inputs.properties.push(`${key}: ${prop.type};`);
     } else if (prop.body.match(/@Output\(/)) {
-      let funcName = `on${key.replace(/^[a-z]/, x => x.toUpperCase())}`;
-      result.outputs.attributes.push(`(${key})="${funcName}($event)"`);
+      const attrName = (prop.body.match(/@Output\(['"](.*?)['"]\)/) || [])[1];
+      const funcName = `on${key.replace(/^[a-z]/, x => x.toUpperCase())}`;
+      result.outputs.attributes.push(`(${attrName || key})="${funcName}($event)"`);
       result.outputs.properties.push(`${funcName}(event): void { /* */ }`);
     }
   }
@@ -57,11 +60,14 @@ module.exports = function getDirectiveData(tsParsed, filePath, angularType) {
       let className = matches[1]
       let lib1 = getImportLib(tsParsed.imports, 'Inject');
       let lib2 = getImportLib(tsParsed.imports, className);
+      result.imports[lib1] = result.imports[lib1] || [];
+      result.imports[lib2] = result.imports[lib2] || [];
       result.imports[lib1].push('Inject');
       result.imports[lib2].push(className);
 
       result.providers[matches[1]] = `{provide: ${className},useValue: 'browser'}`;
     } else if (param.type == 'ElementRef') {
+      result.imports[importLib] = result.imports[importLib] || [];
       result.imports[importLib].push(param.type);
       result.mocks[param.type] = reIndent(`
         class Mock${param.type} extends ${param.type} {
@@ -70,6 +76,7 @@ module.exports = function getDirectiveData(tsParsed, filePath, angularType) {
         }`);
       result.providers[param.type] = `{provide: ${param.type}, useClass: Mock${param.type}}`;
     } else if (importLib.match(/^[\.]+/)) {  // starts from . or .., which is a user-defined provider
+      result.imports[importLib] = result.imports[importLib] || [];
       result.imports[importLib].push(param.type);
       result.mocks[param.type] = reIndent(`
         class Mock${param.type} extends ${param.type} {
@@ -77,6 +84,7 @@ module.exports = function getDirectiveData(tsParsed, filePath, angularType) {
       `);
       result.providers[param.type] = `{provide: ${param.type}, useClass: Mock${param.type}}`;
     } else {
+      result.imports[importLib] = result.imports[importLib] || [];
       result.imports[importLib].push(param.type);
       result.providers[param.type] = `${param.type}`;
     }

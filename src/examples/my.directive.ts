@@ -20,12 +20,12 @@ export class MyDirective implements OnInit, OnDestroy {
   observer: IntersectionObserver;
 
   /** IntersectionObserver options */
-  @Input() options: any = {};
+  @Input('item') options: any = {};
 
   /** Event that will be fired when in viewport */
-  @Output() nguiInview: EventEmitter<any> = new EventEmitter();
+  @Output('inview') nguiInview: EventEmitter<any> = new EventEmitter();
   /** Event that will be fired when out of  viewport */
-  @Output() nguiOutview: EventEmitter<any> = new EventEmitter();
+  @Output('outview') nguiOutview: EventEmitter<any> = new EventEmitter();
 
   constructor(
     public element: ElementRef,
