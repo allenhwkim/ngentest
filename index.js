@@ -14,7 +14,7 @@ var getDefaultData = require('./src/get-default-data.js');
 
 var argv = yargs.usage('Usage: $0 <angular-typescript-file> [options]')
   .options({
-    // 'o': { alias: 'output', describe: 'output file', type: 'string' }
+    's': { alias: 'spec', describe: 'write the spec file along with source file', type: 'boolean' }
   })
   .example('$0 my.component.ts', 'generate Angular unit test for my.component.ts')
   .help('h')
@@ -43,7 +43,15 @@ parseTypescript(typescript).then(tsParsed => {
       break;
   }
 
-  process.stdout.write(ejs.render(ejsTemplate, ejsData, {}))
+  const generated = ejs.render(ejsTemplate, ejsData);
+  if (argv.spec) {
+    const outFile = tsFile.replace(/\.ts$/, '.spec.ts');
+    const outFilePath = path.resolve(outFile);
+    fs.writeFileSync(outFilePath, generated);
+    console.log('unit test for', argv._[0], 'is generated to', outFile);
+  } else {
+    process.stdout.write(generated);
+  }
 }).catch(e => {
   if (e.message === `Cannot read property '1' of null`) {
     console.error('ERROR: Please make it sure there is no empty constructor or empty block');

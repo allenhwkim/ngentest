@@ -4,7 +4,8 @@
   "description": "Angular5+ Unit Test Generator For Components, Directive, Services, and Pipes",
   "main": "index.js",
   "bin": {
-    "gentest": "./index.js"
+    "gentest": "./index.js",
+    "ngentest": "./index.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
