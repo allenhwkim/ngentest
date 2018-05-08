@@ -1,5 +1,5 @@
 {
-  "name": "gen-test",
+  "name": "ngentest",
   "version": "0.1.0",
   "description": "Angular5+ Unit Test Generator For Components, Directive, Services, and Pipes",
   "main": "index.js",
