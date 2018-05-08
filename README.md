@@ -1,4 +1,4 @@
-# ng-gen-test
+# ngentest
 Angular5+ Unit Test Generator For Components, Directive, Services, and Pipes
 
 ## How It Works
