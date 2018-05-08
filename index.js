@@ -30,7 +30,7 @@ parseTypescript(typescript).then(tsParsed => {
   switch(angularType) {
     case 'Component':
     case 'Directive':
-      ejsData = getDirectiveData(tsParsed, tsFile);
+      ejsData = getDirectiveData(tsParsed, tsFile, angularType);
       break;
     case 'Injectable':
       ejsData = getInjectableData(tsParsed, tsFile);

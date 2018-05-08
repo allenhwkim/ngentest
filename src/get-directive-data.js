@@ -2,7 +2,7 @@ var getImportLib = require('./lib/util.js').getImportLib;
 var reIndent = require('./lib/util.js').reIndent;
 var windowObjects = require('./lib/window-objects.js');
 
-module.exports = function getDirectiveData(tsParsed, filePath) {
+module.exports = function getDirectiveData(tsParsed, filePath, angularType) {
   let result = {
     className: tsParsed.name,
     imports: {
@@ -107,7 +107,7 @@ module.exports = function getDirectiveData(tsParsed, filePath) {
   for (var key in tsParsed.methods) {
     let method = tsParsed.methods[key];
     let parameters = method.parameters.map(el => el.name).join(', ');
-    let js = `${key}(${parameters})`;
+    let js = `${angularType.toLowerCase()}.${key}(${parameters})`;
     (method.type !== 'void') && (js = `const result = ${js}`); 
     result.functionTests[key] = reIndent(`
       it('should run #${key}()', async(() => {
