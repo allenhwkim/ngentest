@@ -4,6 +4,7 @@ import {
   PLATFORM_ID, Renderer2, TemplateRef, ViewChild
  } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'ngui-inview',

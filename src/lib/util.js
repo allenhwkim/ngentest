@@ -29,11 +29,15 @@ function getEjsTemplate(type) {
 function getImportLib(mports, className) {
   let lib;
   mports.forEach(mport => {
-    mport.specifiers.forEach(el => { // e.g. 'Inject', 'Inject as foo'
-      if (el.indexOf(className) !== -1) {
-        lib = mport.from; // e.g. '@angular/core'
-      }
-    });
+    if (mport.specifiers) {
+      mport.specifiers.forEach(el => { // e.g. 'Inject', 'Inject as foo'
+        if (el.indexOf(className) !== -1) {
+          lib = mport.from; // e.g. '@angular/core'
+        }
+      });
+    } else {
+      lib = mport.from;
+    }
   });
 
   return lib;

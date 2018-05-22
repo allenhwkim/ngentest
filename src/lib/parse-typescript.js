@@ -24,8 +24,15 @@ module.exports = async function parseTypescript(fileOrTs, className){
 
   // imports
   parsed.imports.forEach(mport => {
-    let specifiers = mport.specifiers.map(el => `${el.specifier}${el.alias ? ' as '+el.alias: ''}`);
-    ret.imports.push({from: mport.libraryName, specifiers});
+    let specifiers;
+    //  { libraryName: '@angular/core', specifiers: [Array], ... }
+    if (mport.constructor.name === 'NamedImport') {   
+      let specifiers = mport.specifiers.map(el => `${el.specifier}${el.alias ? ' as '+el.alias: ''}`);
+      ret.imports.push({from: mport.libraryName, specifiers});
+    } // { libraryName: 'lodash', alias: '_', start: 51, end: 79 }
+    else if (mport.constructor.name === 'NamespaceImport') {
+      ret.imports.push({from: mport.libraryName, as: mport.alias});
+    }
   })
 
   // constructor
