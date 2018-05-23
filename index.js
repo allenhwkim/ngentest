@@ -48,7 +48,7 @@ parseTypescript(typescript).then(tsParsed => {
     const outFile = tsFile.replace(/\.ts$/, '.spec.ts');
     const outFilePath = path.resolve(outFile);
     fs.writeFileSync(outFilePath, generated);
-    console.log('unit test for', argv._[0], 'is generated to', outFile);
+    console.log('Generated unit test for', argv._[0], 'to', outFile);
   } else {
     process.stdout.write(generated);
   }

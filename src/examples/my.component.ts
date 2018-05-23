@@ -14,7 +14,7 @@ import * as _ from 'lodash';
   `,
   styles: [':host {display: block;}']
 })
-export class MyComponent implements OnInit, OnDestroy {
+export class MyComponent implements OnInit {
   @ContentChild(TemplateRef) template: TemplateRef<any>;
   @Input() options: any = {threshold: [.1, .2, .3, .4, .5, .6, .7, .8]};
   @Output() inview: EventEmitter<any> = new EventEmitter();

@@ -53,6 +53,7 @@ module.exports = async function parseTypescript(fileOrTs, className){
 
   // properties 
   klass.properties.forEach(prop => {
+    console.log('prop........', prop);
     ret.properties[prop.name] = {
       type: prop.type,
       body: fileContents.substring(prop.start, prop.end)
