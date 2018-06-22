@@ -2,15 +2,14 @@
 Angular5+ Unit Test Generator For Components, Directive, Services, and Pipes
 
 ## How It Works
-1. Parse typescript and find out the file type.
-2. Build the following data for unit test from the parsed Typescript.
+1. Parse component/directive/service, then prepare the following data.
     - className
     - imports
     - input/output attributes and properties
     - mocks
     - providers for TestBed
     - list of functions to test
-3. Generate unit test with .ejs template and data from #2
+2. Generate unit test from prepared data with .ejs template
 
 ## Install & Run
 ```
