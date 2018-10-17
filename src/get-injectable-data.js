@@ -1,12 +1,13 @@
-var getImportLib = require('./lib/util.js').getImportLib;
-var reIndent = require('./lib/util.js').reIndent;
+const getImportLib = require('./lib/util.js').getImportLib;
+const reIndent = require('./lib/util.js').reIndent;
+const path = require('path');
 
 module.exports = function getServiceData(tsParsed, filePath) {
   let result = {
     className: tsParsed.name,
     classParams: [],
     imports: {
-      [`./${filePath}`.replace(/.ts$/,'')]: [tsParsed.name], // the directive itself
+      [`./${path.basename(filePath)}`.replace(/.ts$/,'')]: [tsParsed.name], // the directive itself
     },
     mocks: {},
     functionTests: {}
@@ -19,7 +20,7 @@ module.exports = function getServiceData(tsParsed, filePath) {
   (tsParsed.constructor.parameters || []).forEach(param => { // name, type, body
     //param.type, param.name, param.body
     result.mocks[param.type] = reIndent(`
-      const ${param.name} = {
+      const ${param.name}: any = {
         // mock properties here 
       }
     `, '  ');
@@ -37,9 +38,9 @@ module.exports = function getServiceData(tsParsed, filePath) {
     let js = `${key}(${parameters})`;
     (method.type !== 'void') && (js = `const result = ${js}`); 
     result.functionTests[key] = reIndent(`
-      it('should run #${key}()', async(() => {
+      it('should run #${key}()', async () => {
         // ${js};
-      }));
+      });
     `, '  ');
   }
 

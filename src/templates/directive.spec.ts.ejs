@@ -1,6 +1,6 @@
 // tslint:disable
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import {By} from '@angular/platform-browser';
+import { By } from '@angular/platform-browser';
 
 <% for(var key in imports) { -%>
 import {<%- imports[key].map(el => `${el}`).join(', ') -%>} from '<%- key -%>';
@@ -30,7 +30,7 @@ describe('<%= className %>', () => {
   let directiveEl;
   let directive;
 
-  beforeEach(async(() => {
+  beforeEach(async () => {
     TestBed.configureTestingModule({
       declarations: [<%= className %>, DirectiveTestComponent],
       providers: [<% for(var key in providers) { %>
@@ -41,12 +41,12 @@ describe('<%= className %>', () => {
     component = fixture.componentInstance;
     directiveEl = fixture.debugElement.query(By.directive(<%= className %>));
     directive = directiveEl.injector.get(<%= className %>);
-  }));
+  });
 
-  it("should run a directive", async(() => {
+  it("should run a directive", async () => {
     expect(component).toBeTruthy();
     expect(directive).toBeTruthy();
-  }));
+  });
 
   <% for(var key in functionTests) { -%>
   <%- functionTests[key] -%>

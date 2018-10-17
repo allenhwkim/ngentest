@@ -59,22 +59,22 @@ describe('MyComponent', () => {
     component = fixture.debugElement.componentInstance;
   });
 
-  it('should create a component', async(() => {
+  it('should create a component', async () => {
     expect(component).toBeTruthy();
-  }));
+  });
 
 
-  it('should run #ngOnInit()', async(() => {
+  it('should run #ngOnInit()', async () => {
     // ngOnInit();
-  }));
+  });
 
-  it('should run #handleIntersect()', async(() => {
+  it('should run #handleIntersect()', async () => {
     // handleIntersect(entries, observer);
-  }));
+  });
 
-  it('should run #defaultInviewHandler()', async(() => {
+  it('should run #defaultInviewHandler()', async () => {
     // const result = defaultInviewHandler(entry);
-  }));
+  });
 
 });
 ```
@@ -117,7 +117,7 @@ describe('MyDirective', () => {
   let directiveEl;
   let directive;
 
-  beforeEach(async(() => {
+  beforeEach(async () => {
     TestBed.configureTestingModule({
       declarations: [MyDirective, DirectiveTestComponent],
       providers: [
@@ -130,25 +130,25 @@ describe('MyDirective', () => {
     component = fixture.componentInstance;
     directiveEl = fixture.debugElement.query(By.directive(MyDirective));
     directive = directiveEl.injector.get(MyDirective);
-  }));
+  });
 
-  it("should run a directive", async(() => {
+  it("should run a directive", async () => {
     expect(component).toBeTruthy();
     expect(directive).toBeTruthy();
-  }));
+  });
 
 
-  it('should run #ngOnInit()', async(() => {
+  it('should run #ngOnInit()', async () => {
     // ngOnInit();
-  }));
+  });
 
-  it('should run #ngOnDestroy()', async(() => {
+  it('should run #ngOnDestroy()', async () => {
     // ngOnDestroy();
-  }));
+  });
 
-  it('should run #handleIntersect()', async(() => {
+  it('should run #handleIntersect()', async () => {
     // handleIntersect(entries, observer);
-  }));
+  });
 
 });
 ```
@@ -175,13 +175,13 @@ describe('DynamicComponentService', () => {
   });
 
 
-  it('should run #createComponent()', async(() => {
+  it('should run #createComponent()', async () => {
     // const result = createComponent(component, into);
-  }));
+  });
 
-  it('should run #insertComponent()', async(() => {
+  it('should run #insertComponent()', async () => {
     // const result = insertComponent(componentRef);
-  }));
+  });
 
 });
 ```

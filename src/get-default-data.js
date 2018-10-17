@@ -1,11 +1,12 @@
-var getImportLib = require('./lib/util.js').getImportLib;
-var windowObjects = require('./lib/window-objects.js');
+const getImportLib = require('./lib/util.js').getImportLib;
+const windowObjects = require('./lib/window-objects.js');
+const path = require('path');
 
 module.exports = function getDirectiveData(tsParsed, filePath) {
   let result = {
     clasName: tsParsed.name,
     imports: {
-      [`./${filePath}`.replace(/.ts$/,'')]: [tsParsed.name], // the directive itself
+      [`./${path.basename(filePath)}`.replace(/.ts$/,'')]: [tsParsed.name], // the directive itself
       '@angular/core': ['Directive']
     },
     inputs: {attributes: [], properties: []},
@@ -116,9 +117,9 @@ module.exports = function getDirectiveData(tsParsed, filePath) {
     let js = `${key}(${parameters})`;
     (method.type !== 'void') && (js = `const result = ${js}`); 
     result.functionTests[key] = `
-      it('should run #{key}', async(() => {
+      it('should run #{key}', async () => {
         // ${js};
-      }));
+      });
     `;
   }
 

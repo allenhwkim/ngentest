@@ -1,7 +1,7 @@
-var path = require('path');
-var getImportLib = require('./lib/util.js').getImportLib;
-var reIndent = require('./lib/util.js').reIndent;
-var windowObjects = require('./lib/window-objects.js');
+const path = require('path');
+const getImportLib = require('./lib/util.js').getImportLib;
+const reIndent = require('./lib/util.js').reIndent;
+const windowObjects = require('./lib/window-objects.js');
 
 module.exports = function getDirectiveData(tsParsed, filePath, angularType) {
   let result = {
@@ -118,9 +118,9 @@ module.exports = function getDirectiveData(tsParsed, filePath, angularType) {
     let js = `${angularType.toLowerCase()}.${key}(${parameters})`;
     (method.type !== 'void') && (js = `const result = ${js}`); 
     result.functionTests[key] = reIndent(`
-      it('should run #${key}()', async(() => {
+      it('should run #${key}()', async () => {
         // ${js};
-      }));
+      });
     `, '  ');
   }
 

@@ -3,12 +3,18 @@
   "version": "0.2.3",
   "description": "Angular5+ Unit Test Generator For Components, Directive, Services, and Pipes",
   "main": "index.js",
+  "license": "MIT",
+  "engines": {
+    "node": "~9.4.0",
+    "npm": ">=6.1"
+  },
   "bin": {
     "gentest": "./index.js",
     "ngentest": "./index.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test.js",
+    "preinstall": "check-engines"
   },
   "repository": {
     "type": "git",
@@ -22,7 +28,6 @@
     "cli"
   ],
   "author": "Allen Kim <allenhwkim@gmail.com>",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/allenhwkim/ng-gen-test/issues"
   },
@@ -31,5 +36,8 @@
     "ejs": "^2.6.1",
     "typescript-parser": "^2.4.0",
     "yargs": "^11.0.0"
+  },
+  "devDependencies": {
+    "check-engines": "^1.5.0"
   }
 }

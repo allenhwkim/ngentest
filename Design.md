@@ -72,9 +72,9 @@ describe('NguiInviewComponent', () => {
     component = fixture.debugElement.componentInstance;
   });
 
-  it('should create a component', async(() => {
+  it('should create a component', async () => {
     expect(component).toBeTruthy();
-  }));
+  });
   
   <<FUNCTION-TESTS>>
 });
@@ -123,7 +123,7 @@ describe('<<DIRECTIVE-NAME>>', () => {
   let directiveEl;
   let directive;
 
-  beforeEach(async(() => {
+  beforeEach(async () => {
     TestBed.configureTestingModule({
       declarations: [<<DIRECTIVE-NAME>>, DirectiveTestComponent],
       providers: [
@@ -135,12 +135,12 @@ describe('<<DIRECTIVE-NAME>>', () => {
     component = fixture.componentInstance;
     directiveEl = fixture.debugElement.query(By.directive(<<DIRECTIVE-NAME>>));
     directive = directiveEl.injector.get(<<DIRECTIVE-NAME>>);
-  }));
+  });
 
-  it("should run a directive", async(() => {
+  it("should run a directive", async () => {
     expect(component).toBeTruthy();
     expect(directive).toBeTruthy();
-  }));
+  });
 
   <<FUNCTION-TESTS>>
 
