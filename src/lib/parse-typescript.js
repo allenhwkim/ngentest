@@ -27,7 +27,7 @@ module.exports = async function parseTypescript(fileOrTs, className){
     let specifiers;
     //  { libraryName: '@angular/core', specifiers: [Array], ... }
     if (mport.constructor.name === 'NamedImport') {   
-      let specifiers = mport.specifiers.map(el => `${el.specifier}${el.alias ? ' as '+el.alias: ''}`);
+      let specifiers = (mport.specifiers || []).map(el => `${el.specifier}${el.alias ? ' as '+el.alias: ''}`);
       ret.imports.push({from: mport.libraryName, specifiers});
     } // { libraryName: 'lodash', alias: '_', start: 51, end: 79 }
     else if (mport.constructor.name === 'NamespaceImport') {
@@ -39,7 +39,7 @@ module.exports = async function parseTypescript(fileOrTs, className){
   let constructor = klass.ctor;
   if (constructor) {
     ret.constructor = {};
-    ret.constructor.parameters = constructor.parameters.map(param => {
+    ret.constructor.parameters = (constructor.parameters || []).map(param => {
       return { 
         name: param.name,
         type: param.type,
@@ -48,12 +48,11 @@ module.exports = async function parseTypescript(fileOrTs, className){
     });
     ret.constructor.body = fileContents
       .substring(constructor.start, constructor.end)
-      .match(/{([\s\S]+)\}$/m)[1];
+      .match(/{([\s\S]*)\}$/m)[1];
   }
 
   // properties 
-  klass.properties.forEach(prop => {
-    console.log('prop........', prop);
+  (klass.properties || []).forEach(prop => {
     ret.properties[prop.name] = {
       type: prop.type,
       body: fileContents.substring(prop.start, prop.end)
@@ -61,10 +60,10 @@ module.exports = async function parseTypescript(fileOrTs, className){
   });
 
   // methods
-  klass.methods.forEach(method => {
+  (klass.methods || []).forEach(method => {
     ret.methods[method.name] = {
       type: method.type,
-      parameters: method.parameters.map(param => ({
+      parameters: (method.parameters || []).map(param => ({
         name: param.name, type: param.type
       })),
       body: fileContents.substring(method.start, method.end).match(/{([\s\S]+)\}$/m)[1]

@@ -1,3 +1,4 @@
+import { async } from '@angular/core/testing';
 <% for(var key in imports) { -%>
 import {<%- imports[key].map(el => `${el}`).join(', ') -%>} from '<%- key -%>';
 <% } -%>

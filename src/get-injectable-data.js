@@ -16,7 +16,7 @@ module.exports = function getServiceData(tsParsed, filePath) {
   // Iterate constructor parameters
   //  . create mocks and constructor parameters
   //
-  tsParsed.constructor.parameters.forEach(param => { // name, type, body
+  (tsParsed.constructor.parameters || []).forEach(param => { // name, type, body
     //param.type, param.name, param.body
     result.mocks[param.type] = reIndent(`
       const ${param.name} = {
@@ -33,7 +33,7 @@ module.exports = function getServiceData(tsParsed, filePath) {
   //
   for (var key in tsParsed.methods) {
     let method = tsParsed.methods[key];
-    let parameters = method.parameters.map(el => el.name).join(', ');
+    let parameters = (method.parameters || []).map(el => el.name).join(', ');
     let js = `${key}(${parameters})`;
     (method.type !== 'void') && (js = `const result = ${js}`); 
     result.functionTests[key] = reIndent(`
