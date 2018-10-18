@@ -71,16 +71,24 @@ module.exports = function getDirectiveData(tsParsed, filePath) {
     } else if (param.type == 'ElementRef') {
       result.imports[importLib].push(param.type);
       result.mocks[param.type] = `
-        class Mock${param.type} extends ${param.type} {
+        @Injectable()
+        class Mock${param.type} {
           constructor() { super(undefined); }
           nativeElement = {}
         }`;
       result.providers[param.type] = {useClass: `Mock${param.type}`};
+    } else if (param.type === 'Router') {
+      result.imports[importLib].push(param.type);
+      result.mocks[param.type] = `
+        @Injectable();
+        class Mock${param.type} { navigate = jest.fn(); }
+      `;
+      result.providers[param.type] = {useClass: `Mock${param.type}`};
     } else if (importLib.match(/^\.\//)) {  // starts from ./, which is a user-defined provider
       result.imports[importLib].push(param.type);
       result.mocks[param.type] = `
-        class Mock${param.type} extends ${param.type} {
-        }
+        @Injectable();
+        class Mock${param.type} {}
       `;
       result.providers[param.type] = {useClass: `Mock${param.type}`};
     } else {
@@ -102,7 +110,7 @@ module.exports = function getDirectiveData(tsParsed, filePath) {
       continue;
     } else if (windowObjects.includes(prop.type)) {
       result.mocks[prop.type] = `
-        (<any>window).${prop.type} = jest.fn();
+        // (<any>window).${prop.type} = jest.fn();
       `;
     }
   }

@@ -34,7 +34,8 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import {MyComponent} from './src/examples/my.component';
 import {Directive, ElementRef, Renderer2, Inject, PLATFORM_ID} from '@angular/core';
 
-class MockElementRef extends ElementRef {
+@Injectable()
+class MockElementRef  {
   constructor() { super(undefined); }
   nativeElement = {}
 }
@@ -93,7 +94,8 @@ import {By} from '@angular/platform-browser';
 import {MyDirective} from './src/examples/my.directive';
 import {Directive, ElementRef, Renderer2, Inject, PLATFORM_ID} from '@angular/core';
 
-class MockElementRef extends ElementRef {
+@Injectable()
+class MockElementRef {
   constructor() { super(undefined); }
   nativeElement = {}
 }

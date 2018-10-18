@@ -7,8 +7,8 @@ module.exports = function getDirectiveData(tsParsed, filePath, angularType) {
   let result = {
     className: tsParsed.name,
     imports: {
-      [`./${path.basename(filePath)}`.replace(/.ts$/,'')]: [tsParsed.name], // the directive itself
-      '@angular/core': ['Component', 'Directive']
+      '@angular/core': ['Component', 'Directive'],
+      [`./${path.basename(filePath)}`.replace(/.ts$/,'')]: [tsParsed.name] // the directive itself
     },
     inputs: {attributes: [], properties: []},
     outputs: {attributes: [], properties: []},
@@ -70,17 +70,26 @@ module.exports = function getDirectiveData(tsParsed, filePath, angularType) {
       result.imports[importLib] = result.imports[importLib] || [];
       result.imports[importLib].push(param.type);
       result.mocks[param.type] = reIndent(`
-        class Mock${param.type} extends ${param.type} {
+        @Injectable()
+        class Mock${param.type} {
           constructor() { super(undefined); }
           nativeElement = {}
         }`);
+      result.providers[param.type] = `{provide: ${param.type}, useClass: Mock${param.type}}`;
+    } else if (param.type === 'Router') {
+      result.imports[importLib] = result.imports[importLib] || [];
+      result.imports[importLib].push(param.type);
+      result.mocks[param.type] = reIndent(`
+        @Injectable();
+        class Mock${param.type} { navigate = jest.fn(); }
+      `);
       result.providers[param.type] = `{provide: ${param.type}, useClass: Mock${param.type}}`;
     } else if (importLib.match(/^[\.]+/)) {  // starts from . or .., which is a user-defined provider
       result.imports[importLib] = result.imports[importLib] || [];
       result.imports[importLib].push(param.type);
       result.mocks[param.type] = reIndent(`
-        class Mock${param.type} extends ${param.type} {
-        }
+        @Injectable()
+        class Mock${param.type} { }
       `);
       result.providers[param.type] = `{provide: ${param.type}, useClass: Mock${param.type}}`;
     } else {
@@ -97,7 +106,7 @@ module.exports = function getDirectiveData(tsParsed, filePath, angularType) {
   //
   for (var key in tsParsed.properties) {
     let prop = tsParsed.properties[key];
-    let basicTypes = ['boolean', 'number', 'string', 'Array', 'any', 'void', 'null', 'undefined', 'never'];
+    let basicTypes = ['Object', 'boolean', 'number', 'string', 'Array', 'any', 'void', 'null', 'undefined', 'never'];
     let importLib = getImportLib(tsParsed.imports, prop.type);
     if (importLib || basicTypes.includes(prop.type)) {
       continue;
