@@ -5,7 +5,7 @@
   "main": "index.js",
   "license": "MIT",
   "engines": {
-    "node": "~9.4.0",
+    "node": ">=8.6.0",
     "npm": ">=6.1"
   },
   "bin": {
@@ -35,9 +35,7 @@
   "dependencies": {
     "ejs": "^2.6.1",
     "typescript-parser": "^2.4.0",
-    "yargs": "^11.0.0"
-  },
-  "devDependencies": {
+    "yargs": "^11.0.0",
     "check-engines": "^1.5.0"
   }
 }
