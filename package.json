@@ -13,8 +13,7 @@
     "ngentest": "./index.js"
   },
   "scripts": {
-    "test": "node test.js",
-    "preinstall": "check-engines"
+    "test": "node test.js"
   },
   "repository": {
     "type": "git",
