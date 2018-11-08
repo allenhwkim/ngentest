@@ -19,7 +19,7 @@ module.exports = async function parseTypescript(fileOrTs, className){
   if (className) {
     klass = parsed.declarations.find(decl => decl.name === className);
   } else {
-    klass = parsed.declarations.find(decl => decl.properties);
+    klass = parsed.declarations.find(decl => decl.constructor.name === 'ClassDeclaration')
     klass = klass || parsed.declarations[0];
   }
   ret.name = klass.name;
