@@ -12,6 +12,9 @@ import { DeeplinkService } from './common/services/deeplink.service';
 
 import 'rci-components/custom-elements';
 
+const foo = '1';
+const bar = '2';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',

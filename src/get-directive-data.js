@@ -51,7 +51,7 @@ module.exports = function getDirectiveData(tsParsed, filePath, angularType) {
   //      . add te result.providers with mock 
   //    . otherwise, add to result.providers
   //
-  tsParsed.constructor.parameters.forEach(param => { // name, type, body
+  (tsParsed.constructor.parameters || []).forEach(param => { // name, type, body
     // handle @Inject(XXXXXXXXX)
     const importLib = getImportLib(tsParsed.imports, param.type);
     const matches = param.body.match(/@Inject\(([A-Z0-9_]+)\)/);

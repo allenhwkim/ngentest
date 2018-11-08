@@ -14,11 +14,13 @@ module.exports = async function parseTypescript(fileOrTs, className){
   }
 
   let ret = { imports: [], properties: {}, methods: {} };
+
   let klass;
   if (className) {
     klass = parsed.declarations.find(decl => decl.name === className);
   } else {
-    klass = parsed.declarations[0];
+    klass = parsed.declarations.find(decl => decl.properties);
+    klass = klass || parsed.declarations[0];
   }
   ret.name = klass.name;
 
