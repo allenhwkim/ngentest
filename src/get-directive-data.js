@@ -72,7 +72,7 @@ module.exports = function getDirectiveData(tsParsed, filePath, angularType) {
       result.mocks[param.type] = reIndent(`
         @Injectable()
         class Mock${param.type} {
-          constructor() { super(undefined); }
+          // constructor() { super(undefined); }
           nativeElement = {}
         }`);
       result.providers[param.type] = `{provide: ${param.type}, useClass: Mock${param.type}}`;

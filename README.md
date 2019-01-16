@@ -36,7 +36,7 @@ import {Directive, ElementRef, Renderer2, Inject, PLATFORM_ID} from '@angular/co
 
 @Injectable()
 class MockElementRef  {
-  constructor() { super(undefined); }
+  // constructor() { super(undefined); }
   nativeElement = {}
 }
 (<any>window).IntersectionObserver = jest.fn();
@@ -96,7 +96,7 @@ import {Directive, ElementRef, Renderer2, Inject, PLATFORM_ID} from '@angular/co
 
 @Injectable()
 class MockElementRef {
-  constructor() { super(undefined); }
+  // constructor() { super(undefined); }
   nativeElement = {}
 }
 (<any>window).IntersectionObserver = jest.fn();

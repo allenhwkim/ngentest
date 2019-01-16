@@ -55,7 +55,7 @@ module.exports = function getDirectiveData(tsParsed, filePath) {
   //      . add te result.providers with mock 
   //    . otherwise, add to result.providers
   //
-  tsParsed.constructor.parameters.forEach(param => { // name, type, body
+  (tsParsed.constructor.parameters || []).forEach(param => { // name, type, body
     // handle @Inject(XXXXXXXXX)
     const importLib = getImportLib(tsParsed.imports, param.type);
     const matches = param.body.match(/@Inject\(([A-Z0-9_]+)\)/);
@@ -73,7 +73,7 @@ module.exports = function getDirectiveData(tsParsed, filePath) {
       result.mocks[param.type] = `
         @Injectable()
         class Mock${param.type} {
-          constructor() { super(undefined); }
+          // constructor() { super(undefined); }
           nativeElement = {}
         }`;
       result.providers[param.type] = {useClass: `Mock${param.type}`};

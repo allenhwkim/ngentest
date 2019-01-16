@@ -1,0 +1,25 @@
+import { async } from '@angular/core/testing';
+<% for(var key in imports) { -%>
+import {<%- imports[key].map(el => `${el}`).join(', ') -%>} from '<%- key -%>';
+<% } -%>
+
+describe('<%= typeof className === 'undefined' ? 'My Test' : className %>', () => {
+  let service;
+
+  <% for(var key in mocks) { -%>
+  <%- mocks[key] -%>
+  <% } -%>
+
+  beforeEach(() => {
+    // TODO
+  });
+
+  it('should pass', async () => {
+    expect(true).toBeTruthy();
+  });
+
+  <% for(var key in functionTests) { -%>
+  <%- functionTests[key] -%>
+  <% } -%>
+
+});

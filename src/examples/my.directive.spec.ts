@@ -12,7 +12,7 @@ import {MyDirective} from './my.directive';
 
 @Injectable()
 class MockElementRef {
-  constructor() { super(undefined); }
+  // constructor() { super(undefined); }
   nativeElement = {}
 }
 (<any>window).IntersectionObserver = jest.fn();
