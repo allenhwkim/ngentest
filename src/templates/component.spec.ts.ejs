@@ -33,9 +33,11 @@ describe('<%= className %>', () => {
     component = fixture.debugElement.componentInstance;
   });
 
+  <% if(functionTests.spec == '') { -%>
   it('should create a component', async () => {
     expect(component).toBeTruthy();
   });
+  <% } -%>
   
   <% for(var key in functionTests) { -%>
   <%- functionTests[key] -%>

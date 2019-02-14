@@ -3,7 +3,7 @@ const getImportLib = require('./lib/util.js').getImportLib;
 const reIndent = require('./lib/util.js').reIndent;
 const windowObjects = require('./lib/window-objects.js');
 
-module.exports = function getDirectiveData(tsParsed, filePath, angularType) {
+module.exports = function getDirectiveData(tsParsed, filePath, angularType, specFuncBlocks) {
   let result = {
     className: tsParsed.name,
     imports: {
@@ -117,6 +117,9 @@ module.exports = function getDirectiveData(tsParsed, filePath, angularType) {
     }
   }
 
+  // Adding the existing spec It Blocks
+  result.functionTests['spec'] = specFuncBlocks;
+
   //
   // Iterate methods
   //  . Javascript to call the function with parameter;
@@ -126,11 +129,13 @@ module.exports = function getDirectiveData(tsParsed, filePath, angularType) {
     let parameters = method.parameters.map(el => el.name).join(', ');
     let js = `${angularType.toLowerCase()}.${key}(${parameters})`;
     (method.type !== 'void') && (js = `const result = ${js}`); 
-    result.functionTests[key] = reIndent(`
+    if(specFuncBlocks.indexOf(key) == -1){
+      result.functionTests[key] = reIndent(`
       it('should run #${key}()', async () => {
         // ${js};
       });
     `, '  ');
+    }
   }
 
   return result;
