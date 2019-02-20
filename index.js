@@ -23,6 +23,14 @@ var argv = yargs.usage('Usage: $0 <angular-typescript-file> [options]')
 var tsFile = '' + argv._;
 var typescript = fs.readFileSync(path.resolve(tsFile), 'utf8');
 
+// Reading the Spec file and extracting the it blocks.
+var tsFileSpec = tsFile.replace(/\.ts$/, '.spec.ts');
+var specStr = fs.readFileSync(path.resolve(tsFileSpec), 'utf8');
+var start = specStr.indexOf('it');
+var end = specStr.lastIndexOf('});');
+var specFuncBlocks = (start == -1 ? '' : specStr.substring(start, end));
+//console.log(specFuncBlocks);
+
 parseTypescript(typescript).then(tsParsed => {
   const angularType = util.getAngularType(typescript); // Component, Directive, Injectable, Pipe, or undefined
   const ejsTemplate = util.getEjsTemplate(angularType);
@@ -30,16 +38,16 @@ parseTypescript(typescript).then(tsParsed => {
   switch(angularType) {
     case 'Component':
     case 'Directive':
-      ejsData = getDirectiveData(tsParsed, tsFile, angularType);
+      ejsData = getDirectiveData(tsParsed, tsFile, angularType, specFuncBlocks);
       break;
     case 'Injectable':
-      ejsData = getInjectableData(tsParsed, tsFile);
+      ejsData = getInjectableData(tsParsed, tsFile, specFuncBlocks);
       break;
     case 'Pipe':
       ejsData = getPipeData(tsParsed, tsFile);
       break;
     default:
-      ejsData = getDefaultData(tsParsed, tsFile);
+      ejsData = getDefaultData(tsParsed, tsFile, specFuncBlocks);
       break;
   }
 

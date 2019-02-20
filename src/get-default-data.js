@@ -2,7 +2,7 @@ const getImportLib = require('./lib/util.js').getImportLib;
 const windowObjects = require('./lib/window-objects.js');
 const path = require('path');
 
-module.exports = function getDirectiveData(tsParsed, filePath) {
+module.exports = function getDirectiveData(tsParsed, filePath, specFuncBlocks) {
   let result = {
     clasName: tsParsed.name,
     imports: {
@@ -115,6 +115,9 @@ module.exports = function getDirectiveData(tsParsed, filePath) {
     }
   }
 
+  // Adding the existing spec It Blocks
+  result.functionTests['spec'] = specFuncBlocks;
+
   //
   // Iterate methods
   //  . Javascript to call the function with parameter;
@@ -123,12 +126,14 @@ module.exports = function getDirectiveData(tsParsed, filePath) {
     let method = tsParsed.methods[key];
     let parameters = method.parameters.map(el => el.name).join(', ');
     let js = `${key}(${parameters})`;
-    (method.type !== 'void') && (js = `const result = ${js}`); 
-    result.functionTests[key] = `
-      it('should run #{key}', async () => {
-        // ${js};
-      });
-    `;
+    (method.type !== 'void') && (js = `const result = ${js}`);
+    if(specFuncBlocks.indexOf(key) == -1){
+      result.functionTests[key] = `
+        it('should run #{key}', async () => {
+          // ${js};
+        });
+      `;
+    }
   }
 
   return result;
