@@ -10,7 +10,7 @@ describe('DynamicComponentService', () => {
   }
       
   beforeEach(() => {
-    service = new DynamicComponentService(factoryResolver);
+    service = new DynamicComponentService(private,factoryResolver);
   });
 
     
@@ -20,6 +20,10 @@ describe('DynamicComponentService', () => {
         
   it('should run #insertComponent()', async () => {
     // const result = insertComponent(componentRef);
+  });
+        
+  it('should run #emptyFunction()', async () => {
+    // const result = emptyFunction();
   });
       
 });

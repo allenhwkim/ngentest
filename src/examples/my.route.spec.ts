@@ -10,9 +10,5 @@ describe('My Test', () => {
     // TODO
   });
 
-  it('should pass', async () => {
-    expect(true).toBeTruthy();
-  });
-
   
 });

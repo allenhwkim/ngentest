@@ -17,5 +17,7 @@ srcFiles.forEach(file => {
   const filePath = path.join(__dirname, 'src', 'examples', file);
   const output = '' + execSync(`./index.js ${filePath}`);
   const expected = '' + fs.readFileSync(filePath.replace('.ts', '.spec.ts'));
+console.log(output);
+console.log(expected);
   assert.equal(output.trim(), expected.trim());
 });

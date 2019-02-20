@@ -1,5 +1,4 @@
-const getImportLib = require('./lib/util.js').getImportLib;
-const reIndent = require('./lib/util.js').reIndent;
+const {getImportLib, reIndent} = require('./lib/util.js');
 const path = require('path');
 
 module.exports = function getServiceData(tsParsed, filePath) {
@@ -12,23 +11,19 @@ module.exports = function getServiceData(tsParsed, filePath) {
   };
 
   //
-  // Iterate methods
-  //  . Javascript to call the function with parameter;
+  // Run only one test, transform()
   //
-  for (var key in tsParsed.methods) {
-    let method = tsParsed.methods[key];
-    let parameters = method.parameters.map(el => el.name);
-    let js = `${key}(${parameters.join(',')})`;
-    (method.type !== 'void') && (js = `const result = ${js}`); 
-    result.functionTests[key] = {
-      parameters,
-      body: reIndent(`
-          it('should run #${key}()', async () => {
-            // ${js};
-          });
-        `, '  ')
-    };
-  }
+  let method = tsParsed.methods.transform;
+  let parameters = method.parameters.map(el => el.name);
+
+  const testName = `should run #transform()`;
+  result.functionTests[testName] = reIndent(`
+    it('${testName}', () => {
+      // const pipe = new ${tsParsed.name}();
+      // const result = pipe.transform(${parameters.join(', ')});
+      // expect(result).toBe('<<EXPECTED>>');
+    });
+  `, '  ');
 
   return result;
 }

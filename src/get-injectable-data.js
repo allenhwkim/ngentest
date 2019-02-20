@@ -1,5 +1,4 @@
-const getImportLib = require('./lib/util.js').getImportLib;
-const reIndent = require('./lib/util.js').reIndent;
+const {getImportLib, reIndent} = require('./lib/util.js');
 const path = require('path');
 
 module.exports = function getServiceData(tsParsed, filePath) {
@@ -37,8 +36,9 @@ module.exports = function getServiceData(tsParsed, filePath) {
     let parameters = (method.parameters || []).map(el => el.name).join(', ');
     let js = `${key}(${parameters})`;
     (method.type !== 'void') && (js = `const result = ${js}`); 
-    result.functionTests[key] = reIndent(`
-      it('should run #${key}()', async () => {
+    const testName = `should run #${key}()`;
+    result.functionTests[testName] = reIndent(`
+      it('${testName}', async () => {
         // ${js};
       });
     `, '  ');

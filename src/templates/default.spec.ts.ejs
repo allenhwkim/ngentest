@@ -14,10 +14,6 @@ describe('<%= typeof className === 'undefined' ? 'My Test' : className %>', () =
     // TODO
   });
 
-  it('should pass', async () => {
-    expect(true).toBeTruthy();
-  });
-
   <% for(var key in functionTests) { -%>
   <%- functionTests[key] -%>
   <% } -%>

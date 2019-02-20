@@ -10,11 +10,10 @@ import {
 
 @Injectable()
 export class DynamicComponentService {
-  factoryResolver: ComponentFactoryResolver;
   rootViewContainer: ViewContainerRef;
 
-  constructor(@Inject(ComponentFactoryResolver) factoryResolver) {
-    this.factoryResolver = factoryResolver;
+  constructor(private @Inject(ComponentFactoryResolver) factoryResolver) {
+    // empty constructor
   }
 
   createComponent(component: any, into?: ViewContainerRef): ComponentRef<any> {
@@ -32,5 +31,9 @@ export class DynamicComponentService {
     this.rootViewContainer.insert(componentRef.hostView);
 
     return componentRef.instance;
+  }
+
+  emptyFunction() {
+    // empty function
   }
 }

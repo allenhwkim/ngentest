@@ -1,4 +1,4 @@
-const getImportLib = require('./lib/util.js').getImportLib;
+const {getImportLib} = require('./lib/util.js');
 const windowObjects = require('./lib/window-objects.js');
 const path = require('path');
 
@@ -124,8 +124,9 @@ module.exports = function getDirectiveData(tsParsed, filePath) {
     let parameters = method.parameters.map(el => el.name).join(', ');
     let js = `${key}(${parameters})`;
     (method.type !== 'void') && (js = `const result = ${js}`); 
-    result.functionTests[key] = `
-      it('should run #{key}', async () => {
+    const testName = `should run #{key}`;
+    result.functionTests[testName] = `
+      it('${testName}', async () => {
         // ${js};
       });
     `;
