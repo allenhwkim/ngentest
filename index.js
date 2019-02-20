@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 'use strict';
-var fs = require('fs');
-var path = require('path');
-var yargs = require('yargs');
-var ejs = require('ejs');
+const fs = require('fs');
+const path = require('path');
+const yargs = require('yargs');
+const ejs = require('ejs');
 
-var parseTypescript = require('./src/lib/parse-typescript.js');
-var util = require('./src/lib/util.js');
-var getDirectiveData = require('./src/get-directive-data.js');
-var getInjectableData = require('./src/get-injectable-data.js');
-var getPipeData = require('./src/get-pipe-data.js');
-var getDefaultData = require('./src/get-default-data.js');
+const parseTypescript = require('./src/lib/parse-typescript.js');
+const util = require('./src/lib/util.js');
+const getDirectiveData = require('./src/get-directive-data.js');
+const getInjectableData = require('./src/get-injectable-data.js');
+const getPipeData = require('./src/get-pipe-data.js');
+const getDefaultData = require('./src/get-default-data.js');
 
-var argv = yargs.usage('Usage: $0 <angular-typescript-file> [options]')
+const argv = yargs.usage('Usage: $0 <angular-typescript-file> [options]')
   .options({
     's': { alias: 'spec', describe: 'write the spec file along with source file', type: 'boolean' }
   })
@@ -20,49 +20,47 @@ var argv = yargs.usage('Usage: $0 <angular-typescript-file> [options]')
   .help('h')
   .argv;
 
-var tsFile = '' + argv._;
-var typescript = fs.readFileSync(path.resolve(tsFile), 'utf8');
+const tsFile = '' + argv._;
+const typescript = fs.readFileSync(path.resolve(tsFile), 'utf8');
+const specFilePath = path.resolve(tsFile.replace(/\.ts$/, '.spec.ts'));
 
-// Reading the Spec file and extracting the it blocks.
-var tsFileSpec = tsFile.replace(/\.ts$/, '.spec.ts');
-var specStr = fs.readFileSync(path.resolve(tsFileSpec), 'utf8');
-var start = specStr.indexOf('it');
-var end = specStr.lastIndexOf('});');
-var specFuncBlocks = (start == -1 ? '' : specStr.substring(start, end));
-//console.log(specFuncBlocks);
+const existingItBlocks = {};
+if (argv.spec && fs.existsSync(specFilePath)) {
+  const tests = fs.readFileSync(specFilePath, 'utf8');
+  (tests.match(/  it\('.*?',.*?\n  }\);/gs) || []).forEach(itBlock => {
+    const key = itBlock.match(/it\('(.*?)',/)[1];
+    existingItBlocks[key] = `\n${itBlock}\n`;
+  });
+}
 
 parseTypescript(typescript).then(tsParsed => {
   const angularType = util.getAngularType(typescript); // Component, Directive, Injectable, Pipe, or undefined
   const ejsTemplate = util.getEjsTemplate(angularType);
+
   let ejsData;
   switch(angularType) {
     case 'Component':
     case 'Directive':
-      ejsData = getDirectiveData(tsParsed, tsFile, angularType, specFuncBlocks);
+      ejsData = getDirectiveData(tsParsed, tsFile, angularType);
       break;
     case 'Injectable':
-      ejsData = getInjectableData(tsParsed, tsFile, specFuncBlocks);
+      ejsData = getInjectableData(tsParsed, tsFile);
       break;
     case 'Pipe':
       ejsData = getPipeData(tsParsed, tsFile);
       break;
     default:
-      ejsData = getDefaultData(tsParsed, tsFile, specFuncBlocks);
+      ejsData = getDefaultData(tsParsed, tsFile);
       break;
   }
+  ejsData.functionTests = Object.assign({}, ejsData.functionTests, existingItBlocks);
 
-  const generated = ejs.render(ejsTemplate, ejsData);
+  const generated = ejs.render(ejsTemplate, ejsData).replace(/\n\s+$/gm, '\n');
   if (argv.spec) {
-    const outFile = tsFile.replace(/\.ts$/, '.spec.ts');
-    const outFilePath = path.resolve(outFile);
-    fs.writeFileSync(outFilePath, generated);
-    console.log('Generated unit test for', argv._[0], 'to', outFile);
+    fs.existsSync(specFilePath) && util.createBackupFile(specFilePath);
+    fs.writeFileSync(specFilePath, generated);
+    console.log('Generated unit test for', argv._[0], 'to', specFilePath);
   } else {
     process.stdout.write(generated);
   }
-}).catch(e => {
-  if (e.message === `Cannot read property '1' of null`) {
-    console.error('ERROR: Please make it sure there is no empty constructor or empty block');
-  }
-  console.error(e.stack);
 });

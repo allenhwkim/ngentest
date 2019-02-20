@@ -1,8 +1,7 @@
-const getImportLib = require('./lib/util.js').getImportLib;
-const reIndent = require('./lib/util.js').reIndent;
+const {getImportLib, reIndent} = require('./lib/util.js');
 const path = require('path');
 
-module.exports = function getServiceData(tsParsed, filePath, specFuncBlocks) {
+module.exports = function getServiceData(tsParsed, filePath) {
   let result = {
     className: tsParsed.name,
     classParams: [],
@@ -28,9 +27,6 @@ module.exports = function getServiceData(tsParsed, filePath, specFuncBlocks) {
     result.classParams.push(param.name);
   });
 
-  // Adding the existing spec It Blocks
-  result.functionTests['spec'] = specFuncBlocks;
-
   //
   // Iterate methods
   //  . Javascript to call the function with parameter;
@@ -40,13 +36,12 @@ module.exports = function getServiceData(tsParsed, filePath, specFuncBlocks) {
     let parameters = (method.parameters || []).map(el => el.name).join(', ');
     let js = `${key}(${parameters})`;
     (method.type !== 'void') && (js = `const result = ${js}`); 
-    if(specFuncBlocks.indexOf(key) == -1){
-      result.functionTests[key] = reIndent(`
-        it('should run #${key}()', async () => {
-          // ${js};
-        });
-      `, '  ');
-    }
+    const testName = `should run #${key}()`;
+    result.functionTests[testName] = reIndent(`
+      it('${testName}', async () => {
+        // ${js};
+      });
+    `, '  ');
   }
 
   return result;

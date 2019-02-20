@@ -49,9 +49,16 @@ function reIndent(str, prefix="") {
   return str.replace(regExp, "\n" + prefix);
 }
 
+function createBackupFile(filePath) {
+  const ext = (new Date()).toISOString().replace(/[^\d]/g,'').slice(0, -9);
+  const contents = fs.readFileSync(filePath, 'utf8');
+  fs.writeFileSync(`${filePath}.${ext}`, contents, 'utf8');
+}
+
 module.exports = {
   getAngularType,
   getEjsTemplate,
   getImportLib,
-  reIndent
+  reIndent,
+  createBackupFile
 };

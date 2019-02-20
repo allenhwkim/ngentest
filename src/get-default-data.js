@@ -1,8 +1,8 @@
-const getImportLib = require('./lib/util.js').getImportLib;
+const {getImportLib} = require('./lib/util.js');
 const windowObjects = require('./lib/window-objects.js');
 const path = require('path');
 
-module.exports = function getDirectiveData(tsParsed, filePath, specFuncBlocks) {
+module.exports = function getDirectiveData(tsParsed, filePath) {
   let result = {
     clasName: tsParsed.name,
     imports: {
@@ -115,9 +115,6 @@ module.exports = function getDirectiveData(tsParsed, filePath, specFuncBlocks) {
     }
   }
 
-  // Adding the existing spec It Blocks
-  result.functionTests['spec'] = specFuncBlocks;
-
   //
   // Iterate methods
   //  . Javascript to call the function with parameter;
@@ -126,14 +123,13 @@ module.exports = function getDirectiveData(tsParsed, filePath, specFuncBlocks) {
     let method = tsParsed.methods[key];
     let parameters = method.parameters.map(el => el.name).join(', ');
     let js = `${key}(${parameters})`;
-    (method.type !== 'void') && (js = `const result = ${js}`);
-    if(specFuncBlocks.indexOf(key) == -1){
-      result.functionTests[key] = `
-        it('should run #{key}', async () => {
-          // ${js};
-        });
-      `;
-    }
+    (method.type !== 'void') && (js = `const result = ${js}`); 
+    const testName = `should run #{key}`;
+    result.functionTests[testName] = `
+      it('${testName}', async () => {
+        // ${js};
+      });
+    `;
   }
 
   return result;
