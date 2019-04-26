@@ -21,7 +21,7 @@ $ ngentest my.service.ts
 ```
 
 ## Examples
-### comopent unit test  generated
+### component unit test  generated
 [my.component.ts](./src/examples/my.component.ts)
 ```
 $ gentest my.component.ts > my.component.spec.ts
