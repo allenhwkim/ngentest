@@ -80,14 +80,14 @@ module.exports = function getDirectiveData(tsParsed, filePath) {
     } else if (param.type === 'Router') {
       result.imports[importLib].push(param.type);
       result.mocks[param.type] = `
-        @Injectable();
+        @Injectable()
         class Mock${param.type} { navigate = jest.fn(); }
       `;
       result.providers[param.type] = {useClass: `Mock${param.type}`};
     } else if (importLib.match(/^\.\//)) {  // starts from ./, which is a user-defined provider
       result.imports[importLib].push(param.type);
       result.mocks[param.type] = `
-        @Injectable();
+        @Injectable()
         class Mock${param.type} {}
       `;
       result.providers[param.type] = {useClass: `Mock${param.type}`};

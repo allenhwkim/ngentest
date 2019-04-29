@@ -79,7 +79,7 @@ module.exports = function getDirectiveData(tsParsed, filePath, angularType) {
       result.imports[importLib] = result.imports[importLib] || [];
       result.imports[importLib].push(param.type);
       result.mocks[param.type] = reIndent(`
-        @Injectable();
+        @Injectable()
         class Mock${param.type} { navigate = jest.fn(); }
       `);
       result.providers[param.type] = `{provide: ${param.type}, useClass: Mock${param.type}}`;

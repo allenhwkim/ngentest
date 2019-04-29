@@ -24,7 +24,7 @@ class MockCookieService { }
 @Injectable()
 class MockAppLoadService { }
 
-@Injectable();
+@Injectable()
 class MockRouter { navigate = jest.fn(); }
 
 @Injectable()

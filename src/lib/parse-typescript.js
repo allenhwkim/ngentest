@@ -68,7 +68,7 @@ module.exports = async function parseTypescript(fileOrTs, className){
       parameters: (method.parameters || []).map(param => ({
         name: param.name, type: param.type
       })),
-      body: fileContents.substring(method.start, method.end).match(/{([\s\S]+)\}$/m)[1]
+      body: fileContents.substring(method.start, method.end).match(/{([\s\S]*)\}$/m)[1]
     }
   })
 
