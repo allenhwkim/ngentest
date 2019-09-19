@@ -83,7 +83,7 @@ module.exports = function getDirectiveData(tsParsed, filePath, angularType) {
         class Mock${param.type} { navigate = jest.fn(); }
       `);
       result.providers[param.type] = `{provide: ${param.type}, useClass: Mock${param.type}}`;
-    } else if (importLib.match(/^[\.]+/)) {  // starts from . or .., which is a user-defined provider
+    } else if ( importLib && importLib.match(/^[\.]+/)) {  // starts from . or .., which is a user-defined provider
       result.imports[importLib] = result.imports[importLib] || [];
       result.imports[importLib].push(param.type);
       result.mocks[param.type] = reIndent(`
