@@ -2,75 +2,71 @@ const fs = require('fs');
 const TypescriptParser = require('typescript-parser').TypescriptParser;
 const parser = new TypescriptParser();
 
-module.exports = async function parseTypescript(fileOrTs, className){
-  let parsed, fileContents;
-  
-  if (fs.existsSync(fileOrTs)) {
-    fileContents = fs.readFileSync(fileOrTs, 'utf8');
-    parsed = await parser.parseFile(filePath);
-  } else {
-    fileContents = fileOrTs; 
-    parsed = await parser.parseSource(fileOrTs);
-  }
+async function parseTypescript(fileOrTs, className) {
+  const fileContents = fs.existsSync(fileOrTs) ? fs.readFileSync(fileOrTs, 'utf8') : fileOrTs;
+  const parsed = await parser.parseSource(fileContents);
 
-  let ret = { imports: [], properties: {}, methods: {} };
+  // find class declarations
+  const klassDeclaraion = className ?
+    parsed.declarations.find(decl => decl.name === className) :
+    parsed.declarations.find(decl => decl.constructor.name === 'ClassDeclaration'); 
+  const klass = klassDeclaraion || parsed.declarations[0];
 
-  let klass;
-  if (className) {
-    klass = parsed.declarations.find(decl => decl.name === className);
-  } else {
-    klass = parsed.declarations.find(decl => decl.constructor.name === 'ClassDeclaration')
-    klass = klass || parsed.declarations[0];
-  }
-  ret.name = klass.name;
-
-  // imports
-  parsed.imports.forEach(mport => {
-    let specifiers;
-    //  { libraryName: '@angular/core', specifiers: [Array], ... }
-    if (mport.constructor.name === 'NamedImport') {   
-      let specifiers = (mport.specifiers || []).map(el => `${el.specifier}${el.alias ? ' as '+el.alias: ''}`);
-      ret.imports.push({from: mport.libraryName, specifiers});
-    } // { libraryName: 'lodash', alias: '_', start: 51, end: 79 }
-    else if (mport.constructor.name === 'NamespaceImport') {
-      ret.imports.push({from: mport.libraryName, as: mport.alias});
+  // find imports
+  const imports = parsed.imports.map(mport => {
+    if (mport.constructor.name === 'NamedImport') {
+      //  { libraryName: '@angular/core', specifiers: [Array], ... }
+      let specifiers = (mport.specifiers || [])
+        .map(el => `${el.specifier}${el.alias ? ' as ' + el.alias : ''}`);
+      return { from: mport.libraryName, specifiers };
+    } else if (mport.constructor.name === 'NamespaceImport') {
+      // { libraryName: 'lodash', alias: '_', start: 51, end: 79 }
+      return { from: mport.libraryName, as: mport.alias };
     }
-  })
+  });
 
   // constructor
-  let constructor = klass.ctor;
-  if (constructor) {
-    ret.constructor = {};
-    ret.constructor.parameters = (constructor.parameters || []).map(param => {
-      return { 
+  const constructor = {};
+  if (klass.ctor) {
+    constructor.parameters = (klass.ctor.parameters || []).map(param => {
+      return {
         name: param.name,
         type: param.type,
         body: fileContents.substring(param.start, param.end)
       };
     });
-    ret.constructor.body = fileContents
-      .substring(constructor.start, constructor.end)
+    constructor.body = fileContents
+      .substring(klass.ctor.start, klass.ctor.end)
       .match(/{([\s\S]*)\}$/m)[1];
   }
 
-  // properties 
+  // properties
+  const properties = {};
   (klass.properties || []).forEach(prop => {
-    ret.properties[prop.name] = {
+    properties[prop.name] = {
       type: prop.type,
       body: fileContents.substring(prop.start, prop.end)
     };
   });
 
   // methods
+  const methods = {};
   (klass.methods || []).forEach(method => {
-    ret.methods[method.name] = {
+    methods[method.name] = {
       type: method.type,
       parameters: (method.parameters || []).map(param => ({
         name: param.name, type: param.type
       })),
       body: fileContents.substring(method.start, method.end).match(/{([\s\S]*)\}$/m)[1]
-    }
-  })
+    };
+  });
 
-  return ret;
+  return {
+    name: klass.name,
+    imports,
+    properties,
+    methods
+  };
 }
+
+module.exports = parseTypescript;
