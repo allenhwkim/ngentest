@@ -1,48 +1,42 @@
-import * as path from 'path';
-import * as fs from 'fs';
-import * as ejs from 'ejs';
+const path = require('path');
+const fs = require('fs');
+const ejs = require('ejs');
 
-import { NgTypescriptParser } from '../ng-typescript-parser';
-import { windowObjects } from '../window-objects';
+const windowObjects = require('../window-objects.js');
 
-export class ComponentData {
-  tsPath: string;
-  typescript: string;
-  imports: any;
-  klass: any;
-  template: string;
+class ComponentData {
+  constructor ({ tsPath, klass, imports }) {
+    // this.template;
+    this.imports = imports;
+    this.klass = klass;
 
-  constructor(tsPath) {
     this.tsPath = tsPath;
     this.typescript = fs.readFileSync(path.resolve(tsPath), 'utf8');
   }
 
-  async getEjsData() {
-    const result: any = {};
-    const parser = new NgTypescriptParser(this.tsPath);
-    this.klass = await parser.getKlass();
-    this.imports = await parser.getImports();
+  getEjsData () {
+    const result = {};
     this.template = fs.readFileSync(path.join(__dirname, 'component.template.ts.ejs'), 'utf8');
 
     result.className = this.klass.name;
-    result.inputs = this.getInputs(this.klass);
-    result.outputs = this.getOutputs(this.klass);
-    result.providers = this.getProviders(this.klass);
-    result.mocks = this.getMocks(this.klass);
-    result.functionTests = this.getItBlocks(this.klass);
-    result.imports = this.getImports(this.klass);
+    result.inputs = this._getInputs(this.klass);
+    result.outputs = this._getOutputs(this.klass);
+    result.providers = this._getProviders(this.klass);
+    result.mocks = this._getMocks(this.klass);
+    result.functionTests = this._getItBlocks(this.klass);
+    result.imports = this._getImports(this.klass);
     result.parsedImports = this.imports;
 
     return result;
   }
 
-  getGenerated(ejsData) {
+  getGenerated (ejsData) {
     const generated = ejs.render(this.template, ejsData).replace(/\n\s+$/gm, '\n');
     return generated;
   }
 
-  private getInputs(klass) {
-    const inputs = {attributes: [], properties: []};
+  _getInputs (klass) {
+    const inputs = { attributes: [], properties: [] };
     (klass.properties || []).forEach(prop => {
       const key = prop.name;
       const body = this.typescript.substring(prop.start, prop.end);
@@ -56,8 +50,8 @@ export class ComponentData {
     return inputs;
   }
 
-  private getOutputs(klass) {
-    const outputs = {attributes: [], properties: []};
+  _getOutputs (klass) {
+    const outputs = { attributes: [], properties: [] };
     (klass.properties || []).forEach(prop => {
       const key = prop.name;
       const body = this.typescript.substring(prop.start, prop.end);
@@ -73,13 +67,13 @@ export class ComponentData {
   }
 
   // Iterate methods, getnerate test with the function with parameter;
-  private getItBlocks(klass) {
+  _getItBlocks (klass) {
     const blocks = {};
     (klass.methods || []).forEach(method => {
       const testName = `should run #${method.name}()`;
-      const parameters = (method.parameters || []).map(param => param.name).join(', ');
+      // const parameters = (method.parameters || []).map(param => param.name).join(', ');
 
-      blocks[method.name] = this.reIndent(`
+      blocks[method.name] = this._reIndent(`
         it('${testName}', async () => {
         });`, '  ');
     });
@@ -87,7 +81,7 @@ export class ComponentData {
     return blocks;
   }
 
-  private getImports(klass) {
+  _getImports (klass) {
     const imports = {};
     const constructorParams = (klass.ctor && klass.ctor.parameters) || [];
 
@@ -117,10 +111,9 @@ export class ComponentData {
   }
 
   /* @returns @Component providers: code */
-  private getProviders(klass) {
+  _getProviders (klass) {
     const constructorParams = (klass.ctor && klass.ctor.parameters) || [];
     const providers = {};
-
 
     constructorParams.forEach(param => { // name, type, start, end
       const paramBody = this.typescript.substring(param.start, param.end);
@@ -129,15 +122,15 @@ export class ComponentData {
       const iimport = this.imports[param.type];
 
       if (injectClassName === 'PLATFORM_ID') {
-        providers['PLATFORM_ID'] = { provide: `PLATFORM_ID`, useValue: 'browser' };
+        providers[param.name] = { provide: `PLATFORM_ID`, useValue: 'browser' };
       } else if (injectClassName === 'LOCALE_ID') {
-        providers['LOCALE_ID'] = { provide: `LOCALE_ID`, useValue: 'en' };
+        providers[param.name] = { provide: `LOCALE_ID`, useValue: 'en' };
       } else if (param.type === 'ElementRef' || param.type === 'Router') {
-        providers[param.type] = { provide: `${param.type}`, useClass: `Mock${param.type}` };
+        providers[param.name] = { provide: `${param.type}`, useClass: `Mock${param.type}` };
       } else if (iimport.mport.libraryName.match(/^[\.]+/)) { // user-defined classes
-        providers[param.type] = { provide: `${param.type}`, useClass: `Mock${param.type}` };
+        providers[param.name] = { provide: `${param.type}`, useClass: `Mock${param.type}` };
       } else {
-        providers[param.type] = `${param.type}`;
+        providers[param.name] = `${param.type}`;
       }
     });
 
@@ -145,13 +138,13 @@ export class ComponentData {
   }
 
   /* @returns mock data for this test */
-  private getMocks(klass) {
+  _getMocks (klass) {
     const mocks = {};
 
     (klass.properties || []).forEach(prop => {
-      const key = prop.name;
-      const basicTypes: any = ['Object', 'boolean', 'number', 'string', 'Array', 'any', 'void', 'null', 'undefined', 'never'];
-      if ((<any>windowObjects).includes(prop.type) && !basicTypes.includes(prop.type)) {
+      // const key = prop.name;
+      const basicTypes = ['Object', 'boolean', 'number', 'string', 'Array', 'any', 'void', 'null', 'undefined', 'never'];
+      if (windowObjects.includes(prop.type) && !basicTypes.includes(prop.type)) {
         mocks[prop.type] = `(<any>window).${prop.type} = jest.fn();\n`;
       }
     });
@@ -161,20 +154,20 @@ export class ComponentData {
       const iimport = this.imports[param.type];
 
       if (param.type === 'ElementRef') {
-        mocks[param.type] = this.reIndent(`
+        mocks[param.type] = this._reIndent(`
           @Injectable()
           class Mock${param.type} {
             // constructor() { super(undefined); }
             nativeElement = {}
           }`);
       } else if (param.type === 'Router') {
-        mocks[param.type] = this.reIndent(`
+        mocks[param.type] = this._reIndent(`
           @Injectable()
           class Mock${param.type} { navigate = jest.fn(); }
         `);
       } else {
         if (iimport && iimport.mport.libraryName.match(/^[\.]+/)) {  // starts from . or .., which is a user-defined provider
-          mocks[param.type] = this.reIndent(`
+          mocks[param.type] = this._reIndent(`
             @Injectable()
             class Mock${param.type} { }
           `);
@@ -187,9 +180,11 @@ export class ComponentData {
     return mocks;
   }
 
-  private reIndent(str, prefix = '') {
+  _reIndent (str, prefix = '') {
     const toRepl = str.match(/^\n\s+/)[0];
     const regExp = new RegExp(toRepl, 'gm');
     return str.replace(regExp, '\n' + prefix);
   }
 }
+
+module.exports = ComponentData;
