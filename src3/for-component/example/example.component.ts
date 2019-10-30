@@ -18,7 +18,7 @@ const bar = 2; // to make it sure component is picked for test, not this
 })
 export class ExampleComponent implements OnInit {
   @ViewChild('menuEl') private menuEl: ElementRef;
-  loggedIn: boolean = this.authGuardSvc.foo.bar.isLoggedIn;
+  loggedIn: boolean = this.authGuardSvc.foo().bar.baz().isLoggedIn;
   i18n: any;
   language: any;
 
@@ -31,8 +31,13 @@ export class ExampleComponent implements OnInit {
     private commonUtilsSvc: CommonUtilsService
   ) {
     // console.log('this is comments')
-    this.language = cookie.get('language') || 'en';
-    this.i18n = appInit.i18n.customElement;
+    this.language = cookie.get('language') || 'en'; // AssignmentExpression
+    this.i18n = appInit.i18n.customElement; // AssignmentExpression
+
+    this.router.route().foo().bar;  // for test
+    // this.language.foo().bar;        // for test
+    cookie.foo().bar.baz() || 'XX'; // for test
+    cookie.foo().bar.baz() && 'YY'; // for test
   }
 
   ngOnInit() {

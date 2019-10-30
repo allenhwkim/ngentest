@@ -4,6 +4,7 @@ const yargs = require('yargs');
 const ts = require('typescript');
 
 const NgClassWriter = require('./ng-class-writer.js');
+const NgFuncWriter = require('./ng-func-writer.js');
 
 const argv = yargs.usage('Usage: $0 <tsFile> [options]')
   .options({
@@ -20,21 +21,10 @@ if (!(tsFile && fs.existsSync(tsFile))) {
   process.exit(1);
 }
 
-run(tsFile);
-
 async function run (tsFile) {
   const testWriter = new NgClassWriter(tsFile);
   const { klass, typescript, ejsData } = await testWriter.getData(); // { klass, imports, parser, typescript, ejsData }
-
-  const thisScope = {};
-
-  for (var varName in ejsData.providers) {
-    const provider = ejsData.providers[varName];
-    const aFunction = function () {};
-    const type = provider.provide;
-    const value = provider.useValue || aFunction;
-    thisScope[varName] = { type, value, constructor: true };
-  }
+  const klassMethods = klass.methods;
 
   const result = ts.transpileModule(typescript, {
     compilerOptions: {
@@ -44,29 +34,46 @@ async function run (tsFile) {
 
   fs.writeFileSync('tmp.js', '' + result.outputText);
   // console.log('>>>>>>>>>>>>>>>>......', requireFromString(result.outputText));
-  const module = require(path.resolve('tmp.js'));
-  const Klass = module[ejsData.className];
+  const modjule = require(path.resolve('tmp.js'));
+  const Klass = modjule[ejsData.className];
 
-  const tsParsed = testWriter.getTSParsed(klass, 'constructor');
-  const jsParsed = testWriter.getJSParsed(Klass, 'constructor');
+  /**
+   * process constructor
+   */
+  console.log(`PROCESSING ${klass.ctor.name} constructor`);
+  const funcWriter = new NgFuncWriter(Klass, 'constructor');
+  const ctorMockData = { // this will be update by funcWriter.setMockData()
+    props: {}, // this variable values
+    params: funcWriter.parameters, // param values e.g. {'paramCookie': {foo: [Function: obj]}}
+    map: {} // e.g. { 'this.cookie': 'paramCookie'}
+  };
+  funcWriter.expressions.slice().forEach( expr => {
+    funcWriter.setMockData(expr, ctorMockData);
+  });
 
-  console.log('>>>>', {tsParsed, jsParsed});
+  const ctorProviders = Object.entries(ejsData.providers).reduce( (acc, [name, provider]) => {
+    const type = provider.provide;
+    const value = provider.useValue || ctorMockData.params[name];
+    acc[name] = { type, value };
+    return acc;
+  }, {});
+  const ctorParams = Object.values(ctorProviders).map(v => v.value);
+  console.log('CHECKING IF CONSTRUCTOR WORKS', new Klass(...ctorParams), '\n\n');
 
-  const jsFuncBlock = jsParsed.value.body;
-  const jsFuncStatements = jsFuncBlock.body;
-
-  console.log('>>>> >>>>> jsFiuncStatements', jsFuncStatements); // ExpressionStatement -> expression ->  left, right
-  console.log('>>>> >>>>> statements', jsFuncStatements.map(node => testWriter.getJSCode(Klass, node)));
-  console.log('>>>> >>>>> >>>>>>', jsFuncStatements.map(node => testWriter.getJSCode(Klass, node.expression.right))); // ExpressionStatement -> expression ->  left, right
-
-  // instanceProps  = {}
-  // funcParms = {} ... constructor params
-
-
-  const ctorParams = Object.values(thisScope).map(el => el.value);
-  // console.log('module....... new Klass(...)', new Klass(... ctorParams));
-
-  // const parsedConstructor = testGenerator.getParsedFunc('constructor');
-  // console.log('...... >>>>>', parsedConstructor);
-
+  /**
+   * methods
+   */
+  klass.methods.forEach(method => {
+    console.log(`PROCESSING ${klass.ctor.name} ${method.name}`);
+    const writer = new NgFuncWriter(Klass, method.name);
+    console.log(`parameters`, writer.parameters);
+    const props = Object.assign({}, ctorMockData.props);
+    const funcMockData = { props, params: writer.parameters, map: {} };
+    writer.expressions.slice().forEach( expr => {
+      writer.setMockData(expr, funcMockData);
+    });
+    console.log('funcMockData', funMockData);
+  });
 }
+
+run(tsFile);

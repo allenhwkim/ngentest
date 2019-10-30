@@ -23,10 +23,14 @@ let ExampleComponent = class ExampleComponent {
         this.platformId = platformId;
         this.router = router;
         this.commonUtilsSvc = commonUtilsSvc;
-        this.loggedIn = this.authGuardSvc.isLoggedIn;
+        this.loggedIn = this.authGuardSvc.foo().bar.baz().isLoggedIn;
         // console.log('this is comments')
-        this.language = cookie.get('language') || 'en';
-        this.i18n = appInit.i18n.customElement;
+        this.language = cookie.get('language') || 'en'; // AssignmentExpression
+        this.i18n = appInit.i18n.customElement; // AssignmentExpression
+        this.router.route().foo().bar; // for test
+        // this.language.foo().bar;        // for test
+        cookie.foo().bar.baz() || 'XX'; // for test
+        cookie.foo().bar.baz() && 'YY'; // for test
     }
     ngOnInit() {
         this.router.events.subscribe(event => {
