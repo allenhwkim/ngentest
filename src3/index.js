@@ -24,7 +24,6 @@ if (!(tsFile && fs.existsSync(tsFile))) {
 async function run (tsFile) {
   const testWriter = new NgClassWriter(tsFile);
   const { klass, typescript, ejsData } = await testWriter.getData(); // { klass, imports, parser, typescript, ejsData }
-  const klassMethods = klass.methods;
 
   const result = ts.transpileModule(typescript, {
     compilerOptions: {
