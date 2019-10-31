@@ -36,43 +36,43 @@ async function run (tsFile) {
   // console.log('>>>>>>>>>>>>>>>>......', requireFromString(result.outputText));
   const modjule = require(path.resolve('tmp.js'));
   const Klass = modjule[ejsData.className];
+  const ctorMockData = { // this will be update by funcWriter.setMockData()
+    props: {}, // this variable values
+    params: {}, // param values e.g. {'paramCookie': {foo: [Function: obj]}}
+    map: {} // e.g. { 'this.cookie': 'paramCookie'}
+  };
 
   /**
    * process constructor
    */
   console.log(`PROCESSING ${klass.ctor.name} constructor`);
   const funcWriter = new NgFuncWriter(Klass, 'constructor');
-  const ctorMockData = { // this will be update by funcWriter.setMockData()
-    props: {}, // this variable values
-    params: funcWriter.parameters, // param values e.g. {'paramCookie': {foo: [Function: obj]}}
-    map: {} // e.g. { 'this.cookie': 'paramCookie'}
-  };
-  funcWriter.expressions.slice().forEach( expr => {
+  ctorMockData.params = funcWriter.parameters;
+  funcWriter.expressions.slice().forEach(expr => {
     funcWriter.setMockData(expr, ctorMockData);
   });
 
-  const ctorProviders = Object.entries(ejsData.providers).reduce( (acc, [name, provider]) => {
+  const ctorProviders = Object.entries(ejsData.providers).reduce((acc, [name, provider]) => {
     const type = provider.provide;
     const value = provider.useValue || ctorMockData.params[name];
     acc[name] = { type, value };
     return acc;
   }, {});
   const ctorParams = Object.values(ctorProviders).map(v => v.value);
-  console.log('CHECKING IF CONSTRUCTOR WORKS', new Klass(...ctorParams), '\n\n');
+  console.log('CHECKING IF CONSTRUCTOR WORKS', new Klass(...ctorParams), 'SUCCESS!!\n\n');
 
   /**
    * methods
    */
-  klass.methods.forEach(method => {
+  klass.methods.slice(0, 1).forEach(method => {
     console.log(`PROCESSING ${klass.ctor.name} ${method.name}`);
     const writer = new NgFuncWriter(Klass, method.name);
-    console.log(`parameters`, writer.parameters);
     const props = Object.assign({}, ctorMockData.props);
     const funcMockData = { props, params: writer.parameters, map: {} };
-    writer.expressions.slice().forEach( expr => {
+    writer.expressions.forEach(expr => {
       writer.setMockData(expr, funcMockData);
     });
-    console.log('funcMockData', funMockData);
+    console.log('funcMockData', funcMockData);
   });
 }
 

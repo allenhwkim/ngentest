@@ -49,13 +49,13 @@ class NgFuncWriter {
     } else if (expr.type === 'MemberExpression') {
       // console.log(' case2 >>>>>>>>>>>>>>>>>>>');
       this.__setPropsAndParams(expr, { props, params, map });
-    } else if (expr.type === 'AssignmentExpression', code) {
+    } else if (expr.type === 'AssignmentExpression') {
       const rightObj = expr.right.type === 'LogicalExpression' ? expr.right.left : expr.right;
 
       const [left1, left2, left3] = this.__getCode(expr.left).split('.'); // this.prop
-      const [right1, right2, _] = this.__getCode(rightObj).split('.'); // param
+      const [right1, right2] = this.__getCode(rightObj).split('.'); // param
 
-      const left = this.__getObjectFromExpression(expr.left);
+      // const left = this.__getObjectFromExpression(expr.left);
       const right = this.__getObjectFromExpression(rightObj);
       if (left1 === 'this' && left2 && !left3 && params[right1] && !right2) {
         // set map between params to `this value`. e.g. this.foo = param1
@@ -67,8 +67,8 @@ class NgFuncWriter {
         this.__assign(right.this, params); // (source, target)
       } else {
         // console.log(' case5 >>>>>>>>>>>>>>>>>>>', left, right);
-        this.__setPropsAndParams(expr.left, {props, params, map});
-        this.__setPropsAndParams(expr.right, {props, params, map});
+        this.__setPropsAndParams(expr.left, { props, params, map });
+        this.__setPropsAndParams(expr.right, { props, params, map });
       }
     } else {
       console.log('WARNING unprocessed expression', code);
@@ -83,8 +83,8 @@ class NgFuncWriter {
   /**
    * Process single expression and sets 'this' or params
    */
-  __setPropsAndParams (node, {props, params, map}) { // MemberExpression, CallExpression
-    const nodeToUse = node.type === 'LogicalExpression' ? node.left: node;
+  __setPropsAndParams (node, { props, params, map }) { // MemberExpression, CallExpression
+    const nodeToUse = node.type === 'LogicalExpression' ? node.left : node;
     const obj = this.__getObjectFromExpression(nodeToUse);
     const [one, two] = this.__getCode(node).split('.'); // this.prop
     if (one === 'this' && two && map[`this.${two}`]) {
@@ -122,7 +122,7 @@ class NgFuncWriter {
    * Identifier           e.g., foo
    * LogicalExpresssion   e.g., foo.bar || a.b
    */
-  __getObjectFromExpression(node) {
+  __getObjectFromExpression (node) {
     const exprMembers = this.__getMembersFromExpression(node);
 
     let nxt, obj;
