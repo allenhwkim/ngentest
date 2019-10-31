@@ -49,6 +49,9 @@ class NgFuncWriter {
     } else if (expr.type === 'MemberExpression') {
       // console.log(' case2 >>>>>>>>>>>>>>>>>>>');
       this.__setPropsAndParams(expr, { props, params, map });
+    } else if (expr.type === 'CallExpression') {
+      console.log(' caseX >>>>>>>>>>>>>>>>>>>');
+      this.__setPropsAndParams(expr, { props, params, map });
     } else if (expr.type === 'AssignmentExpression') {
       const rightObj = expr.right.type === 'LogicalExpression' ? expr.right.left : expr.right;
 
