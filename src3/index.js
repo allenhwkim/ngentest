@@ -58,20 +58,22 @@ async function run (tsFile) {
     return acc;
   }, {});
   const ctorParams = Object.values(ctorProviders).map(v => v.value);
-  console.log('CHECKING IF CONSTRUCTOR WORKS', new Klass(...ctorParams), 'SUCCESS!!\n\n');
+  console.log('.................', ctorParams);
+  console.log('CHECKING IF CONSTRUCTOR WORKS', new Klass(...ctorParams), 'SUCCESS!!\n');
 
   /**
    * methods
    */
-  klass.methods.slice(0, 1).forEach(method => {
-    console.log(`PROCESSING ${klass.ctor.name} ${method.name}`);
+  klass.methods.slice().forEach(method => {
+    console.log(`\nPROCESSING ${klass.ctor.name}#${method.name}`);
     const writer = new NgFuncWriter(Klass, method.name);
     const props = Object.assign({}, ctorMockData.props);
     const funcMockData = { props, params: writer.parameters, map: {} };
-    writer.expressions.forEach(expr => {
+    writer.expressions.forEach((expr, ndx) => {
+      console.log('  *** EXPRESSION ***', ndx, writer.__getCode(expr));
       writer.setMockData(expr, funcMockData);
     });
-    console.log('funcMockData', funcMockData);
+    console.log('  funcMockData', funcMockData);
   });
 }
 
