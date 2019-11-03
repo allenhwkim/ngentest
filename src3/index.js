@@ -70,10 +70,13 @@ async function run (tsFile) {
     const props = Object.assign({}, ctorMockData.props);
     const funcMockData = { props, params: writer.parameters, map: {} };
     writer.expressions.forEach((expr, ndx) => {
-      console.log('  *** EXPRESSION ***', ndx, writer.__getCode(expr));
+      const code = writer.classCode.substring(expr.start, expr.end);
+      console.log('  *** EXPRESSION ***', ndx, code);
       writer.setMockData(expr, funcMockData);
     });
-    console.log('  funcMockData', funcMockData);
+    console.log('  RESULT \'this\'', funcMockData.props);
+    console.log('  RESULT params', funcMockData.params);
+    console.log('  RESULT map', funcMockData.map);
   });
 }
 
