@@ -29,7 +29,7 @@ class NgFuncWriter {
    * Iterate function expressions one by one
    *  then, sets the given props, params, maps from the expressinns
    */
-  setMockData (nodeIn, { props, params, map }) { // node: ExpressionStatement
+  setMockData (nodeIn, mockData) { // node: ExpressionStatement
     // console.log(' nodeIn >>>>>>>>>>>>>>>>>>> type >>>>>>', nodeIn.type);
     const node = /* eslint-disable */
       nodeIn.type === 'ExpressionStatement' ? nodeIn.expression :
@@ -46,18 +46,20 @@ class NgFuncWriter {
     }
     const code = this.getCode(node);
 
-    if (node.type === 'LogicalExpression') {
+    if (node.type === 'Literal') {
+      // console.log(' case0 literal, >>>>>>>>>>', node);
+    } else if (node.type === 'LogicalExpression') {
       // console.log(' case1 >>>>>>>>>>>>>>>>>>>', code);
-      this.setPropsOrParams(node.left, { props, params, map });
+      this.setPropsOrParams(node.left, mockData);
 
-    } else if (node.type === 'MemberExpression') {
+    } else if (node.type === 'MemberExpression') { // this.xxxx, foo.xxxx
       // console.log(' case2 >>>>>>>>>>>>>>>>>>>');
-      this.setPropsOrParams(node, { props, params, map });
+      this.setPropsOrParams(node, mockData);
 
     } else if (node.type === 'BlockStatement') {
-      node.body.forEach( expr => {
+      node.body.forEach(expr => {
         // console.log('  *** BlockStatement code ***', this.getCode(expr));
-        this.setMockData(expr, { props, params, map });
+        this.setMockData(expr, mockData);
       });
 
     } else if (node.type === 'CallExpression') {
@@ -65,10 +67,10 @@ class NgFuncWriter {
       // e.g. this.foo.bar.x(1,2,3);
       const funcReturn = Util.getExprReturn(node, this.classCode) || {};
       // {code: 'this.router.events', type: 'Observable', value: Observable.of(event)}
-      this.setPropsOrParams(funcReturn.code, { props, params, map }, funcReturn.value);
+      this.setPropsOrParams(funcReturn.code, mockData, funcReturn.value);
 
       const funcExpArg = Util.getFuncExprArg(node);
-      funcExpArg && this.setMockData(funcExpArg, { props, params, map });
+      funcExpArg && this.setMockData(funcExpArg, mockData);
     } else if (node.type === 'AssignmentExpression') {
       const rightObj = node.right.type === 'LogicalExpression' ? node.right.left : node.right;
       const leftCode = this.getCode(node.left);
@@ -76,6 +78,7 @@ class NgFuncWriter {
 
       const [left1, left2, left3] = leftCode.split('.'); // this.prop
       const [right1, right2] = rightCode.split('.'); // param
+      const { params, map } = mockData;
 
       const right = Util.getObjectFromExpression(rightObj);
       if (left1 === 'this' && left2 && !left3 && params[right1] && !right2) {
@@ -85,18 +88,19 @@ class NgFuncWriter {
         // set param value instead of 'this'(prop) value e.g., this.bar = this.foo.x.y (`this.foo` is from param1)
         Util.assign(right.this, params); // (source, target)
       } else {
-        this.setPropsOrParams(node.left, { props, params, map });
-        this.setPropsOrParams(node.right, { props, params, map });
+        this.setPropsOrParams(node.left, mockData);
+        this.setPropsOrParams(node.right, mockData);
       }
     } else {
-      console.log('WARNING WARNING WARNING unprocessed expression', node.type, code);
+      console.warn('\x1b[33m%s\x1b[0m', `WARNING WARNING WARNING unprocessed expression ${node.type} ${code}`);
     }
   }
 
   /**
    * Process single expression and sets 'this' or params refrencing props to param map
    */
-  setPropsOrParams (codeOrNode, { props, params, map }, returns) { // MemberExpression, CallExpression
+  setPropsOrParams (codeOrNode, mockData, returns) { // MemberExpression, CallExpression
+    const { props, params, map } = mockData;
     // console.log('.......... codeOrNode...', codeOrNode);
     let nodeToUse, obj, one, two;
     if (typeof codeOrNode === 'string') {

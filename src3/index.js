@@ -44,7 +44,8 @@ async function run (tsFile) {
   /**
    * process constructor
    */
-  console.log(`PROCESSING ${klass.ctor.name} constructor`);
+  console.warn('\x1b[36m%s\x1b[0m', `PROCESSING ${klass.ctor.name} constructor`);
+
   const funcWriter = new NgFuncWriter(Klass, 'constructor');
   ctorMockData.params = funcWriter.parameters;
   funcWriter.expressions.slice().forEach(expr => {
@@ -62,7 +63,7 @@ async function run (tsFile) {
    * methods
    */
   klass.methods.slice().forEach(method => {
-    console.log(`\nPROCESSING ${klass.ctor.name}#${method.name}`);
+    console.log('\x1b[36m%s\x1b[0m', `\nPROCESSING ${klass.ctor.name}#${method.name}`);
     const writer = new NgFuncWriter(Klass, method.name);
     const props = Object.assign({}, ctorMockData.props);
     const funcMockData = { props, params: writer.parameters, map: {} };
