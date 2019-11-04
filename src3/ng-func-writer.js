@@ -30,7 +30,6 @@ class NgFuncWriter {
    *  then, sets the given props, params, maps from the expressinns
    */
   setMockData (nodeIn, mockData) { // node: ExpressionStatement
-    // console.log(' nodeIn >>>>>>>>>>>>>>>>>>> type >>>>>>', nodeIn.type);
     const node = /* eslint-disable */
       nodeIn.type === 'ExpressionStatement' ? nodeIn.expression :
       nodeIn.type === 'DeclaratoinxapressionStatement' ? nodeIn.declarations :
@@ -40,25 +39,26 @@ class NgFuncWriter {
       nodeIn.type === 'FunctionExpression' ? nodeIn.body :
       nodeIn.type === 'ReturnStatement' ? nodeIn.argument :
       null; /* eslint-enable */
+
     if (!node) {
-      console.error(nodeIn);
+      console.error('\x1b[31m%s\x1b[0m', nodeIn);
       throw new Error('ERROR: Invalid node type ' + nodeIn.type);
     }
     const code = this.getCode(node);
 
     if (node.type === 'Literal') {
-      // console.log(' case0 literal, >>>>>>>>>>', node);
+      Util.DEBUG && console.log('    *** EXPRESSION Literal ***', node);
     } else if (node.type === 'LogicalExpression') {
-      // console.log(' case1 >>>>>>>>>>>>>>>>>>>', code);
+      Util.DEBUG && console.log('    *** EXPRESSION LogicalExpression ***', this.getCode(node));
       this.setPropsOrParams(node.left, mockData);
 
     } else if (node.type === 'MemberExpression') { // this.xxxx, foo.xxxx
-      // console.log(' case2 >>>>>>>>>>>>>>>>>>>');
+      Util.DEBUG && console.log('    *** EXPRESSION MemberExpression ***', this.getCode(node));
       this.setPropsOrParams(node, mockData);
 
     } else if (node.type === 'BlockStatement') {
       node.body.forEach(expr => {
-        // console.log('  *** BlockStatement code ***', this.getCode(expr));
+        Util.DEBUG && console.log('    *** EXPRESSION BlockStatement ***', this.getCode(expr));
         this.setMockData(expr, mockData);
       });
 
@@ -67,11 +67,15 @@ class NgFuncWriter {
       // e.g. this.foo.bar.x(1,2,3);
       const funcReturn = Util.getExprReturn(node, this.classCode) || {};
       // {code: 'this.router.events', type: 'Observable', value: Observable.of(event)}
+      Util.DEBUG && console.log('    *** EXPRESSION CallExpression ***', funcReturn.code);
       this.setPropsOrParams(funcReturn.code, mockData, funcReturn.value);
 
       const funcExpArg = Util.getFuncExprArg(node);
-      funcExpArg && this.setMockData(funcExpArg, mockData);
+      if (funcExpArg) {
+        this.setMockData(funcExpArg, mockData);
+      }
     } else if (node.type === 'AssignmentExpression') {
+      Util.DEBUG && console.log('    *** EXPRESSION AssignmentExpression ***', this.getCode(node));
       const rightObj = node.right.type === 'LogicalExpression' ? node.right.left : node.right;
       const leftCode = this.getCode(node.left);
       const rightCode = this.getCode(rightObj);

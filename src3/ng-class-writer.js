@@ -75,7 +75,7 @@ class NgClassWriter {
     }
   }
 
-  _getExistingTests() {
+  _getExistingTests () {
     const existingItBlocks = {};
     const specPath = path.resolve(this.tsPath.replace(/\.ts$/, '.spec.ts'));
 

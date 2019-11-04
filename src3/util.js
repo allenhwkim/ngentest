@@ -2,6 +2,9 @@ const jsParser = require('acorn').Parser;
 const observableOf = require('rxjs').of;
 
 class Util {
+  static get DEBUG () { return !!Util.__debug; }
+  static set DEBUG (bool) { Util.__debug = bool; }
+
   /**
    * set value from source ONLY IF target value does not exists
    *
