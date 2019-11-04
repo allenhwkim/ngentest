@@ -50,15 +50,12 @@ async function run (tsFile) {
   funcWriter.expressions.slice().forEach(expr => {
     funcWriter.setMockData(expr, ctorMockData);
   });
+  console.log(`  === RESULT 'this' ===`, ctorMockData.props);
+  console.log(`  === RESULT params ===`, ctorMockData.params);
+  console.log(`  === RESULT map    ===`, ctorMockData.map);
 
-  const ctorProviders = Object.entries(ejsData.providers).reduce((acc, [name, provider]) => {
-    const type = provider.provide;
-    const value = provider.useValue || ctorMockData.params[name];
-    acc[name] = { type, value };
-    return acc;
-  }, {});
-  const ctorParams = Object.values(ctorProviders).map(v => v.value);
-  console.log('.................', ctorParams);
+  const ctorParams = Object.entries(ctorMockData.params)
+    .map(([key, val]) => ejsData.providers[key].useValue || val);
   console.log('CHECKING IF CONSTRUCTOR WORKS', new Klass(...ctorParams), 'SUCCESS!!\n');
 
   /**
@@ -74,9 +71,9 @@ async function run (tsFile) {
       console.log('  *** EXPRESSION ***', ndx, code);
       writer.setMockData(expr, funcMockData);
     });
-    console.log('  RESULT \'this\'', funcMockData.props);
-    console.log('  RESULT params', funcMockData.params);
-    console.log('  RESULT map', funcMockData.map);
+    console.log(`  === RESULT 'this' ===`, funcMockData.props);
+    console.log(`  === RESULT params ===`, funcMockData.params);
+    console.log(`  === RESULT map    ===`, funcMockData.map);
   });
 }
 

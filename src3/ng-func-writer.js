@@ -22,49 +22,57 @@ class NgFuncWriter {
     this.methodDefinition = this.klassDecl.body.body.find(node => node.key.name === this.funcName);
   }
 
+  getCode (node) {
+    return this.classCode.substring(node.start, node.end);
+  }
   /**
    * Iterate function expressions one by one
    *  then, sets the given props, params, maps from the expressinns
    */
-  setMockData (node, { props, params, map }) { // node: ExpressionStatement
-    const expr =
-      node.type === 'ExpressionStatement' ? node.expression :
-        node.type === 'DeclaratoinxapressionStatement' ? node.declarations :
-          node.type === 'IfStatement' ? node.consequent : // node.test (consequent)
-            node.type === 'VariableDeclaration' ? node.declarations[0].init : // node.id (init)
-              null;
-    if (!expr) {
-      console.error(node);
-      throw new Error('ERROR: Invalid node type ' + node.type);
+  setMockData (nodeIn, { props, params, map }) { // node: ExpressionStatement
+    // console.log(' nodeIn >>>>>>>>>>>>>>>>>>> type >>>>>>', nodeIn.type);
+    const node = /* eslint-disable */
+      nodeIn.type === 'ExpressionStatement' ? nodeIn.expression :
+      nodeIn.type === 'DeclaratoinxapressionStatement' ? nodeIn.declarations :
+      nodeIn.type === 'IfStatement' ? nodeIn.consequent : // node.test (consequent)
+      nodeIn.type === 'VariableDeclaration' ? nodeIn.declarations[0].init : // node.id (init)
+      nodeIn.type === 'ArrowFunctionExpression' ? nodeIn.body :
+      nodeIn.type === 'FunctionExpression' ? nodeIn.body :
+      nodeIn.type === 'ReturnStatement' ? nodeIn.argument :
+      null; /* eslint-enable */
+    if (!node) {
+      console.error(nodeIn);
+      throw new Error('ERROR: Invalid node type ' + nodeIn.type);
     }
-    const code = this.classCode.substring(node.start, node.end);
+    const code = this.getCode(node);
 
-    if (expr.type === 'LogicalExpression') {
+    if (node.type === 'LogicalExpression') {
       // console.log(' case1 >>>>>>>>>>>>>>>>>>>', code);
-      this.setPropsOrParams(expr.left, { props, params, map });
+      this.setPropsOrParams(node.left, { props, params, map });
 
-    } else if (expr.type === 'MemberExpression') {
+    } else if (node.type === 'MemberExpression') {
       // console.log(' case2 >>>>>>>>>>>>>>>>>>>');
-      this.setPropsOrParams(expr, { props, params, map });
+      this.setPropsOrParams(node, { props, params, map });
 
-    } else if (expr.type === 'BlockStatement') {
-      console.log('TODO', 'make use of __getThisExprs, then set props');
-      console.log('TODO', 'make use of __getParamExprs, then set params');
+    } else if (node.type === 'BlockStatement') {
+      node.body.forEach( expr => {
+        // console.log('  *** BlockStatement code ***', this.getCode(expr));
+        this.setMockData(expr, { props, params, map });
+      });
 
-    } else if (expr.type === 'CallExpression') {
+    } else if (node.type === 'CallExpression') {
       // e.g. this.router.events.subscribe(event => xxxxxxx)
       // e.g. this.foo.bar.x(1,2,3);
-      const funcReturn = Util.getExprReturn(expr, this.classCode) || {};
+      const funcReturn = Util.getExprReturn(node, this.classCode) || {};
       // {code: 'this.router.events', type: 'Observable', value: Observable.of(event)}
       this.setPropsOrParams(funcReturn.code, { props, params, map }, funcReturn.value);
 
-      console.log('TODO', 'make use of __getThisExprs, then set props');
-      console.log('TODO', 'make use of __getParamExprs, then set params');
-
-    } else if (expr.type === 'AssignmentExpression') {
-      const rightObj = expr.right.type === 'LogicalExpression' ? expr.right.left : expr.right;
-      const leftCode = this.classCode.substring(expr.left.start, expr.left.end);
-      const rightCode = this.classCode.substring(rightObj.start, rightObj.end);
+      const funcExpArg = Util.getFuncExprArg(node);
+      funcExpArg && this.setMockData(funcExpArg, { props, params, map });
+    } else if (node.type === 'AssignmentExpression') {
+      const rightObj = node.right.type === 'LogicalExpression' ? node.right.left : node.right;
+      const leftCode = this.getCode(node.left);
+      const rightCode = this.getCode(rightObj);
 
       const [left1, left2, left3] = leftCode.split('.'); // this.prop
       const [right1, right2] = rightCode.split('.'); // param
@@ -77,11 +85,11 @@ class NgFuncWriter {
         // set param value instead of 'this'(prop) value e.g., this.bar = this.foo.x.y (`this.foo` is from param1)
         Util.assign(right.this, params); // (source, target)
       } else {
-        this.setPropsOrParams(expr.left, { props, params, map });
-        this.setPropsOrParams(expr.right, { props, params, map });
+        this.setPropsOrParams(node.left, { props, params, map });
+        this.setPropsOrParams(node.right, { props, params, map });
       }
     } else {
-      console.log('WARNING WARNING WARNING unprocessed expression', expr.type, code);
+      console.log('WARNING WARNING WARNING unprocessed expression', node.type, code);
     }
   }
 
@@ -98,7 +106,7 @@ class NgFuncWriter {
     } else {
       nodeToUse = codeOrNode.type === 'LogicalExpression' ? codeOrNode.left : codeOrNode;
       obj = Util.getObjectFromExpression(nodeToUse, returns);
-      const code = this.classCode.substring(codeOrNode.start, codeOrNode.end);
+      const code = this.getCode(codeOrNode);
       [one, two] = code.split('.'); // this.prop
     }
     // console.log('  ....... {one, two}', { one, two });
