@@ -1,9 +1,50 @@
 const jsParser = require('acorn').Parser;
-const observableOf = require('rxjs').of;
+const indentJs = require('indent.js');
 
 class Util {
   static get DEBUG () { return !!Util.__debug; }
   static set DEBUG (bool) { Util.__debug = bool; }
+
+  static indent (str, prefix = '') {
+    // const opts = Object.assign({ indent_size: 2 }, moreOpts);
+    // return beautify(str, opts);
+    str = indentJs.ts(str, { tabString: '  ' });
+    str = str + prefix;
+    str = str.replace(/\n/gm, '\n'+prefix);
+    return str;
+  }
+
+  static objToJS (obj, level = 1) {
+    const exprs = [];
+    const indent = ' '.repeat(level * 2);
+    if (typeof obj === 'function') {
+      return `function() {\n` +
+        `${indent}  return ${Util.objToJS(obj(), level + 2)};` +
+        '\n' +
+        `${indent}}`;
+    } else {
+      for (var key in obj) {
+        if (!obj.hasOwnProperty(key)) { continue; }
+        if (typeof obj[key] === 'object') {
+          exprs.push(`${key}: ${Util.objToJS(obj[key], level + 1)}`);
+        } else if (typeof obj[key] === 'function') {
+          exprs.push(`${key} : ` +
+            `function() {\n` +
+            `${indent}  return ${Util.objToJS(obj[key](), level + 2)};` +
+            '\n' +
+            `${indent}}`);
+        } else if (typeof obj[key] === 'string') {
+          exprs.push(`${key}: "${obj[key]}"`);
+        } else {
+          exprs.push(`${key}: ${obj[key]}`);
+        }
+      }
+      return '{\n' +
+        exprs.map(el => { return `${indent}${el}`; }).join(',\n') +
+        '\n' +
+        indent.substr(2) + '}';
+    }
+  }
 
   /**
    * set value from source ONLY IF target value does not exists
@@ -133,17 +174,26 @@ class Util {
     let ret;
     const funcExprArg = Util.getFuncExprArg(node);
     if (last.match(/(substr|replace)\(.*\)$/)) {
+
       ret = { code: baseCode, type: 'string', value: 'gentest' };
+
     } else if (last.match(/(subscribe)\(.*\)$/) && funcExprArg) {
       const funcCode = classCode.substring(funcExprArg.body.start, funcExprArg.body.end);
       const funcParam = Util.getFuncParamObj(funcExprArg, funcCode);
-      ret = { code: baseCode, type: 'Observable', value: observableOf(funcParam || {}) };
+      const value = { type: 'Observable', value: funcParam || {} };
+
+      ret = { code: baseCode, type: 'Observable', value };
+
     } else if (last.match(/(map|forEach)\(.*\)$/) && funcExprArg) {
       const funcCode = classCode.substring(funcExprArg.body.start, funcExprArg.body.end);
       const funcParam = Util.getFuncParamObj(funcExprArg, funcCode);
+
       ret = { code: baseCode, type: 'string', value: [funcParam] };
+
     } else {
+
       ret = { code: code, type: 'unknown', value: {} };
+
     }
 
     return ret;
@@ -157,7 +207,7 @@ class Util {
   static getFuncParamObj (node, code) { // CallExpression
     const funcRetName = node.params[0].name;
     const codeReplaced = code.replace(/\n+/g, '').replace(/\s+/g, ' ');
-    const funcRetExprs = codeReplaced.match(new RegExp(`${funcRetName}(\\.[^\\s\\\;]+)+`, 'ig'));
+    const funcRetExprs = codeReplaced.match(new RegExp(`${funcRetName}(\\.[^\\s\\;]+)+`, 'ig'));
 
     const funcParam = {};
     funcRetExprs.forEach(funcExpr => { // e.g., ['event.urlAfterRedirects.substr(1)', ..]
@@ -180,7 +230,7 @@ class Util {
   static getThisExprs (node, allCode) {
     const code = allCode.substring(node.start, node.end);
     const code2 = code.replace(/\n+/g, '').replace(/\s+/g, ' ');
-    const thisExprs = code2.match(new RegExp(`this(\\.[^\\s\\\;]+)+`, 'ig'));
+    const thisExprs = code2.match(new RegExp(`this(\\.[^\\s\\;]+)+`, 'ig'));
     return thisExprs;
   }
 
@@ -192,11 +242,49 @@ class Util {
     const code2 = code.replace(/\n+/g, '').replace(/\s+/g, ' ');
     const paramExprs = [];
     paramNames.forEach(paramName => {
-      const matches = code2.match(new RegExp(`${paramName}(\\.[^\\s\\;]+)+`, 'ig'));
+      const matches = code2.match(new RegExp(`${paramName }(\\.[^\\s\\;]+)+`, 'ig'));
       paramExprs.push(matches);
     });
 
     return paramExprs.flat();
+  }
+
+  static getFuncMockJS (mockData, thisName = 'component') {
+    const js = [];
+    Object.entries(mockData.props).forEach(([key1, value]) => {
+      Object.entries(value).forEach(([key2, value2]) => {
+        if (value2.type === 'Observable') {
+          const obsRetVal = Util.objToJS(value2.value).replace(/\{\s+\}/gm, '{}');
+          js.push(`${thisName}.${key1}.${key2} = observableOf(${obsRetVal})`);
+          console.log();
+        } else if (typeof value2 === 'function') {
+          const fnValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
+          js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(${fnValue2})`);
+        } else {
+          const objValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
+          js.push(`${thisName}.${key1}.${key2} = ${objValue2}`);
+        }
+      });
+    });
+
+    return js.join(';\n');
+  }
+
+  static getFuncParamJS (mockData) {
+    const js = [];
+    Object.entries(mockData.params).forEach(([key2, value2]) => {
+      if (value2.type === 'Observable') {
+        const obsRetVal = Util.objToJS(value2.value).replace(/\{\s+\}/gm, '{}');
+        js.push(`observableOf(${obsRetVal})`);
+      } else if (typeof value2 === 'function') {
+        const fnValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
+        js.push(`function() { return ${fnValue2}; }`);
+      } else {
+        const objValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
+        js.push(`${objValue2}`);
+      }
+    });
+    return js.join(', ');
   }
 
 }

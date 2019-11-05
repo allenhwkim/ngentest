@@ -39,6 +39,8 @@
   },
   "devDependencies": {
     "acorn": "^7.1.0",
+    "indent.js": "^0.3.4",
+    "js-beautify": "^1.10.2",
     "rxjs": "^6.5.3",
     "ts-node": "^8.4.1"
   }

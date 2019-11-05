@@ -6,6 +6,7 @@ const requireFromString = require('require-from-string');
 
 const NgClassWriter = require('./ng-class-writer.js');
 const NgFuncWriter = require('./ng-func-writer.js');
+const Util = require('./util.js');
 
 const argv = yargs.usage('Usage: $0 <tsFile> [options]')
   .options({
@@ -47,18 +48,44 @@ async function run (tsFile) {
   const modjule = requireFromString(result.outputText);
   const Klass = modjule[ejsData.className];
   console.warn('\x1b[36m%s\x1b[0m', `PROCESSING ${klass.ctor.name} constructor`);
-  // const ctorMockData = getCtorMockData(Klass);
   const ctorMockData = getFuncMockData(Klass, 'constructor', {});
   console.log(`  === RESULT 'ctorMockData' ===`, ctorMockData);
+  console.log('...................... ejsData.providers ..........\n', ejsData.providers);
+  console.log('...................... ejsData.mocks     ..........\n', ejsData.mocks);
+  console.log('...................... ctorMockData      ..........\n', ctorMockData);
   // const ctorParams = Object.entries(ctorMockData.params).map(([key, val]) => ejsData.providers[key].useValue || val);
-  // console.log('CHECKING IF CONSTRUCTOR WORKS', new Klass(...ctorParams), 'SUCCESS!!\n');
+  // console.log('CHECKI#NG IF CONSTRUCTOR WORKS', new Klass(...ctorParams), 'SUCCESS!!\n');
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+  ejsData.providerMocks = testWriter.getProviderMocks(klass, ctorMockData.params);
+  for(var key in ejsData.providerMocks) {
+    ejsData.providerMocks[key] = Util.indent(ejsData.providerMocks[key]).replace(/\{\s+\}/gm, '{}');
+    console.log(key,':', ejsData.providerMocks[key]);
+  }
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+
 
   klass.methods.forEach(method => {
     console.log('\x1b[36m%s\x1b[0m', `\nPROCESSING ${klass.ctor.name}#${method.name}`);
     const thisValues = Object.assign({}, ctorMockData.props);
     const funcMockData = getFuncMockData(Klass, method.name, thisValues);
-    console.log(`  === RESULT funcMockData ===`, funcMockData);
+    console.log('>>>>>>>>>>>>>>>', funcMockData);
+    const funcMockJS = Util.getFuncMockJS(funcMockData);
+    const funcParamJS = Util.getFuncParamJS(funcMockData);
+    ejsData.functionTests[method.name] = Util.indent(`
+      it('should run #${method.name}()', async () => {
+        ${funcMockJS}
+        component.${method.name}(${funcParamJS});
+      });
+    `, '  ');
   });
+
+  // console.log('------------------------------------------------------------------');
+  console.log(testWriter.getGenerated(ejsData));
 }
 
 run(tsFile);

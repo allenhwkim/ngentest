@@ -3,6 +3,7 @@ const fs = require('fs');
 const ejs = require('ejs');
 
 const windowObjects = require('../window-objects.js');
+const Util = require('../util.js');
 
 class ComponentData {
   constructor ({ tsPath, klass, imports }) {
@@ -22,7 +23,7 @@ class ComponentData {
     result.inputs = this._getInputs(this.klass);
     result.outputs = this._getOutputs(this.klass);
     result.providers = this._getProviders(this.klass);
-    result.mocks = this._getMocks(this.klass);
+    result.mocks = this._getWindowMocks(this.klass);
     result.functionTests = this._getItBlocks(this.klass);
     result.imports = this._getImports(this.klass);
     result.parsedImports = this.imports;
@@ -137,8 +138,7 @@ class ComponentData {
     return providers;
   }
 
-  /* @returns mock data for this test */
-  _getMocks (klass) {
+  _getWindowMocks (klass) {
     const mocks = {};
 
     (klass.properties || []).forEach(prop => {
@@ -146,34 +146,6 @@ class ComponentData {
       const basicTypes = ['Object', 'boolean', 'number', 'string', 'Array', 'any', 'void', 'null', 'undefined', 'never'];
       if (windowObjects.includes(prop.type) && !basicTypes.includes(prop.type)) {
         mocks[prop.type] = `(<any>window).${prop.type} = jest.fn();\n`;
-      }
-    });
-
-    const constructorParams = (klass.ctor && klass.ctor.parameters) || [];
-    constructorParams.forEach(param => {
-      const iimport = this.imports[param.type];
-
-      if (param.type === 'ElementRef') {
-        mocks[param.type] = this._reIndent(`
-          @Injectable()
-          class Mock${param.type} {
-            // constructor() { super(undefined); }
-            nativeElement = {}
-          }`);
-      } else if (param.type === 'Router') {
-        mocks[param.type] = this._reIndent(`
-          @Injectable()
-          class Mock${param.type} { navigate = jest.fn(); }
-        `);
-      } else {
-        if (iimport && iimport.mport.libraryName.match(/^[\.]+/)) {  // starts from . or .., which is a user-defined provider
-          mocks[param.type] = this._reIndent(`
-            @Injectable()
-            class Mock${param.type} { }
-          `);
-        } else {
-          // console.log('XXXXXXXXXXXXXXXXXXXXXX', param);
-        }
       }
     });
 
@@ -185,6 +157,45 @@ class ComponentData {
     const regExp = new RegExp(toRepl, 'gm');
     return str.replace(regExp, '\n' + prefix);
   }
+
+  /* @returns mock data for this test */
+  /* ctorParams : { key: <value in JS object> */
+  _getProviderMocks (klass, ctorParams) {
+    const mocks = {};
+    const providers = this._getProviders(klass);
+    /* { var: { provide: 'Class', useClass: 'MockClass'}, ...} */
+
+    function getCtorVarsJS (varName) {
+      const vars = ctorParams[varName];
+      return Object.entries(vars).map( ([key, value]) => {
+        console.log(`>>>>>>>>>>>>>>>> value`, value);
+        return `${key} = ${Util.objToJS(value)};`;
+      });
+    }
+
+    const constructorParams = (klass.ctor && klass.ctor.parameters) || [];
+    constructorParams.forEach(param => {
+      const iimport = this.imports[param.type];
+      const ctorVars = getCtorVarsJS(param.name);
+      const typeVars = /* eslint-disable */
+        param.type === 'ElementRef' ? ['nativeElement = {};'] :
+        param.type === 'Router' ? ['navigate = jest.fn();'] :
+        iimport && iimport.mport.libraryName.match(/^[\.]+/) ? []  : undefined;
+        /* eslint-enable */
+
+      if (typeVars) {
+        const mockVars = ctorVars.concat(typeVars).join('\n');
+        mocks[param.type] = `
+          @Injectable()
+          class Mock${param.type} {
+            ${mockVars}
+          }`;
+      }
+    });
+
+    return mocks;
+  }
+
 }
 
 module.exports = ComponentData;

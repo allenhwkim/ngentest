@@ -30,7 +30,18 @@ class NgClassWriter {
       angularType === 'Component' ? new ComponentData({ tsPath, klass, imports }) : {};
     const ejsData = testGenerator.getEjsData();
 
+    this.testGenerator = testGenerator;
+
     return { klass, imports, parser, typescript, ejsData };
+  }
+
+  getGenerated (ejsData) {
+    const generated = this.testGenerator.getGenerated(ejsData);
+    return generated;
+  }
+
+  getProviderMocks (klass, ctorParams) {
+    return this.testGenerator._getProviderMocks(klass, ctorParams);
   }
 
   getTSParsed (klass, funcName) {

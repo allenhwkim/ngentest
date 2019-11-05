@@ -12,6 +12,9 @@ import { <%- imports[importLib].map(el => `${el}`).join(', ') -%> } from '<%- im
 <% for(var klassName in mocks) { -%>
 <%- mocks[klassName] -%>
 <% } -%>
+<% for(var klassName in providerMocks) { %>
+<%- providerMocks[klassName] -%>
+<% } -%>
 
 describe('<%= className %>', () => {
   let fixture;
@@ -21,8 +24,14 @@ describe('<%= className %>', () => {
     TestBed.configureTestingModule({
       declarations: [ <%= className %> ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
-      providers: [<% for(var key in providers) { %>
-        <%- providers[key]+ ',' %><% } %>
+      providers: [
+        <%- Object.entries(providers).map( ([key, value]) =>
+          '{ ' + 
+          Object.entries(value).map( ([k, v]) => 
+            `${k}: ${k === 'useValue' ? `'${v}'`: v}`
+          ).join(', ') +
+          ' }'
+        ).join(',\n        ') -%>
       ]
     }).compileComponents();
     fixture = TestBed.createComponent(<%= className %>);
