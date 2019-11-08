@@ -1,67 +1,86 @@
 #!/usr/bin/env node
-'use strict';
-console.log('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
+
 const fs = require('fs');
-const path = require('path');
+const path = require('path'); // eslint-disable-line
 const yargs = require('yargs');
-const ejs = require('ejs');
+const ts = require('typescript');
+const requireFromString = require('require-from-string');
 
-const parseTypescript = require('./src/lib/parse-typescript.js');
-const util = require('./src/lib/util.js');
-const getDirectiveData = require('./src/get-directive-data.js');
-const getInjectableData = require('./src/get-injectable-data.js');
-const getPipeData = require('./src/get-pipe-data.js');
-const getDefaultData = require('./src/get-default-data.js');
+const NgClassWriter = require('./src/ng-class-writer.js');
+const NgFuncWriter = require('./src/ng-func-writer.js');
+const Util = require('./src/util.js');
 
-const argv = yargs.usage('Usage: $0 <angular-typescript-file> [options]')
+const argv = yargs.usage('Usage: $0 <tsFile> [options]')
   .options({
-    's': { alias: 'spec', describe: 'write the spec file along with source file', type: 'boolean' }
+    's': { alias: 'spec', describe: 'write the spec file along with source file', type: 'boolean' },
+    'v': { alias: 'verbose', describe: 'log verbose debug messages', type: 'boolean' }
   })
   .example('$0 my.component.ts', 'generate Angular unit test for my.component.ts')
   .help('h')
   .argv;
 
-const tsFile = '' + argv._;
-const typescript = fs.readFileSync(path.resolve(tsFile), 'utf8');
-const specFilePath = path.resolve(tsFile.replace(/\.ts$/, '.spec.ts'));
-
-const existingItBlocks = {};
-if (argv.spec && fs.existsSync(specFilePath)) {
-  const tests = fs.readFileSync(specFilePath, 'utf8');
-  (tests.match(/  it\('.*?',.*?\n  }\);/gs) || []).forEach(itBlock => {
-    const key = itBlock.match(/it\('(.*?)',/)[1];
-    existingItBlocks[key] = `\n${itBlock}\n`;
-  });
+Util.DEBUG = argv.verbose;
+const tsFile = argv._[0];
+// const writeToSpec = argv.spec;
+if (!(tsFile && fs.existsSync(tsFile))) {
+  console.log('Error. invalid typescript file. e.g., Usage $0 <tsFile> [options]');
+  process.exit(1);
 }
 
-parseTypescript(typescript).then(tsParsed => {
-  const angularType = util.getAngularType(typescript); // Component, Directive, Injectable, Pipe, or undefined
-  const ejsTemplate = util.getEjsTemplate(angularType);
+function getFuncMockData (Klass, funcName, props) {
+  const funcWriter = new NgFuncWriter(Klass, funcName);
+  const funcMockData = { props, params: funcWriter.parameters, map: {}, globals: {} };
+  funcWriter.expressions.forEach((expr, ndx) => {
+    const code = funcWriter.classCode.substring(expr.start, expr.end);
+    console.log('  *** EXPRESSION ***', ndx, code.replace(/\n+/g, '').replace(/\s+/g, ' '));
+    funcWriter.setMockData(expr, funcMockData);
+  });
 
-  let ejsData;
-  switch(angularType) {
-    case 'Component':
-    case 'Directive':
-      ejsData = getDirectiveData(tsParsed, tsFile, angularType);
-      break;
-    case 'Injectable':
-      ejsData = getInjectableData(tsParsed, tsFile);
-      break;
-    case 'Pipe':
-      ejsData = getPipeData(tsParsed, tsFile);
-      break;
-    default:
-      ejsData = getDefaultData(tsParsed, tsFile);
-      break;
-  }
-  ejsData.functionTests = Object.assign({}, ejsData.functionTests, existingItBlocks);
+  return funcMockData;
+}
 
-  const generated = ejs.render(ejsTemplate, ejsData).replace(/\n\s+$/gm, '\n');
-  if (argv.spec) {
-    fs.existsSync(specFilePath) && util.createBackupFile(specFilePath);
-    fs.writeFileSync(specFilePath, generated);
-    console.log('Generated unit test for', argv._[0], 'to', specFilePath);
-  } else {
-    process.stdout.write(generated);
+async function run (tsFile) {
+  const testWriter = new NgClassWriter(tsFile);
+  const { klass, typescript, ejsData } = await testWriter.getData(); // { klass, imports, parser, typescript, ejsData }
+
+  const result = ts.transpileModule(typescript, {
+    compilerOptions: {
+      module: ts.ModuleKind.CommonJS, experimentalDecorators: true, target: ts.ScriptTarget.ES2015
+    }
+  });
+
+  const modjule = requireFromString(result.outputText);
+  const Klass = modjule[ejsData.className];
+  console.warn('\x1b[36m%s\x1b[0m', `PROCESSING ${klass.ctor.name} constructor`);
+  const ctorMockData = getFuncMockData(Klass, 'constructor', {});
+  console.log(`  === RESULT 'ctorMockData' ===`, ctorMockData);
+  console.log('...................... ejsData.providers   ..........\n', ejsData.providers);
+  // console.log('...................... ejsData.windowMocks ..........\n', ejsData.windowMocks);
+  console.log('...................... ctorMockData        ..........\n', ctorMockData);
+  // const ctorParams = Object.entries(ctorMockData.params).map(([key, val]) => ejsData.providers[key].useValue || val);
+  // console.log('CHECKI#NG IF CONSTRUCTOR WORKS', new Klass(...ctorParams), 'SUCCESS!!\n');
+  ejsData.providerMocks = testWriter.getProviderMocks(klass, ctorMockData.params);
+  for (var key in ejsData.providerMocks) {
+    ejsData.providerMocks[key] = Util.indent(ejsData.providerMocks[key]).replace(/\{\s+\}/gm, '{}');
+    // console.log(key,':', ejsData.providerMocks[key]);
   }
-});
+  klass.methods.forEach(method => {
+    console.log('\x1b[36m%s\x1b[0m', `\nPROCESSING ${klass.ctor.name}#${method.name}`);
+    const thisValues = Object.assign({}, ctorMockData.props);
+    const funcMockData = getFuncMockData(Klass, method.name, thisValues);
+    const funcMockJS = Util.getFuncMockJS(funcMockData);
+    const funcParamJS = Util.getFuncParamJS(funcMockData);
+    ejsData.functionTests[method.name] = Util.indent(`
+      it('should run #${method.name}()', async () => {
+        ${funcMockJS}
+        component.${method.name}(${funcParamJS});
+      });
+    `, '  ');
+  });
+
+  const generated = testWriter.getGenerated(ejsData);
+  testWriter.writeGenerated(generated, argv.spec);
+
+}
+
+run(tsFile);
