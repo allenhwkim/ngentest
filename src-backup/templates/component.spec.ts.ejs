@@ -1,0 +1,44 @@
+// tslint:disable
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { Injectable, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { By } from '@angular/platform-browser';
+// import { Observable } from 'rxjs/Observable';
+// import 'rxjs/add/observable/of';
+// import 'rxjs/add/observable/throw';
+
+<% for(var key in imports) { -%>
+import {<%- imports[key].map(el => `${el}`).join(', ') -%>} from '<%- key -%>';
+<% } -%>
+<%-                        -%>
+<% for(var key in mocks) { -%>
+<%- mocks[key] -%>
+<% } -%>
+
+describe('<%= className %>', () => {
+  let fixture;
+  let component;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [
+        <%= className %>
+      ],
+      providers: [<% for(var key in providers) { %>
+        <%- providers[key]+ ',' %><% } %>
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+    }).compileComponents();
+    fixture = TestBed.createComponent(<%= className %>);
+    component = fixture.debugElement.componentInstance;
+  });
+
+  it('should create a component', async () => {
+    expect(component).toBeTruthy();
+  });
+  
+  <% for(var key in functionTests) { -%>
+  <%- functionTests[key] -%>
+  <% } -%>
+  
+});

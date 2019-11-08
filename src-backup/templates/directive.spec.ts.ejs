@@ -1,0 +1,61 @@
+// tslint:disable
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { Injectable, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { By } from '@angular/platform-browser';
+// import { Observable } from 'rxjs/Observable';
+// import 'rxjs/add/observable/of';
+// import 'rxjs/add/observable/throw';
+
+<% for(var key in imports) { -%>
+import {<%- imports[key].map(el => `${el}`).join(', ') -%>} from '<%- key -%>';
+<% } -%>
+<%-                        -%>
+<% for(var key in mocks) { -%>
+<%- mocks[key] -%>
+<% } -%>
+
+@Component({
+  template: `
+    <DIRECTIVE-SELECTOR <%- inputs.attributes.join(' ') %> <%- outputs.attributes.join(' ') %>></DIRECTIVE-SELECTOR>
+  `
+})
+class DirectiveTestComponent {
+<% inputs.properties.forEach(function(prop) { -%>
+  <%- prop -%>
+<% }) %>
+<% outputs.properties.forEach(function(prop) { %>
+  <%- prop -%>
+<% }) %>
+}
+
+describe('<%= className %>', () => {
+  let fixture: ComponentFixture<DirectiveTestComponent>;
+  let component: DirectiveTestComponent;
+  let directiveEl;
+  let directive;
+
+  beforeEach(async () => {
+    TestBed.configureTestingModule({
+      declarations: [<%= className %>, DirectiveTestComponent],
+      providers: [<% for(var key in providers) { %>
+        <%- providers[key]+ ',' %><% } %>
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+    }).compileComponents();
+    fixture = TestBed.createComponent(DirectiveTestComponent);
+    component = fixture.componentInstance;
+    directiveEl = fixture.debugElement.query(By.directive(<%= className %>));
+    directive = directiveEl.injector.get(<%= className %>);
+  });
+
+  it("should run a directive", async () => {
+    expect(component).toBeTruthy();
+    expect(directive).toBeTruthy();
+  });
+
+  <% for(var key in functionTests) { -%>
+  <%- functionTests[key] -%>
+  <% } -%>
+
+});
