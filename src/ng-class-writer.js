@@ -45,7 +45,8 @@ class NgClassWriter {
   }
 
   getTSParsed (klass, funcName) {
-    return funcName === 'constructor' ? klass.ctor : klass.methods.find(method => method.name === funcName);
+    return funcName === 'constructor' ? 
+      klass.ctor : klass.methods.find(method => method.name === funcName);
   }
 
   getJSParsed (klass, funcName) {
@@ -85,7 +86,8 @@ class NgClassWriter {
     if (toFile && fs.existsSync(specPath)) {
       const readline = require('readline');
       const rl = readline.createInterface(process.stdin, process.stdout);
-      console.warn('\x1b[33m%s\x1b[0m', `WARNING!!, Spec file, ${specPath} already exists. Writing to console`);
+      console.warn('\x1b[33m%s\x1b[0m',
+        `WARNING!!, Spec file, ${specPath} already exists. Writing to console`);
       rl.question('Continue? ', answer => {
         toFile = !!answer.match(/y/i);
         toFile ? writeToFile() : process.stdout.write(generated);

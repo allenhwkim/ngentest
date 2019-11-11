@@ -62,8 +62,16 @@ async function run (tsFile) {
   ejsData.providerMocks = testWriter.getProviderMocks(klass, ctorMockData.params);
   for (var key in ejsData.providerMocks) {
     ejsData.providerMocks[key] = Util.indent(ejsData.providerMocks[key]).replace(/\{\s+\}/gm, '{}');
-    // console.log(key,':', ejsData.providerMocks[key]);
   }
+  // TODO:
+  // . move method code into class-writer to get functionTests
+  // . create a function to get one functionTest code
+  //    . getFunctionTest(funcName)
+  // . create a function to write one functionTest code in case you overwrite a file
+  //    . writeFunctionTest(funcName)
+  // . separte class-level test and function-level test so that
+  //   . it does not write class-level test when file exists
+  //      . writeClassTest()
   klass.methods.forEach(method => {
     console.log('\x1b[36m%s\x1b[0m', `\nPROCESSING ${klass.ctor.name}#${method.name}`);
     const thisValues = Object.assign({}, ctorMockData.props);

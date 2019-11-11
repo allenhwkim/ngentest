@@ -22,10 +22,14 @@ class Util {
         `${indent}  return ${Util.objToJS(obj(), level + 2)};` +
         '\n' +
         `${indent}}`;
+    } else if (Array.isArray(obj)) {
+      return JSON.stringify(obj);
     } else {
       for (var key in obj) {
         if (!obj.hasOwnProperty(key)) { continue; }
-        if (typeof obj[key] === 'object') {
+        if (typeof obj[key] === 'object' && !Object.keys(obj[key])[0]) { // is empty obj, e.g. {}
+          exprs.push(`${key}: '${key}'`);
+        } else if (typeof obj[key] === 'object') {
           exprs.push(`${key}: ${Util.objToJS(obj[key], level + 1)}`);
         } else if (typeof obj[key] === 'function') {
           exprs.push(`${key} : ` +
@@ -115,7 +119,7 @@ class Util {
       } else if (arg.type === 'ArrayExpression') {
         return `[]`;
       } else if (typeof arg.value !== 'undefined') {
-        return arg.value;
+        return arg.raw || arg.value;
       }
     });
     return argNames.join(',');
@@ -171,12 +175,16 @@ class Util {
     const baseCode = vars.slice(0, -1).join('.');
     const last = vars[vars.length - 1];
 
+    try {
+      jsParser.parse(baseCode);
+    } catch (e) {
+      throw new Error(`ERROR this JS code is invalid, "${baseCode}"`);
+    }
+
     let ret;
     const funcExprArg = Util.getFuncExprArg(node);
-    if (last.match(/(substr|replace)\(.*\)$/)) {
-
+    if (last.match(/(substr|replace|split)\(.*\)$/)) {
       ret = { code: baseCode, type: 'string', value: 'gentest' };
-
     } else if (last.match(/(subscribe)\(.*\)$/) && funcExprArg) {
       const funcCode = classCode.substring(funcExprArg.body.start, funcExprArg.body.end);
       const funcParam = Util.getFuncParamObj(funcExprArg, funcCode);
@@ -184,11 +192,11 @@ class Util {
 
       ret = { code: baseCode, type: 'Observable', value };
 
-    } else if (last.match(/(map|forEach)\(.*\)$/) && funcExprArg) {
-      const funcCode = classCode.substring(funcExprArg.body.start, funcExprArg.body.end);
-      const funcParam = Util.getFuncParamObj(funcExprArg, funcCode);
+    } else if (last.match(/(map|forEach|reduce)\(.*\)$/) && funcExprArg) {
+      // const funcCode = classCode.substring(funcExprArg.body.start, funcExprArg.body.end);
+      // const funcParam = Util.getFuncParamObj(funcExprArg, funcCode);
 
-      ret = { code: baseCode, type: 'string', value: [funcParam] };
+      ret = { code: baseCode, type: 'array', value: ['ngentest'] };
 
     } else {
 
@@ -210,7 +218,7 @@ class Util {
     const funcRetExprs = codeReplaced.match(new RegExp(`${funcRetName}(\\.[^\\s\\;]+)+`, 'ig'));
 
     const funcParam = {};
-    funcRetExprs.forEach(funcExpr => { // e.g., ['event.urlAfterRedirects.substr(1)', ..]
+    (funcRetExprs || []).forEach(funcExpr => { // e.g., ['event.urlAfterRedirects.substr(1)', ..]
       const exprNode = Util.getNode(funcExpr);
       const newReturn = Util.getExprReturn(exprNode, funcExpr);
       const newCode = newReturn.code;
@@ -257,9 +265,14 @@ class Util {
         if (value2.type === 'Observable') {
           const obsRetVal = Util.objToJS(value2.value).replace(/\{\s+\}/gm, '{}');
           js.push(`${thisName}.${key1}.${key2} = observableOf(${obsRetVal})`);
+        } else if (typeof value2 === 'function' && JSON.stringify(value2()) === '{}') {
+          js.push(`${thisName}.${key1}.${key2} = jest.fn();`);
         } else if (typeof value2 === 'function') {
           const fnValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
           js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(${fnValue2})`);
+        } else if (Array.isArray(value2)) {
+          // const fnValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
+          js.push(`${thisName}.${key1}.${key2} = ['gentest']`);
         } else {
           const objValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
           js.push(`${thisName}.${key1}.${key2} = ${objValue2}`);

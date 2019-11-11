@@ -42,7 +42,8 @@ class ComponentData {
       const key = prop.name;
       const body = this.typescript.substring(prop.start, prop.end);
       if (body.match(/@Input\(/)) {
-        const attrName = (prop.body.match(/@Input\(['"](.*?)['"]\)/) || [])[1];
+        const attrName =
+          prop.body ? (prop.body.match(/@Input\(['"](.*?)['"]\)/) || [])[1] : prop.name;
         inputs.attributes.push(`[${attrName || key}]="${key}"`);
         inputs.properties.push(`${key}: ${prop.type};`);
       }
@@ -57,7 +58,8 @@ class ComponentData {
       const key = prop.name;
       const body = this.typescript.substring(prop.start, prop.end);
       if (body.match(/@Output\(/)) {
-        const attrName = (prop.body.match(/@Output\(['"](.*?)['"]\)/) || [])[1];
+        const attrName =
+          prop.body ? (prop.body.match(/@Input\(['"](.*?)['"]\)/) || [])[1] : prop.name;
         const funcName = `on${key.replace(/^[a-z]/, x => x.toUpperCase())}`;
         outputs.attributes.push(`(${attrName || key})="${funcName}($event)"`);
         outputs.properties.push(`${funcName}(event): void { /* */ }`);
@@ -123,15 +125,15 @@ class ComponentData {
       const iimport = this.imports[param.type];
 
       if (injectClassName === 'PLATFORM_ID') {
-        providers[param.name] = { provide: `PLATFORM_ID`, useValue: 'browser' };
+        providers[param.name] = `{ provide: 'PLATFORM_ID', useValue: 'browser' }`;
       } else if (injectClassName === 'LOCALE_ID') {
-        providers[param.name] = { provide: `LOCALE_ID`, useValue: 'en' };
+        providers[param.name] = `{ provide: 'LOCALE_ID', useValue: 'en' }`;
       } else if (param.type === 'ElementRef' || param.type === 'Router') {
-        providers[param.name] = { provide: `${param.type}`, useClass: `Mock${param.type}` };
-      } else if (iimport.mport.libraryName.match(/^[\.]+/)) { // user-defined classes
-        providers[param.name] = { provide: `${param.type}`, useClass: `Mock${param.type}` };
+        providers[param.name] = `{ provide: '${param.type}', useClass: 'Mock${param.type}' }`;
+      } else if (iimport.mport.libraryName.match(/^\./)) { // user-defined classes
+        providers[param.name] = `{ provide: '${param.type}', useClass: 'Mock${param.type} }`;
       } else {
-        providers[param.name] = `${param.type}`;
+        providers[param.name] = param.type;
       }
     });
 

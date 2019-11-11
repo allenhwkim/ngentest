@@ -38,6 +38,12 @@ class NgFuncWriter {
       nodeIn.type === 'ArrowFunctionExpression' ? nodeIn.body :
       nodeIn.type === 'FunctionExpression' ? nodeIn.body :
       nodeIn.type === 'ReturnStatement' ? nodeIn.argument :
+      nodeIn.type === 'CallExpression' ? nodeIn :
+      nodeIn.type === 'BinaryExpression' ? nodeIn :
+      nodeIn.type === 'Literal' ? nodeIn :
+      nodeIn.type === 'MemberExpression' ? nodeIn :
+      nodeIn.type === 'LogicalExpression' ? nodeIn :
+      nodeIn.type === 'Identifier' ? nodeIn :
       null; /* eslint-enable */
 
     if (!node) {
@@ -95,6 +101,9 @@ class NgFuncWriter {
         this.setPropsOrParams(node.left, mockData);
         this.setPropsOrParams(node.right, mockData);
       }
+    } else if (node.type === 'BinaryExpression') {
+      this.setMockData(node.right, mockData);
+      this.setMockData(node.left, mockData);
     } else {
       console.warn('\x1b[33m%s\x1b[0m', `WARNING WARNING WARNING unprocessed expression ${node.type} ${code}`);
     }

@@ -22,20 +22,14 @@ describe('<%= className %>', () => {
       declarations: [ <%= className %> ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
       providers: [
-        <%- Object.entries(providers).map( ([key, value]) =>
-          '{ ' + 
-          Object.entries(value).map( ([k, v]) => 
-            `${k}: ${k === 'useValue' ? `'${v}'`: v}`
-          ).join(', ') +
-          ' }'
-        ).join(',\n        ') -%>
+        <%- Object.entries(providers).map( ([_, value]) => value ).join(',\n        ') -%>
       ]
     }).compileComponents();
     fixture = TestBed.createComponent(<%= className %>);
     component = fixture.debugElement.componentInstance;
   });
 
-  it('should create a component', async () => {
+  it('should run #constructor()', async () => {
     expect(component).toBeTruthy();
   });
   
