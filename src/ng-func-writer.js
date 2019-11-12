@@ -30,11 +30,16 @@ class NgFuncWriter {
    *  then, sets the given props, params, maps from the expressinns
    */
   setMockData (nodeIn, mockData) { // node: ExpressionStatement
+    if (!nodeIn || !mockData) {
+      console.error('\x1b[31m%s\x1b[0m', {nodeIn, mockData});
+      throw new Error('ERROR: parameter is invalid');
+    }
     const node = /* eslint-disable */
       nodeIn.type === 'ExpressionStatement' ? nodeIn.expression :
       nodeIn.type === 'DeclaratoinxapressionStatement' ? nodeIn.declarations :
       nodeIn.type === 'IfStatement' ? nodeIn.consequent : // node.test (consequent)
-      nodeIn.type === 'VariableDeclaration' ? nodeIn.declarations[0].init : // node.id (init)
+      nodeIn.type === 'VariableDeclaration' ? nodeIn :
+      // nodeIn.type === 'VariableDeclaration' ? nodeIn.declarations[0].init : // node.id (init)
       nodeIn.type === 'ArrowFunctionExpression' ? nodeIn.body :
       nodeIn.type === 'FunctionExpression' ? nodeIn.body :
       nodeIn.type === 'ReturnStatement' ? nodeIn.argument :
@@ -45,6 +50,8 @@ class NgFuncWriter {
       nodeIn.type === 'LogicalExpression' ? nodeIn :
       nodeIn.type === 'Identifier' ? nodeIn :
       nodeIn.type === 'ObjectExpression' ? nodeIn :
+      nodeIn.type === 'ConditionalExpression' ? nodeIn :
+      nodeIn.type === 'NewExpression' ? nodeIn :
       nodeIn.type === 'ForStatement' ? nodeIn.body : // NOTE: init/test/update/body
       null; /* eslint-enable */
 
@@ -56,6 +63,18 @@ class NgFuncWriter {
 
     if (node.type === 'Literal') {
       Util.DEBUG && console.log('    *** EXPRESSION Literal ***', node);
+    } else if (node.type === 'NewExpression') {
+      Util.DEBUG && console.log('    *** EXPRESSION NewExpression ***', node);
+    } else if (node.type === 'VariableDeclaration') {
+      Util.DEBUG && console.log('    *** EXPRESSION VariableDeclaration ***', this.getCode(node));
+      node.declarations.forEach(declaration => {
+        declaration.init && this.setMockData(declaration.init, mockData);
+      });
+    } else if (node.type === 'ConcitionalExpression') {
+      Util.DEBUG && console.log('    *** EXPRESSION ConditionalExpression ***', this.getCode(node));
+      this.setMockData(node.test);
+      this.setMockData(node.consequent);
+      this.setMockData(node.alternate);
     } else if (node.type === 'LogicalExpression') {
       Util.DEBUG && console.log('    *** EXPRESSION LogicalExpression ***', this.getCode(node));
       this.setPropsOrParams(node.left, mockData);

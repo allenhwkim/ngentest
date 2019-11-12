@@ -113,8 +113,7 @@ class Util {
    */
   static getFuncArgNames (node) {
     const argNames = node.arguments.map(arg => {
-      // console.log('......... arg ...........', arg);
-      if (arg.params) {
+      if (arg.params && arg.params[0]) {
         return arg.params[0].name;
       } else if (arg.type === 'ArrayExpression') {
         return `[]`;
@@ -128,6 +127,10 @@ class Util {
         return 'OBJ_EXPR';
       } else if (arg.type === 'MemberExpression') {
         return 'MBR_EXPR';
+      } else if (arg.type === 'CallExpression') {
+        return 'CALL_EXPR';
+      } else if (arg.type === 'ArrowFunctionExpression') {
+        return 'FUNC_EXPR';
       } else {
         console.error('\x1b[31m%s\x1b[0m', `Invalid function argument expression`, arg);
         throw new Error('Invalid function argument type, ' + arg.type);
