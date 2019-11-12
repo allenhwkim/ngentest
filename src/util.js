@@ -120,6 +120,8 @@ class Util {
         return `[]`;
       } else if (typeof arg.value !== 'undefined') {
         return arg.raw || arg.value;
+      } else if (arg.type === 'Identifier' && arg.name) {
+        return arg.name;
       }
     });
     return argNames.join(',');

@@ -51,7 +51,7 @@ async function run (tsFile) {
 
   const modjule = requireFromString(result.outputText);
   const Klass = modjule[ejsData.className];
-  console.warn('\x1b[36m%s\x1b[0m', `PROCESSING ${klass.ctor.name} constructor`);
+  console.warn('\x1b[36m%s\x1b[0m', `PROCESSING ${klass.ctor && klass.ctor.name} constructor`);
   const ctorMockData = getFuncMockData(Klass, 'constructor', {});
   console.log(`  === RESULT 'ctorMockData' ===`, ctorMockData);
   console.log('...................... ejsData.providers   ..........\n', ejsData.providers);
@@ -73,7 +73,7 @@ async function run (tsFile) {
   //   . it does not write class-level test when file exists
   //      . writeClassTest()
   klass.methods.forEach(method => {
-    console.log('\x1b[36m%s\x1b[0m', `\nPROCESSING ${klass.ctor.name}#${method.name}`);
+    console.log('\x1b[36m%s\x1b[0m', `\nPROCESSING ${klass.ctor && klass.ctor.name}#${method.name}`);
     const thisValues = Object.assign({}, ctorMockData.props);
     const funcMockData = getFuncMockData(Klass, method.name, thisValues);
     const funcMockJS = Util.getFuncMockJS(funcMockData);
