@@ -45,6 +45,7 @@ class NgFuncWriter {
       nodeIn.type === 'LogicalExpression' ? nodeIn :
       nodeIn.type === 'Identifier' ? nodeIn :
       nodeIn.type === 'ObjectExpression' ? nodeIn :
+      nodeIn.type === 'ForStatement' ? nodeIn.body : // NOTE: init/test/update/body
       null; /* eslint-enable */
 
     if (!node) {

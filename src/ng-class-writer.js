@@ -67,10 +67,10 @@ class NgClassWriter {
 
   getAngularType () {
     const typescript = fs.readFileSync(path.resolve(this.tsPath), 'utf8');
-    return typescript.match(/^@Component\(/m) ? 'Component' :
-      typescript.match(/^@Directive\(/m) ? 'Directive' :
-        typescript.match(/^@Injectable\(/m) ? 'Injectable' :
-          typescript.match(/^@Pipe\(/m) ? 'Pipe' : undefined;
+    return typescript.match(/^\s*@Component\(/m) ? 'Component' :
+      typescript.match(/^\s*@Directive\(/m) ? 'Directive' :
+        typescript.match(/^\s*@Injectable\(/m) ? 'Injectable' :
+          typescript.match(/^\s*@Pipe\(/m) ? 'Pipe' : undefined;
   }
 
   writeGenerated (generated, toFile) {

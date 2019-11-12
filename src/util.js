@@ -122,6 +122,15 @@ class Util {
         return arg.raw || arg.value;
       } else if (arg.type === 'Identifier' && arg.name) {
         return arg.name;
+      } else if (arg.type === 'BinaryExpression') {
+        return 'BIN_EXPR';
+      } else if (arg.type === 'ObjectExpression') {
+        return 'OBJ_EXPR';
+      } else if (arg.type === 'MemberExpression') {
+        return 'MBR_EXPR';
+      } else {
+        console.error('\x1b[31m%s\x1b[0m', `Invalid function argument expression`, arg);
+        throw new Error('Invalid function argument type, ' + arg.type);
       }
     });
     return argNames.join(',');
@@ -332,9 +341,14 @@ class Util {
   static getFuncParamJS (mockData) {
     const js = [];
     Object.entries(mockData.params).forEach(([key2, value2]) => {
-      if (value2.type === 'Observable') {
+      const value2Key = typeof value2 === 'object' && Object.keys(value2)[0];
+      if (key2 === 'undefined') {
+        // ignore this
+      } else if (value2.type === 'Observable') {
         const obsRetVal = Util.objToJS(value2.value).replace(/\{\s+\}/gm, '{}');
         js.push(`observableOf(${obsRetVal})`);
+      } else if (['substr', 'replace', 'split'].includes(value2Key)) {
+        js.push(`'${key2}'`);
       } else if (typeof value2 === 'function') {
         const fnValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
         js.push(`function() { return ${fnValue2}; }`);
