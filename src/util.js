@@ -86,12 +86,12 @@ class Util {
    */
   static getExprMembers (node, result = []) {
     const { type, property, object, callee } = node;
-    const member =
+    const member = /* eslint-disable */
       type === 'MemberExpression' ? property.name :
-        type === 'CallExpression' ? `(${Util.getFuncArgNames(node)})` :
-          type === 'ThisExpression' ? 'this' :
-            type === 'Identifier' ? node.name : undefined;
-    result.push(member);
+      type === 'CallExpression' ? `(${Util.getFuncArgNames(node)})` :
+      type === 'ThisExpression' ? 'this' :
+      type === 'Identifier' ? node.name : undefined;
+    member && result.push(member); /* eslint-enable */
 
     if (object) {
       result = Util.getExprMembers(object, result);
@@ -169,10 +169,28 @@ class Util {
    */
   static getExprReturn (node, classCode) {
     const code = classCode.substring(node.start, node.end);
+    const getVars = function (node) {
+      const members = Util.getExprMembers(node).reverse().join('.').replace(/\.\(/g, '(').split('.');
+      let vars = [];
+      let flagged;
 
-    const members = Util.getExprMembers(node).reverse();
-    const vars = members.join('.').replace(/\.\(/g, '(').split('.');
-    const baseCode = vars.slice(0, -1).join('.');
+      members.forEach(el => {
+        if (flagged) {
+          const lastIndex = vars.length - 1;
+          vars[lastIndex] = vars[lastIndex] + '.' + el;
+        } else {
+          vars.push(el);
+        }
+
+        flagged = el.match(/\(/) ? true :
+          el.match(/\)$/) ? false : flagged;
+      });
+      return vars;
+    };
+
+    // const members = Util.getExprMembers(node).reverse();
+    const vars = getVars(node); // parenthesis taken care of array. 
+    const baseCode = vars.join('.');
     const last = vars[vars.length - 1];
 
     try {
@@ -192,9 +210,7 @@ class Util {
 
       ret = { code: baseCode, type: 'Observable', value };
 
-    } else if (last.match(/(map|forEach|reduce)\(.*\)$/) && funcExprArg) {
-      // const funcCode = classCode.substring(funcExprArg.body.start, funcExprArg.body.end);
-      // const funcParam = Util.getFuncParamObj(funcExprArg, funcCode);
+    } else if (last.match(/(map|forEach|reduce|slice)\(.*\)$/) && funcExprArg) {
 
       ret = { code: baseCode, type: 'array', value: ['ngentest'] };
 
@@ -260,7 +276,8 @@ class Util {
   static getFuncMockJS (mockData, thisName = 'component') {
     const js = [];
     Object.entries(mockData.props).forEach(([key1, value]) => {
-      Object.entries(value).forEach(([key2, value2]) => {
+      const valueFiltered = Object.entries(value).filter( ([k, v]) => k !== 'undefined');
+      valueFiltered.forEach(([key2, value2]) => {
         js.push(`${thisName}.${key1} = ${thisName}.${key1} || {}`);
         if (value2.type === 'Observable') {
           const obsRetVal = Util.objToJS(value2.value).replace(/\{\s+\}/gm, '{}');
@@ -274,8 +291,19 @@ class Util {
           // const fnValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
           js.push(`${thisName}.${key1}.${key2} = ['gentest']`);
         } else {
-          const objValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
-          js.push(`${thisName}.${key1}.${key2} = ${objValue2}`);
+          const objVal2Key = Object.keys(value2)[0];
+          if (['map', 'forEach', 'reduce', 'slice'].includes(objVal2Key)) {
+            js.push(`${thisName}.${key1}.${key2} = ['${key2}']`);
+          } else if (['substr', 'replace', 'split'].includes(objVal2Key)) {
+            js.push(`${thisName}.${key1}.${key2} = = '${key2}'`);
+          } else {
+            const objValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
+            if (objValue2 === '{}') {
+              js.push(`${thisName}.${key1}.${key2} = '${key2}'`);
+            } else {
+              js.push(`${thisName}.${key1}.${key2} = ${objValue2}`);
+            }
+          }
         }
       });
     });

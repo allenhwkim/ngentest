@@ -44,6 +44,7 @@ class NgFuncWriter {
       nodeIn.type === 'MemberExpression' ? nodeIn :
       nodeIn.type === 'LogicalExpression' ? nodeIn :
       nodeIn.type === 'Identifier' ? nodeIn :
+      nodeIn.type === 'ObjectExpression' ? nodeIn :
       null; /* eslint-enable */
 
     if (!node) {
@@ -104,6 +105,10 @@ class NgFuncWriter {
     } else if (node.type === 'BinaryExpression') {
       this.setMockData(node.right, mockData);
       this.setMockData(node.left, mockData);
+    } else if (node.type === 'ObjectExpression') {
+      node.properties.forEach(property => {
+        this.setMockData(property.value, mockData);
+      });
     } else {
       console.warn('\x1b[33m%s\x1b[0m', `WARNING WARNING WARNING unprocessed expression ${node.type} ${code}`);
     }
@@ -121,12 +126,15 @@ class NgFuncWriter {
       obj = Util.getObjectFromExpression(nodeToUse, returns);
       [one, two] = codeOrNode.split('.'); // this.prop
     } else {
-      nodeToUse = codeOrNode.type === 'LogicalExpression' ? codeOrNode.left : codeOrNode;
+      nodeToUse = /* eslint-disable */
+        codeOrNode.type === 'LogicalExpression' ? codeOrNode.left :
+        codeOrNode.type === 'BinaryExpression' ? codeOrNode.left :
+        codeOrNode; /* eslint-enable */
       obj = Util.getObjectFromExpression(nodeToUse, returns);
       const code = this.getCode(codeOrNode);
       [one, two] = code.split('.'); // this.prop
+      Util.DEBUG && console.log('  setPropsOrParams',  { code, type: codeOrNode.type });
     }
-    // console.log('  ....... {one, two}', { one, two });
 
     if (one === 'this' && two && map[`this.${two}`]) {
       Util.assign(obj.this, params);
