@@ -91,7 +91,7 @@ class ComponentData {
     imports['@angular/core'] = ['Component'];
     imports[`./${path.basename(this.tsPath)}`.replace(/.ts$/, '')] = [klass.name];
 
-    constructorParams.forEach(param => {
+    constructorParams.forEach( (param, index) => {
       const paramBody = this.typescript.substring(param.start, param.end);
 
       const injectMatches = paramBody.match(/@Inject\(([A-Z0-9_]+)\)/) || [];
@@ -100,7 +100,7 @@ class ComponentData {
         const iimport = this.imports[injectClassName];
         imports[iimport.mport.libraryName] = imports[iimport.mport.libraryName] || [];
         imports[iimport.mport.libraryName].push(injectClassName);
-        imports[iimport.mport.libraryName].push(param.type);
+        // imports[iimport.mport.libraryName].push(param.type);
       } else {
         const iimport = this.imports[param.type];
         const importStr = iimport.mport.alias ?
@@ -118,20 +118,22 @@ class ComponentData {
     const constructorParams = (klass.ctor && klass.ctor.parameters) || [];
     const providers = {};
 
-    constructorParams.forEach(param => { // name, type, start, end
+    constructorParams.forEach( (param, index) => { // name, type, start, end
       const paramBody = this.typescript.substring(param.start, param.end);
       const injectMatches = paramBody.match(/@Inject\(([A-Z0-9_]+)\)/) || [];
       const injectClassName = injectMatches[1];
       const iimport = this.imports[param.type];
 
-      if (injectClassName === 'PLATFORM_ID') {
+      if (injectClassName === 'DOCUMENT') {
+        providers[param.name] = `{ provide: DOCUMENT, useClass: MockDocument }`;
+      } else if (injectClassName === 'PLATFORM_ID') {
         providers[param.name] = `{ provide: 'PLATFORM_ID', useValue: 'browser' }`;
       } else if (injectClassName === 'LOCALE_ID') {
         providers[param.name] = `{ provide: 'LOCALE_ID', useValue: 'en' }`;
       } else if (param.type === 'ElementRef' || param.type === 'Router') {
-        providers[param.name] = `{ provide: '${param.type}', useClass: 'Mock${param.type}' }`;
+        providers[param.name] = `{ provide: '${param.type}', useClass: Mock${param.type} }`;
       } else if (iimport.mport.libraryName.match(/^\./)) { // user-defined classes
-        providers[param.name] = `{ provide: '${param.type}', useClass: 'Mock${param.type} }`;
+        providers[param.name] = `{ provide: '${param.type}', useClass: Mock${param.type} }`;
       } else {
         providers[param.name] = param.type;
       }
@@ -183,6 +185,7 @@ class ComponentData {
       const typeVars = /* eslint-disable */
         param.type === 'ElementRef' ? ['nativeElement = {};'] :
         param.type === 'Router' ? ['navigate = jest.fn();'] :
+        param.type === 'Document' ? ['querySelector = jest.fn();'] :
         iimport && iimport.mport.libraryName.match(/^[\.]+/) ? []  : undefined;
         /* eslint-enable */
 
