@@ -120,18 +120,18 @@ class Util {
       } else if (typeof arg.value !== 'undefined') {
         return arg.raw || arg.value;
       } else if (arg.type === 'Identifier' && arg.name) {
-        return arg.name;
-      } else if (arg.type === 'BinaryExpression') {
-        return 'BIN_EXPR';
-      } else if (arg.type === 'ObjectExpression') {
-        return 'OBJ_EXPR';
-      } else if (arg.type === 'MemberExpression') {
-        return 'MBR_EXPR';
-      } else if (arg.type === 'CallExpression') {
-        return 'CALL_EXPR';
-      } else if (arg.type === 'ArrowFunctionExpression') {
-        return 'FUNC_EXPR';
-      } else {
+        return arg.name; 
+      } else if (arg.type === 'BinaryExpression') return 'BIN_EXPR';
+      else if (arg.type === 'ArrowFunctionExpression') return 'FUNC_EXPR';
+      else if (arg.type === 'CallExpression') return 'CALL_EXPR';
+      else if (arg.type === 'LogicalExpression') return 'LOGI_EXPR';
+      else if (arg.type === 'MemberExpression') return 'MBR_EXPR';
+      else if (arg.type === 'NewExpression') return 'NEW_EXPR';
+      else if (arg.type === 'ObjectExpression') return 'OBJ_EXPR';
+      else if (arg.type === 'TemplateLiteral') return 'TMPL_LTRL';
+      else if (arg.type === 'ThisExpression') return 'THIS_EXPR';
+      else if (arg.type === 'UnaryExpression') return 'UNRY_EXPR';
+      else {
         console.error('\x1b[31m%s\x1b[0m', `Invalid function argument expression`, arg);
         throw new Error('Invalid function argument type, ' + arg.type);
       }
@@ -305,11 +305,14 @@ class Util {
           // const fnValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
           js.push(`${thisName}.${key1}.${key2} = ['gentest']`);
         } else {
-          const objVal2Key = Object.keys(value2)[0];
-          if (['map', 'forEach', 'reduce', 'slice'].includes(objVal2Key)) {
+          const objVal21stKey = Object.keys(value2)[0];
+          if (['map', 'forEach', 'reduce', 'slice'].includes(objVal21stKey)) {
             js.push(`${thisName}.${key1}.${key2} = ['${key2}']`);
-          } else if (['substr', 'replace', 'split'].includes(objVal2Key)) {
-            js.push(`${thisName}.${key1}.${key2} = = '${key2}'`);
+          } else if ([
+            'substr', 'replace', 'split',
+            'toLowerCase', 'toUpperCase', 'match'
+          ].includes(objVal21stKey)) {
+            js.push(`${thisName}.${key1}.${key2} = '${key2}'`);
           } else {
             const objValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
             if (objValue2 === '{}') {
@@ -350,7 +353,10 @@ class Util {
       } else if (value2.type === 'Observable') {
         const obsRetVal = Util.objToJS(value2.value).replace(/\{\s+\}/gm, '{}');
         js.push(`observableOf(${obsRetVal})`);
-      } else if (['substr', 'replace', 'split'].includes(value2Key)) {
+      } else if ([
+        'substr', 'replace', 'split',
+        'toLowerCase', 'toUpperCase', 'match'
+      ].includes(value2Key)) {
         js.push(`'${key2}'`);
       } else if (typeof value2 === 'function') {
         const fnValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');

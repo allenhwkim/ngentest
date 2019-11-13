@@ -5,13 +5,18 @@ class NgFuncWriter {
 
   get parameters () {
     const params = {};
-    this.methodDefinition.value.params.forEach(el => (params[el.name] = {}));
+    if (this.methodDefinition) {
+      this.methodDefinition.value.params.forEach(el => (params[el.name] = {}));
+    }
     return params;
   }
 
   get expressions () {
-    const block = this.methodDefinition.value.body;
-    return block.body; // array of ExpressionStatements
+    if (this.methodDefinition) {
+      const block = this.methodDefinition.value.body;
+      return block.body; // array of ExpressionStatements
+    }
+    return [];
   }
 
   constructor (Klass, funcName) {
@@ -31,7 +36,8 @@ class NgFuncWriter {
    */
   setMockData (nodeIn, mockData) { // node: ExpressionStatement
     if (!nodeIn || !mockData) {
-      console.error('\x1b[31m%s\x1b[0m', {nodeIn, mockData});
+      console.error({ nodeIn, mockData });
+      console.error('\x1b[31m%s\x1b[0m', 'Error: parameter nodeIn or mockData is invalid');
       throw new Error('ERROR: parameter is invalid');
     }
     const node = /* eslint-disable */
@@ -52,43 +58,57 @@ class NgFuncWriter {
       nodeIn.type === 'ObjectExpression' ? nodeIn :
       nodeIn.type === 'ConditionalExpression' ? nodeIn :
       nodeIn.type === 'NewExpression' ? nodeIn :
+      nodeIn.type === 'BreakStatement' ? nodeIn :
+      nodeIn.type === 'ArrayExpression' ? nodeIn :
+      nodeIn.type === 'SwitchStatement' ? nodeIn :
+      nodeIn.type === 'UnaryExpression' ? nodeIn.argument :
       nodeIn.type === 'ForStatement' ? nodeIn.body : // NOTE: init/test/update/body
       null; /* eslint-enable */
 
     if (!node) {
-      console.error('\x1b[31m%s\x1b[0m', nodeIn);
+      console.error(nodeIn, this.getCode(nodeIn));
       throw new Error('ERROR: Invalid node type ' + nodeIn.type);
     }
     const code = this.getCode(node);
 
     if (node.type === 'Literal') {
-      Util.DEBUG && console.log('    *** EXPRESSION Literal ***', node);
+      Util.DEBUG && console.log('    *** EXPRESSION Literal ***', this.getCode(node));
+    } else if (node.type === 'Identifier') {
+      Util.DEBUG && console.log('    *** EXPRESSION Identifier ***', this.getCode(node));
+    } else if (node.type === 'BreakStatement') {
+      Util.DEBUG && console.log('    *** EXPRESSION BreakStatement ***', this.getCode(node));
     } else if (node.type === 'NewExpression') {
-      Util.DEBUG && console.log('    *** EXPRESSION NewExpression ***', node);
+      Util.DEBUG && console.log('    *** EXPRESSION NewExpression ***', this.getCode(node));
+    } else if (node.type === 'ArrayExpression') {
+      Util.DEBUG && console.log('    *** EXPRESSION ArrayExpression ***', this.getCode(node));
+      node.elements.forEach(element => element && this.setMockData(element, mockData));
     } else if (node.type === 'VariableDeclaration') {
       Util.DEBUG && console.log('    *** EXPRESSION VariableDeclaration ***', this.getCode(node));
-      node.declarations.forEach(declaration => {
-        declaration.init && this.setMockData(declaration.init, mockData);
+      node.declarations.forEach(decl => decl.init && this.setMockData(decl.init, mockData));
+    } else if (node.type === 'SwitchStatement') {
+      this.setMockData(node.discriminant, mockData);
+      node.cases.forEach(kase => {
+        kase.test && this.setMockData(kase.test, mockData);
+        kase.consequent.forEach(stmt => stmt && this.setMockData(stmt, mockData));
       });
-    } else if (node.type === 'ConcitionalExpression') {
+    } else if (node.type === 'ConditionalExpression') {
       Util.DEBUG && console.log('    *** EXPRESSION ConditionalExpression ***', this.getCode(node));
-      this.setMockData(node.test);
-      this.setMockData(node.consequent);
-      this.setMockData(node.alternate);
+      this.setMockData(node.test, mockData);
+      this.setMockData(node.consequent, mockData);
+      this.setMockData(node.alternate, mockData);
     } else if (node.type === 'LogicalExpression') {
       Util.DEBUG && console.log('    *** EXPRESSION LogicalExpression ***', this.getCode(node));
-      this.setPropsOrParams(node.left, mockData);
-
+      this.setMockData(node.left, mockData);
+      this.setMockData(node.right, mockData);
+      // this.setPropsOrParams(node.left, mockData);
     } else if (node.type === 'MemberExpression') { // this.xxxx, foo.xxxx
       Util.DEBUG && console.log('    *** EXPRESSION MemberExpression ***', this.getCode(node));
       this.setPropsOrParams(node, mockData);
-
     } else if (node.type === 'BlockStatement') {
       node.body.forEach(expr => {
         Util.DEBUG && console.log('    *** EXPRESSION BlockStatement ***', this.getCode(expr));
         this.setMockData(expr, mockData);
       });
-
     } else if (node.type === 'CallExpression') {
       // e.g. this.router.events.subscribe(event => xxxxxxx)
       // e.g. this.foo.bar.x(1,2,3);
@@ -119,8 +139,10 @@ class NgFuncWriter {
         // set param value instead of 'this'(prop) value e.g., this.bar = this.foo.x.y (`this.foo` is from param1)
         Util.assign(right.this, params); // (source, target)
       } else {
-        this.setPropsOrParams(node.left, mockData);
-        this.setPropsOrParams(node.right, mockData);
+        this.setMockData(node.right, mockData);
+        this.setMockData(node.left, mockData);
+        // this.setPropsOrParams(node.left, mockData);
+        // this.setPropsOrParams(node.right, mockData);
       }
     } else if (node.type === 'BinaryExpression') {
       this.setMockData(node.right, mockData);
@@ -130,6 +152,7 @@ class NgFuncWriter {
         this.setMockData(property.value, mockData);
       });
     } else {
+      console.warn({node});
       console.warn('\x1b[33m%s\x1b[0m', `WARNING WARNING WARNING unprocessed expression ${node.type} ${code}`);
     }
   }
@@ -153,7 +176,7 @@ class NgFuncWriter {
       obj = Util.getObjectFromExpression(nodeToUse, returns);
       const code = this.getCode(codeOrNode);
       [one, two] = code.split('.'); // this.prop
-      Util.DEBUG && console.log('  setPropsOrParams',  { code, type: codeOrNode.type });
+      Util.DEBUG && console.log('  setPropsOrParams',  {code, type: codeOrNode.type});
     }
 
     if (one === 'this' && two && map[`this.${two}`]) {
