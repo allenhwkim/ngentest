@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const NgTypescriptParser = require('./ng-typescript-parser.js');
 const ComponentData = require('./for-component/component-data.js');
+const DirectiveData = require('./for-directive/directive-data.js');
 const jsParser = require('acorn').Parser;
 
 class NgClassWriter {
@@ -26,8 +27,10 @@ class NgClassWriter {
     const imports = await parser.getImports();
     const typescript = fs.readFileSync(path.resolve(this.tsPath), 'utf8');
 
-    const testGenerator =
-      angularType === 'Component' ? new ComponentData({ tsPath, klass, imports }) : {};
+    const testGenerator = /* eslint-disable */
+      angularType === 'Component' ? new ComponentData({ tsPath, klass, imports }) :
+      angularType === 'Directive' ? new DirectiveData({ tsPath, klass, imports }) : 
+      {}; /* eslint-enable */
     const ejsData = testGenerator.getEjsData();
 
     this.testGenerator = testGenerator;

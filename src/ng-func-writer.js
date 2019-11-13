@@ -42,6 +42,7 @@ class NgFuncWriter {
     }
     const node = /* eslint-disable */
       nodeIn.type === 'ArrayExpression' ? nodeIn :
+      nodeIn.type === 'ArrayPattern' ? nodeIn :
       nodeIn.type === 'ArrowFunctionExpression' ? nodeIn.body :
       nodeIn.type === 'AssignmentExpression' ? nodeIn :
       nodeIn.type === 'BinaryExpression' ? nodeIn :
@@ -63,6 +64,7 @@ class NgFuncWriter {
       nodeIn.type === 'SpreadElement' ? nodeIn.argument :
       nodeIn.type === 'SwitchStatement' ? nodeIn :
       nodeIn.type === 'TemplateLiteral' ? nodeIn :
+      nodeIn.type === 'ThisExpression' ? nodeIn :
       nodeIn.type === 'UnaryExpression' ? nodeIn.argument :
       nodeIn.type === 'VariableDeclaration' ? nodeIn :
       null; /* eslint-enable */
@@ -75,6 +77,8 @@ class NgFuncWriter {
 
     if (node.type === 'Literal') {
       Util.DEBUG && console.log('    *** EXPRESSION Literal ***', this.getCode(node));
+    } else if (node.type === 'ThisExpression') {
+      Util.DEBUG && console.log('    *** EXPRESSION ThisExpression ***', this.getCode(node));
     } else if (node.type === 'Identifier') {
       Util.DEBUG && console.log('    *** EXPRESSION Identifier ***', this.getCode(node));
     } else if (node.type === 'BreakStatement') {
@@ -83,6 +87,9 @@ class NgFuncWriter {
       Util.DEBUG && console.log('    *** EXPRESSION NewExpression ***', this.getCode(node));
     } else if (node.type === 'ArrayExpression') {
       Util.DEBUG && console.log('    *** EXPRESSION ArrayExpression ***', this.getCode(node));
+      node.elements.forEach(element => element && this.setMockData(element, mockData));
+    } else if (node.type === 'ArrayPattern') {
+      Util.DEBUG && console.log('    *** EXPRESSION ArrayPattern ***', this.getCode(node));
       node.elements.forEach(element => element && this.setMockData(element, mockData));
     } else if (node.type === 'TemplateLiteral') {
       Util.DEBUG && console.log('    *** EXPRESSION TemplateLiteral ***', this.getCode(node));

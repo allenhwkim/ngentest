@@ -10,7 +10,7 @@ class Util {
     // return beautify(str, opts);
     str = indentJs.ts(str, { tabString: '  ' });
     str = str + prefix;
-    str = str.replace(/\n/gm, '\n'+prefix);
+    str = str.replace(/\n/gm, '\n' + prefix);
     return str;
   }
 
@@ -26,11 +26,22 @@ class Util {
       return JSON.stringify(obj);
     } else {
       for (var key in obj) {
-        if (!obj.hasOwnProperty(key)) { continue; }
-        if (typeof obj[key] === 'object' && !Object.keys(obj[key])[0]) { // is empty obj, e.g. {}
+        if (key === 'undefined' || !obj.hasOwnProperty(key)) { continue; }
+
+        const obj1stKey = obj[key] === 'object' && Object.keys(obj[key])[0];
+        if (typeof obj[key] === 'object' && !obj1stKey) { // is empty obj, e.g. {}
           exprs.push(`${key}: '${key}'`);
+        // } else if (obj1stKey && obj1stKey.match(/substr|replace|split/)) { // is empty obj, e.g. {}
+        //   const strVal = obj[key]();
+        //   exprs.push(`${key} : '${strVal}'`);
+        } else if (obj[key].type === 'Observable') {
+          const observableVal = Util.objToJS(obj[key].value);
+          exprs.push(`${key} : observableOf(${observableVal})`);
         } else if (typeof obj[key] === 'object') {
           exprs.push(`${key}: ${Util.objToJS(obj[key], level + 1)}`);
+        } else if (typeof obj[key] === 'function' && obj[key]().type === 'Observable') {
+          const observableVal = Util.objToJS(obj[key]().value);
+          exprs.push(`${key} : observableOf(${observableVal})`);
         } else if (typeof obj[key] === 'function') {
           exprs.push(`${key} : ` +
             `function() {\n` +
@@ -120,7 +131,7 @@ class Util {
       } else if (typeof arg.value !== 'undefined') {
         return arg.raw || arg.value;
       } else if (arg.type === 'Identifier' && arg.name) {
-        return arg.name; 
+        return arg.name;
       } else if (arg.type === 'BinaryExpression') return 'BIN_EXPR';
       else if (arg.type === 'ArrowFunctionExpression') return 'FUNC_EXPR';
       else if (arg.type === 'CallExpression') return 'CALL_EXPR';
@@ -131,9 +142,10 @@ class Util {
       else if (arg.type === 'TemplateLiteral') return 'TMPL_LTRL';
       else if (arg.type === 'ThisExpression') return 'THIS_EXPR';
       else if (arg.type === 'UnaryExpression') return 'UNRY_EXPR';
+      else if (arg.type === 'SpreadElement') return '...' + arg.name;
       else {
         console.error('\x1b[31m%s\x1b[0m', `Invalid function argument expression`, arg);
-        throw new Error('Invalid function argument type, ' + arg.type);
+        throw new Error(`Invalid function argument type, ${arg.type}`);
       }
     });
     return argNames.join(',');
@@ -249,6 +261,9 @@ class Util {
 
     const funcParam = {};
     (funcRetExprs || []).forEach(funcExpr => { // e.g., ['event.urlAfterRedirects.substr(1)', ..]
+      if (funcExpr.match(/\([^)]*$/) && !funcExpr.match(/\)$/)) { // if parenthesis not closed
+        funcExpr = `${funcExpr})`.replace(/\)\)$/, ')');
+      }
       const exprNode = Util.getNode(funcExpr);
       const newReturn = Util.getExprReturn(exprNode, funcExpr);
       const newCode = newReturn.code;
@@ -297,7 +312,7 @@ class Util {
           const obsRetVal = Util.objToJS(value2.value).replace(/\{\s+\}/gm, '{}');
           js.push(`${thisName}.${key1}.${key2} = observableOf(${obsRetVal})`);
         } else if (typeof value2 === 'function' && JSON.stringify(value2()) === '{}') {
-          js.push(`${thisName}.${key1}.${key2} = jest.fn();`);
+          js.push(`${thisName}.${key1}.${key2} = jest.fn()`);
         } else if (typeof value2 === 'function') {
           const fnValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
           js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(${fnValue2})`);
@@ -341,7 +356,7 @@ class Util {
       });
     });
 
-    return js.length ? `${js.join(';\n')};` : '';
+    return js;
   }
 
   static getFuncParamJS (mockData) {
