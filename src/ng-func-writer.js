@@ -41,28 +41,30 @@ class NgFuncWriter {
       throw new Error('ERROR: parameter is invalid');
     }
     const node = /* eslint-disable */
-      nodeIn.type === 'ExpressionStatement' ? nodeIn.expression :
-      nodeIn.type === 'DeclaratoinxapressionStatement' ? nodeIn.declarations :
-      nodeIn.type === 'IfStatement' ? nodeIn.consequent : // node.test (consequent)
-      nodeIn.type === 'VariableDeclaration' ? nodeIn :
-      // nodeIn.type === 'VariableDeclaration' ? nodeIn.declarations[0].init : // node.id (init)
-      nodeIn.type === 'ArrowFunctionExpression' ? nodeIn.body :
-      nodeIn.type === 'FunctionExpression' ? nodeIn.body :
-      nodeIn.type === 'ReturnStatement' ? nodeIn.argument :
-      nodeIn.type === 'CallExpression' ? nodeIn :
-      nodeIn.type === 'BinaryExpression' ? nodeIn :
-      nodeIn.type === 'Literal' ? nodeIn :
-      nodeIn.type === 'MemberExpression' ? nodeIn :
-      nodeIn.type === 'LogicalExpression' ? nodeIn :
-      nodeIn.type === 'Identifier' ? nodeIn :
-      nodeIn.type === 'ObjectExpression' ? nodeIn :
-      nodeIn.type === 'ConditionalExpression' ? nodeIn :
-      nodeIn.type === 'NewExpression' ? nodeIn :
-      nodeIn.type === 'BreakStatement' ? nodeIn :
       nodeIn.type === 'ArrayExpression' ? nodeIn :
-      nodeIn.type === 'SwitchStatement' ? nodeIn :
-      nodeIn.type === 'UnaryExpression' ? nodeIn.argument :
+      nodeIn.type === 'ArrowFunctionExpression' ? nodeIn.body :
+      nodeIn.type === 'AssignmentExpression' ? nodeIn :
+      nodeIn.type === 'BinaryExpression' ? nodeIn :
+      nodeIn.type === 'BreakStatement' ? nodeIn :
+      nodeIn.type === 'CallExpression' ? nodeIn :
+      nodeIn.type === 'ConditionalExpression' ? nodeIn :
+      nodeIn.type === 'DeclaratoinxapressionStatement' ? nodeIn.declarations :
+      nodeIn.type === 'ExpressionStatement' ? nodeIn.expression :
       nodeIn.type === 'ForStatement' ? nodeIn.body : // NOTE: init/test/update/body
+      nodeIn.type === 'FunctionExpression' ? nodeIn.body :
+      nodeIn.type === 'Identifier' ? nodeIn :
+      nodeIn.type === 'IfStatement' ? nodeIn.consequent : // node.test (consequent)
+      nodeIn.type === 'Literal' ? nodeIn :
+      nodeIn.type === 'LogicalExpression' ? nodeIn :
+      nodeIn.type === 'MemberExpression' ? nodeIn :
+      nodeIn.type === 'NewExpression' ? nodeIn :
+      nodeIn.type === 'ObjectExpression' ? nodeIn :
+      nodeIn.type === 'ReturnStatement' ? nodeIn.argument :
+      nodeIn.type === 'SpreadElement' ? nodeIn.argument :
+      nodeIn.type === 'SwitchStatement' ? nodeIn :
+      nodeIn.type === 'TemplateLiteral' ? nodeIn :
+      nodeIn.type === 'UnaryExpression' ? nodeIn.argument :
+      nodeIn.type === 'VariableDeclaration' ? nodeIn :
       null; /* eslint-enable */
 
     if (!node) {
@@ -82,6 +84,9 @@ class NgFuncWriter {
     } else if (node.type === 'ArrayExpression') {
       Util.DEBUG && console.log('    *** EXPRESSION ArrayExpression ***', this.getCode(node));
       node.elements.forEach(element => element && this.setMockData(element, mockData));
+    } else if (node.type === 'TemplateLiteral') {
+      Util.DEBUG && console.log('    *** EXPRESSION TemplateLiteral ***', this.getCode(node));
+      node.expressions.forEach(expr => expr && this.setMockData(expr, mockData));
     } else if (node.type === 'VariableDeclaration') {
       Util.DEBUG && console.log('    *** EXPRESSION VariableDeclaration ***', this.getCode(node));
       node.declarations.forEach(decl => decl.init && this.setMockData(decl.init, mockData));
@@ -100,15 +105,21 @@ class NgFuncWriter {
       Util.DEBUG && console.log('    *** EXPRESSION LogicalExpression ***', this.getCode(node));
       this.setMockData(node.left, mockData);
       this.setMockData(node.right, mockData);
-      // this.setPropsOrParams(node.left, mockData);
-    } else if (node.type === 'MemberExpression') { // this.xxxx, foo.xxxx
-      Util.DEBUG && console.log('    *** EXPRESSION MemberExpression ***', this.getCode(node));
-      this.setPropsOrParams(node, mockData);
     } else if (node.type === 'BlockStatement') {
       node.body.forEach(expr => {
         Util.DEBUG && console.log('    *** EXPRESSION BlockStatement ***', this.getCode(expr));
         this.setMockData(expr, mockData);
       });
+    } else if (node.type === 'BinaryExpression') {
+      this.setMockData(node.right, mockData);
+      this.setMockData(node.left, mockData);
+    } else if (node.type === 'ObjectExpression') {
+      node.properties.forEach(property => {
+        this.setMockData(property.value, mockData);
+      });
+    } else if (node.type === 'MemberExpression') { // this.xxxx, foo.xxxx
+      Util.DEBUG && console.log('    *** EXPRESSION MemberExpression ***', this.getCode(node));
+      this.setPropsOrParams(node, mockData);
     } else if (node.type === 'CallExpression') {
       // e.g. this.router.events.subscribe(event => xxxxxxx)
       // e.g. this.foo.bar.x(1,2,3);
@@ -141,18 +152,9 @@ class NgFuncWriter {
       } else {
         this.setMockData(node.right, mockData);
         this.setMockData(node.left, mockData);
-        // this.setPropsOrParams(node.left, mockData);
-        // this.setPropsOrParams(node.right, mockData);
       }
-    } else if (node.type === 'BinaryExpression') {
-      this.setMockData(node.right, mockData);
-      this.setMockData(node.left, mockData);
-    } else if (node.type === 'ObjectExpression') {
-      node.properties.forEach(property => {
-        this.setMockData(property.value, mockData);
-      });
     } else {
-      console.warn({node});
+      console.warn({ node });
       console.warn('\x1b[33m%s\x1b[0m', `WARNING WARNING WARNING unprocessed expression ${node.type} ${code}`);
     }
   }
