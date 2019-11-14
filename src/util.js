@@ -307,6 +307,8 @@ class Util {
         if (value2.type === 'Observable') {
           const obsRetVal = Util.objToJS(value2.value).replace(/\{\s+\}/gm, '{}');
           js.push(`${thisName}.${key1}.${key2} = observableOf(${obsRetVal})`);
+        } else if (typeof value2 === 'function' && key2.match(/^(get|post|put)$/) ) {
+          js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(observableOf('${key2}'));`);
         } else if (typeof value2 === 'function' && JSON.stringify(value2()) === '{}') {
           js.push(`${thisName}.${key1}.${key2} = jest.fn()`);
         } else if (['forEach', 'map', 'reduce', 'slice'].includes(key2)) {

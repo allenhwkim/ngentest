@@ -1,6 +1,6 @@
 // tslint:disable
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Injectable, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Pipe, PipeTransform, Injectable, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { By } from '@angular/platform-browser';
 import { Observable, of as observableOf, throwError } from 'rxjs';
@@ -13,13 +13,19 @@ import { <%- imports[importLib].map(el => `${el}`).join(', ') -%> } from '<%- im
 <%- providerMocks[klassName] -%>
 <% } -%>
 
+
+@Pipe({name: 'translate'})
+class TranslatePipe implements PipeTransform { 
+  transform(value) { return value; } 
+}
+
 describe('<%= className %>', () => {
   let fixture;
   let component;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ <%= className %> ],
+      declarations: [ <%= className %>, TranslatePipe ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
       providers: [
         <%- Object.entries(providers).map( ([_, value]) => value ).join(',\n        ') -%>

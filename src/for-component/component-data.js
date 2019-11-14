@@ -122,7 +122,8 @@ class ComponentData {
       const paramBody = this.typescript.substring(param.start, param.end);
       const injectMatches = paramBody.match(/@Inject\(([A-Z0-9_]+)\)/) || [];
       const injectClassName = injectMatches[1];
-      const iimport = this.imports[param.type];
+      const className = (param.type||'').replace(/<[^>]+>/, '');
+      const iimport = this.imports[className];
 
       if (injectClassName === 'DOCUMENT') {
         providers[param.name] = `{ provide: DOCUMENT, useClass: MockDocument }`;
@@ -130,10 +131,10 @@ class ComponentData {
         providers[param.name] = `{ provide: 'PLATFORM_ID', useValue: 'browser' }`;
       } else if (injectClassName === 'LOCALE_ID') {
         providers[param.name] = `{ provide: 'LOCALE_ID', useValue: 'en' }`;
-      } else if (param.type === 'ElementRef' || param.type === 'Router') {
-        providers[param.name] = `{ provide: '${param.type}', useClass: Mock${param.type} }`;
-      } else if (iimport.mport.libraryName.match(/^\./)) { // user-defined classes
-        providers[param.name] = `{ provide: '${param.type}', useClass: Mock${param.type} }`;
+      } else if (param.type.match(/^(ElementRef|Router|HttpClient|TranslateService)$/)) {
+        providers[param.name] = `{ provide: ${param.type}, useClass: Mock${param.type} }`;
+      } else if (iimport && iimport.mport.libraryName.match(/^\./)) { // user-defined classes
+        providers[param.name] = `{ provide: ${param.type}, useClass: Mock${param.type} }`;
       } else {
         providers[param.name] = param.type;
       }
@@ -186,6 +187,8 @@ class ComponentData {
         param.type === 'ElementRef' ? ['nativeElement = {};'] :
         param.type === 'Router' ? ['navigate = jest.fn();'] :
         param.type === 'Document' ? ['querySelector = jest.fn();'] :
+        param.type === 'HttpClient' ? ['post = jest.fn();'] :
+        param.type === 'TranslateService' ? ['translate = jest.fn();'] :
         iimport && iimport.mport.libraryName.match(/^[\.]+/) ? []  : undefined;
         /* eslint-enable */
 
