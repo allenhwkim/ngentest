@@ -4,15 +4,14 @@ import {<%- imports[key].map(el => `${el}`).join(', ') -%>} from '<%- key -%>';
 <% } -%>
 
 describe('<%= className %>', () => {
-  let service;
+  let pipe;
 
   <% for(var klassName in providerMocks) { %>
   <%- providerMocks[klassName] -%>
   <% } -%>
 
   beforeEach(() => {
-    // TODO: Think about is there anything can do with constructor mocks(?), things done within constructor
-    service = new <%= className %>(<%= ctorParamJs %>);
+    pipe = new <%= className %>(<%= ctorParamJs %>);
   });
 
   <% for(var key in functionTests) { -%>

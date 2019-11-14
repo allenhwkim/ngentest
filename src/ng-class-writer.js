@@ -4,6 +4,7 @@ const NgTypescriptParser = require('./ng-typescript-parser.js');
 const ComponentData = require('./for-component/component-data.js');
 const DirectiveData = require('./for-directive/directive-data.js');
 const InjectableData = require('./for-injectable/injectable-data.js');
+const PipeData = require('./for-pipe/pipe-data.js');
 const jsParser = require('acorn').Parser;
 
 class NgClassWriter {
@@ -32,6 +33,7 @@ class NgClassWriter {
       angularType === 'component' ? new ComponentData({ tsPath, klass, imports }) :
       angularType === 'directive' ? new DirectiveData({ tsPath, klass, imports }) : 
       angularType === 'service' ? new InjectableData({ tsPath, klass, imports }) : 
+      angularType === 'pipe' ? new PipeData({ tsPath, klass, imports }) : 
       {}; /* eslint-enable */
     const ejsData = testGenerator.getEjsData();
 

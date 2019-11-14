@@ -49,7 +49,6 @@ async function run (tsFile) {
         module: ts.ModuleKind.CommonJS, experimentalDecorators: true, target: ts.ScriptTarget.ES2015
       }
     });
-console.log('xxxxxxxxxxxxxxx', {typescript, transpiled: result.outputText});
 
     const modjule = requireFromString(result.outputText);
     const Klass = modjule[ejsData.className];
@@ -80,8 +79,8 @@ console.log('xxxxxxxxxxxxxxx', {typescript, transpiled: result.outputText});
     //      . writeClassTest()
     klass.methods.forEach(method => {
       console.log('\x1b[36m%s\x1b[0m', `\nPROCESSING ${klass.ctor && klass.ctor.name}#${method.name}`);
-      const thisValues = Object.assign({}, ctorMockData.props);
-      const funcMockData = getFuncMockData(Klass, method.name, thisValues);
+      // const thisValues = Object.assign({}, ctorMockData.props);
+      const funcMockData = getFuncMockData(Klass, method.name, {});
       const funcMockJS = Util.getFuncMockJS(funcMockData, angularType);
       const funcParamJS = Util.getFuncParamJS(funcMockData);
       const assertRE = /(.*?)\s*=\s*jest\.fn\(.*\)/;

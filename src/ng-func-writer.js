@@ -46,12 +46,14 @@ class NgFuncWriter {
       nodeIn.type === 'ArrowFunctionExpression' ? nodeIn.body :
       nodeIn.type === 'AssignmentExpression' ? nodeIn :
       nodeIn.type === 'BinaryExpression' ? nodeIn :
+      nodeIn.type === 'BlockStatement' ? nodeIn :
       nodeIn.type === 'BreakStatement' ? nodeIn :
       nodeIn.type === 'CallExpression' ? nodeIn :
       nodeIn.type === 'ConditionalExpression' ? nodeIn :
       nodeIn.type === 'DeclaratoinxapressionStatement' ? nodeIn.declarations :
       nodeIn.type === 'ExpressionStatement' ? nodeIn.expression :
       nodeIn.type === 'ForStatement' ? nodeIn.body : // NOTE: init/test/update/body
+      nodeIn.type === 'ForInStatement' ? nodeIn :
       nodeIn.type === 'FunctionExpression' ? nodeIn.body :
       nodeIn.type === 'Identifier' ? nodeIn :
       nodeIn.type === 'IfStatement' ? nodeIn.consequent : // node.test (consequent)
@@ -64,9 +66,11 @@ class NgFuncWriter {
       nodeIn.type === 'SpreadElement' ? nodeIn.argument :
       nodeIn.type === 'SwitchStatement' ? nodeIn :
       nodeIn.type === 'TemplateLiteral' ? nodeIn :
+      nodeIn.type === 'ThrowStatement' ? nodeIn :
       nodeIn.type === 'ThisExpression' ? nodeIn :
       nodeIn.type === 'UnaryExpression' ? nodeIn.argument :
       nodeIn.type === 'VariableDeclaration' ? nodeIn :
+      nodeIn.type === 'WhileStatement' ? nodeIn :
       null; /* eslint-enable */
 
     if (!node) {
@@ -75,16 +79,16 @@ class NgFuncWriter {
     }
     const code = this.getCode(node);
 
-    if (node.type === 'Literal') {
-      Util.DEBUG && console.log('    *** EXPRESSION Literal ***', this.getCode(node));
-    } else if (node.type === 'ThisExpression') {
-      Util.DEBUG && console.log('    *** EXPRESSION ThisExpression ***', this.getCode(node));
-    } else if (node.type === 'Identifier') {
-      Util.DEBUG && console.log('    *** EXPRESSION Identifier ***', this.getCode(node));
-    } else if (node.type === 'BreakStatement') {
-      Util.DEBUG && console.log('    *** EXPRESSION BreakStatement ***', this.getCode(node));
-    } else if (node.type === 'NewExpression') {
-      Util.DEBUG && console.log('    *** EXPRESSION NewExpression ***', this.getCode(node));
+    if ([
+      'BreakStatement',
+      'Identifier',
+      'Literal',
+      'NewExpression',
+      'ThisExpression',
+      'ThrowStatement'
+    ].includes(node.type)) {
+      // ignore these expressions/statements
+      Util.DEBUG && console.log('    *** EXPRESSION ' + node.type + ' ***', this.getCode(node));
     } else if (node.type === 'ArrayExpression') {
       Util.DEBUG && console.log('    *** EXPRESSION ArrayExpression ***', this.getCode(node));
       node.elements.forEach(element => element && this.setMockData(element, mockData));
@@ -108,6 +112,10 @@ class NgFuncWriter {
       this.setMockData(node.test, mockData);
       this.setMockData(node.consequent, mockData);
       this.setMockData(node.alternate, mockData);
+    } else if (node.type === 'ForInStatement') {
+      Util.DEBUG && console.log('    *** EXPRESSION ForInStatement ***', this.getCode(node));
+      this.setMockData(node.left, mockData);
+      this.setMockData(node.body, mockData);
     } else if (node.type === 'LogicalExpression') {
       Util.DEBUG && console.log('    *** EXPRESSION LogicalExpression ***', this.getCode(node));
       this.setMockData(node.left, mockData);
@@ -127,6 +135,10 @@ class NgFuncWriter {
     } else if (node.type === 'MemberExpression') { // this.xxxx, foo.xxxx
       Util.DEBUG && console.log('    *** EXPRESSION MemberExpression ***', this.getCode(node));
       this.setPropsOrParams(node, mockData);
+    } else if (node.type === 'WhileExpression') { // this.xxxx, foo.xxxx
+      Util.DEBUG && console.log('    *** EXPRESSION WhileExpression ***', this.getCode(node));
+      this.setPropsOrParams(node.test, mockData);
+      this.setPropsOrParams(node.body, mockData);
     } else if (node.type === 'CallExpression') {
       // e.g. this.router.events.subscribe(event => xxxxxxx)
       // e.g. this.foo.bar.x(1,2,3);

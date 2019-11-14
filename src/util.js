@@ -30,18 +30,14 @@ class Util {
 
         const obj1stKey = (typeof obj[key] === 'object') && Object.keys(obj[key])[0];
         if (typeof obj[key] === 'object' && !obj1stKey) { // is empty obj, e.g. {}
-          exprs.push(`${key}: '${key}'`);
-        } else if (obj1stKey && obj1stKey.match(/substr|replace|split/)) { // is empty obj, e.g. {}
-          const strVal = obj[key]();
-          exprs.push(`${key} : '${strVal}'`);
-        } else if (obj[key].type === 'Observable') {
+          exprs.push(`${key}: '${obj[key]}'`);
+        } else if (obj1stKey && obj1stKey.match(/trim|substr|replace|split/)) { // string in form of an object
+          exprs.push(`${key} : '${key}'`);
+        } else if (obj[key].type === 'Observable') { // normal Observable
           const observableVal = Util.objToJS(obj[key].value);
           exprs.push(`${key} : observableOf(${observableVal})`);
         } else if (typeof obj[key] === 'object') {
           exprs.push(`${key}: ${Util.objToJS(obj[key], level + 1)}`);
-        } else if (typeof obj[key] === 'function' && obj[key]().type === 'Observable') {
-          const observableVal = Util.objToJS(obj[key]().value);
-          exprs.push(`${key} : observableOf(${observableVal})`);
         } else if (typeof obj[key] === 'function') {
           exprs.push(`${key} : ` +
             `function() {\n` +
@@ -313,6 +309,10 @@ class Util {
           js.push(`${thisName}.${key1}.${key2} = observableOf(${obsRetVal})`);
         } else if (typeof value2 === 'function' && JSON.stringify(value2()) === '{}') {
           js.push(`${thisName}.${key1}.${key2} = jest.fn()`);
+        } else if (['forEach', 'map', 'reduce', 'slice'].includes(key2)) {
+          js.push(`${thisName}.${key1} = ['${key1}']`);
+        } else if (['length'].includes(key2)) {
+          // do nothing
         } else if (typeof value2 === 'function') {
           const fnValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
           js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(${fnValue2})`);
@@ -362,14 +362,14 @@ class Util {
   static getFuncParamJS (mockData) {
     const js = [];
     Object.entries(mockData.params).forEach(([key2, value2]) => {
-      const value2Key = typeof value2 === 'object' && Object.keys(value2)[0];
+      const value21stKey = typeof value2 === 'object' && Object.keys(value2)[0];
       if (key2 === 'undefined') {
         // ignore this
       } else if (value2.type === 'Observable') {
         const obsRetVal = Util.objToJS(value2.value).replace(/\{\s+\}/gm, '{}');
         js.push(`observableOf(${obsRetVal})`);
-      } else if (
-        ['substr', 'replace', 'split', 'toLowerCase', 'toUpperCase', 'match'].includes(value2Key)
+      } else if (value21stKey &&
+        value21stKey.match(/^(slice|trim|substr|replace|split|toLowerCase|toUpperCase|match)$/)
       ) {
         js.push(`'${key2}'`);
       } else if (typeof value2 === 'function') {
