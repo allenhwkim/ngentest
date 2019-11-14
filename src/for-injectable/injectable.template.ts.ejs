@@ -1,0 +1,21 @@
+import { async } from '@angular/core/testing';
+<% for(var key in imports) { -%>
+import {<%- imports[key].map(el => `${el}`).join(', ') -%>} from '<%- key -%>';
+<% } -%>
+
+describe('<%= className %>', () => {
+  let service;
+
+  <% for(var klassName in providerMocks) { %>
+  <%- providerMocks[klassName] -%>
+  <% } -%>
+
+  beforeEach(() => {
+    service = new <%= className %>(<%= ctorParamJs %>);
+  });
+
+  <% for(var key in functionTests) { -%>
+  <%- functionTests[key] -%>
+  <% } -%>
+
+});

@@ -28,12 +28,12 @@ class Util {
       for (var key in obj) {
         if (key === 'undefined' || !obj.hasOwnProperty(key)) { continue; }
 
-        const obj1stKey = obj[key] === 'object' && Object.keys(obj[key])[0];
+        const obj1stKey = (typeof obj[key] === 'object') && Object.keys(obj[key])[0];
         if (typeof obj[key] === 'object' && !obj1stKey) { // is empty obj, e.g. {}
           exprs.push(`${key}: '${key}'`);
-        // } else if (obj1stKey && obj1stKey.match(/substr|replace|split/)) { // is empty obj, e.g. {}
-        //   const strVal = obj[key]();
-        //   exprs.push(`${key} : '${strVal}'`);
+        } else if (obj1stKey && obj1stKey.match(/substr|replace|split/)) { // is empty obj, e.g. {}
+          const strVal = obj[key]();
+          exprs.push(`${key} : '${strVal}'`);
         } else if (obj[key].type === 'Observable') {
           const observableVal = Util.objToJS(obj[key].value);
           exprs.push(`${key} : observableOf(${observableVal})`);
@@ -368,10 +368,9 @@ class Util {
       } else if (value2.type === 'Observable') {
         const obsRetVal = Util.objToJS(value2.value).replace(/\{\s+\}/gm, '{}');
         js.push(`observableOf(${obsRetVal})`);
-      } else if ([
-        'substr', 'replace', 'split',
-        'toLowerCase', 'toUpperCase', 'match'
-      ].includes(value2Key)) {
+      } else if (
+        ['substr', 'replace', 'split', 'toLowerCase', 'toUpperCase', 'match'].includes(value2Key)
+      ) {
         js.push(`'${key2}'`);
       } else if (typeof value2 === 'function') {
         const fnValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');

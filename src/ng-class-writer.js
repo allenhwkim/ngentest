@@ -3,6 +3,7 @@ const path = require('path');
 const NgTypescriptParser = require('./ng-typescript-parser.js');
 const ComponentData = require('./for-component/component-data.js');
 const DirectiveData = require('./for-directive/directive-data.js');
+const InjectableData = require('./for-injectable/injectable-data.js');
 const jsParser = require('acorn').Parser;
 
 class NgClassWriter {
@@ -20,7 +21,7 @@ class NgClassWriter {
   }
 
   async getData () {
-    const angularType = this.getAngularType();
+    const angularType = this.getAngularType().toLowerCase();
     const parser = new NgTypescriptParser(this.tsPath);
     const tsPath = this.tsPath;
     const klass = await parser.getKlass();
@@ -28,8 +29,9 @@ class NgClassWriter {
     const typescript = fs.readFileSync(path.resolve(this.tsPath), 'utf8');
 
     const testGenerator = /* eslint-disable */
-      angularType === 'Component' ? new ComponentData({ tsPath, klass, imports }) :
-      angularType === 'Directive' ? new DirectiveData({ tsPath, klass, imports }) : 
+      angularType === 'component' ? new ComponentData({ tsPath, klass, imports }) :
+      angularType === 'directive' ? new DirectiveData({ tsPath, klass, imports }) : 
+      angularType === 'service' ? new InjectableData({ tsPath, klass, imports }) : 
       {}; /* eslint-enable */
     const ejsData = testGenerator.getEjsData();
 
@@ -70,10 +72,10 @@ class NgClassWriter {
 
   getAngularType () {
     const typescript = fs.readFileSync(path.resolve(this.tsPath), 'utf8');
-    return typescript.match(/^\s*@Component\s*\(/m) ? 'Component' :
-      typescript.match(/^\s*@Directive\s*\(/m) ? 'Directive' :
-        typescript.match(/^\s*@Injectable\s*\(/m) ? 'Injectable' :
-          typescript.match(/^\s*@Pipe\s*\(/m) ? 'Pipe' : undefined;
+    return typescript.match(/^\s*@Component\s*\(/m) ? 'component' :
+      typescript.match(/^\s*@Directive\s*\(/m) ? 'directive' :
+        typescript.match(/^\s*@Injectable\s*\(/m) ? 'service' :
+          typescript.match(/^\s*@Pipe\s*\(/m) ? 'pipe' : undefined;
   }
 
   writeGenerated (generated, toFile) {

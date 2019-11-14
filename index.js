@@ -49,21 +49,24 @@ async function run (tsFile) {
         module: ts.ModuleKind.CommonJS, experimentalDecorators: true, target: ts.ScriptTarget.ES2015
       }
     });
+console.log('xxxxxxxxxxxxxxx', {typescript, transpiled: result.outputText});
 
     const modjule = requireFromString(result.outputText);
     const Klass = modjule[ejsData.className];
     console.warn('\x1b[36m%s\x1b[0m', `PROCESSING ${klass.ctor && klass.ctor.name} constructor`);
     const ctorMockData = getFuncMockData(Klass, 'constructor', {});
-    console.log(`  === RESULT 'ctorMockData' ===`, ctorMockData);
-    console.log('...................... ejsData.providers   ..........\n', ejsData.providers);
-    // console.log('...................... ejsData.windowMocks ..........\n', ejsData.windowMocks);
-    console.log('...................... ctorMockData        ..........\n', ctorMockData);
-    // const ctorParams = Object.entries(ctorMockData.params).map(([key, val]) => ejsData.providers[key].useValue || val);
-    // console.log('CHECKI#NG IF CONSTRUCTOR WORKS', new Klass(...ctorParams), 'SUCCESS!!\n');
+    const ctorParamJs = Util.getFuncParamJS(ctorMockData);
+    ejsData.ctorParamJs = ctorParamJs;
     ejsData.providerMocks = testWriter.getProviderMocks(klass, ctorMockData.params);
     for (var key in ejsData.providerMocks) {
       ejsData.providerMocks[key] = Util.indent(ejsData.providerMocks[key]).replace(/\{\s+\}/gm, '{}');
     }
+
+    console.log(`  === RESULT 'ctorMockData' ===`, ctorMockData);
+    console.log('...................... ejsData.providers   ..........\n', ejsData.providers);
+    console.log('...................... ctorMockData        ..........\n', ctorMockData);
+    // const ctorParams = Object.entries(ctorMockData.params).map( ([key, val]) => ejsData.providers[key].useValue || val );
+    // console.log('CHECKI#NG IF CONSTRUCTOR WORKS', new Klass(...ctorParams), 'SUCCESS!!\n');
 
     const angularType = testWriter.getAngularType().toLowerCase();
     // TODO:
@@ -84,7 +87,7 @@ async function run (tsFile) {
       const assertRE = /(.*?)\s*=\s*jest\.fn\(.*\)/;
       const funcAssertJS = funcMockJS
         .filter(el => el.match(assertRE))
-        .map(el => el.replace(assertRE, (_, m1) => `expect(${m1}).toHaveBeenCalled()`) );
+        .map(el => el.replace(assertRE, (_, m1) => `expect(${m1}).toHaveBeenCalled()`));
       ejsData.functionTests[method.name] = Util.indent(`
         it('should run #${method.name}()', async () => {
           ${funcMockJS.join(';\n')}${funcMockJS.length ? ';' : ''}
