@@ -62,7 +62,7 @@ class NgFuncWriter {
       nodeIn.type === 'MemberExpression' ? nodeIn :
       nodeIn.type === 'NewExpression' ? nodeIn :
       nodeIn.type === 'ObjectExpression' ? nodeIn :
-      nodeIn.type === 'ReturnStatement' ? nodeIn.argument :
+      nodeIn.type === 'ReturnStatement' ? nodeIn :
       nodeIn.type === 'SpreadElement' ? nodeIn.argument :
       nodeIn.type === 'SwitchStatement' ? nodeIn :
       nodeIn.type === 'TemplateLiteral' ? nodeIn :
@@ -101,6 +101,13 @@ class NgFuncWriter {
     } else if (node.type === 'VariableDeclaration') {
       Util.DEBUG && console.log('    *** EXPRESSION VariableDeclaration ***', this.getCode(node));
       node.declarations.forEach(decl => decl.init && this.setMockData(decl.init, mockData));
+    } else if (node.type === 'ReturnStatement') {
+      Util.DEBUG && console.log('    *** EXPRESSION ReturnStatement ***', this.getCode(node));
+      node.argument && this.setMockData(node.argument, mockData);
+    } else if (node.type === 'WhileStatement') {
+      Util.DEBUG && console.log('    *** EXPRESSION WhileStatement ***', this.getCode(node));
+      this.setMockData(node.test, mockData);
+      this.setMockData(node.body, mockData);
     } else if (node.type === 'SwitchStatement') {
       this.setMockData(node.discriminant, mockData);
       node.cases.forEach(kase => {

@@ -5,6 +5,7 @@ const ComponentData = require('./for-component/component-data.js');
 const DirectiveData = require('./for-directive/directive-data.js');
 const InjectableData = require('./for-injectable/injectable-data.js');
 const PipeData = require('./for-pipe/pipe-data.js');
+const ClassData = require('./for-class/class-data.js');
 const jsParser = require('acorn').Parser;
 
 class NgClassWriter {
@@ -34,7 +35,7 @@ class NgClassWriter {
       angularType === 'directive' ? new DirectiveData({ tsPath, klass, imports }) : 
       angularType === 'service' ? new InjectableData({ tsPath, klass, imports }) : 
       angularType === 'pipe' ? new PipeData({ tsPath, klass, imports }) : 
-      {}; /* eslint-enable */
+       new ClassData({ tsPath, klass, imports }); /* eslint-enable */
     const ejsData = testGenerator.getEjsData();
 
     this.testGenerator = testGenerator;
@@ -77,7 +78,7 @@ class NgClassWriter {
     return typescript.match(/^\s*@Component\s*\(/m) ? 'component' :
       typescript.match(/^\s*@Directive\s*\(/m) ? 'directive' :
         typescript.match(/^\s*@Injectable\s*\(/m) ? 'service' :
-          typescript.match(/^\s*@Pipe\s*\(/m) ? 'pipe' : undefined;
+          typescript.match(/^\s*@Pipe\s*\(/m) ? 'pipe' : 'obj';
   }
 
   writeGenerated (generated, toFile) {

@@ -1,9 +1,18 @@
 const jsParser = require('acorn').Parser;
+const path = require('path');
 const indentJs = require('indent.js');
 
 class Util {
   static get DEBUG () { return !!Util.__debug; }
   static set DEBUG (bool) { Util.__debug = bool; }
+
+  static getClassName (tsPath) {
+    return path.basename(tsPath)
+      .replace(/\.[a-z]+$/, '') // remove extension
+      .split(/[^a-z]/i) // each word
+      .map(el => el[0].toUpperCase() + el.slice(1)) // capitalize 1st ch.
+      .join('');
+  }
 
   static indent (str, prefix = '') {
     // const opts = Object.assign({ indent_size: 2 }, moreOpts);

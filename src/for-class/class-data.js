@@ -4,7 +4,7 @@ const ejs = require('ejs');
 
 const Base = require('../ng-test-data.js');
 
-class PipeData {
+class ClassData {
   constructor ({ tsPath, klass, imports }) {
     // this.template;
     this.imports = imports;
@@ -23,12 +23,15 @@ class PipeData {
 
   getEjsData () {
     const result = {};
-    this.template = fs.readFileSync(path.join(__dirname, 'pipe.template.ts.ejs'), 'utf8');
+    this.template = fs.readFileSync(path.join(__dirname, 'class.template.ts.ejs'), 'utf8');
 
     result.className = this.klass.name;
+    result.inputs = this._getInputs(this.klass);
+    result.outputs = this._getOutputs(this.klass);
     result.providers = this._getProviders(this.klass);
     result.functionTests = this._getItBlocks(this.klass);
     result.imports = this._getImports(this.klass);
+    result.parsedImports = this.imports;
 
     return result;
   }
@@ -40,4 +43,4 @@ class PipeData {
 
 }
 
-module.exports = PipeData;
+module.exports = ClassData;
