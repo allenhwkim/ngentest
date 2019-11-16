@@ -100,7 +100,9 @@ class NgFuncWriter {
       node.expressions.forEach(expr => expr && this.setMockData(expr, mockData));
     } else if (node.type === 'VariableDeclaration') {
       Util.DEBUG && console.log('    *** EXPRESSION VariableDeclaration ***', this.getCode(node));
-      node.declarations.forEach(decl => decl.init && this.setMockData(decl.init, mockData));
+      node.declarations.forEach(decl => {
+        decl.init && this.setMockData(decl.init, mockData);
+      });
     } else if (node.type === 'ReturnStatement') {
       Util.DEBUG && console.log('    *** EXPRESSION ReturnStatement ***', this.getCode(node));
       node.argument && this.setMockData(node.argument, mockData);
@@ -204,7 +206,7 @@ class NgFuncWriter {
       obj = Util.getObjectFromExpression(nodeToUse, returns);
       const code = this.getCode(codeOrNode);
       [one, two] = code.split('.'); // this.prop
-      Util.DEBUG && console.log('  setPropsOrParams',  {code, type: codeOrNode.type});
+      Util.DEBUG && console.log('  setPropsOrParams',  { code, type: codeOrNode.type });
     }
 
     if (one === 'this' && two && map[`this.${two}`]) {

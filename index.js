@@ -62,7 +62,7 @@ async function run (tsFile) {
     }
 
     console.log(`  === RESULT 'ctorMockData' ===`, ctorMockData);
-    console.log('...................... ejsData.providers   ..........\n', ejsData.providers);
+    console.log('...................... ejsData   ..........\n', ejsData);
     console.log('...................... ctorMockData        ..........\n', ctorMockData);
     // const ctorParams = Object.entries(ctorMockData.params).map( ([key, val]) => ejsData.providers[key].useValue || val );
     // console.log('CHECKI#NG IF CONSTRUCTOR WORKS', new Klass(...ctorParams), 'SUCCESS!!\n');

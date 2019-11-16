@@ -15,7 +15,13 @@ import {<%- imports[key].map(el => `${el}`).join(', ') -%>} from '<%- key -%>';
 
 @Component({
   template: `
-    <DIRECTIVE-SELECTOR <%- inputs.attributes.join(' ') %> <%- outputs.attributes.join(' ') %>></DIRECTIVE-SELECTOR>
+<% if (selector.type === 'element') { -%>
+  <<%- selector.name -%> <%- inputs.attributes.join(' ') -%> <%- outputs.attributes.join(' ') -%>></<%- selector.name %>>
+<% } else if (selector.type === 'attribute') { -%>
+  <div <%- selector.name -%> <%- inputs.attributes.join(' ') -%> <%- outputs.attributes.join(' ') -%>></div>
+<% } else if (selector.type === 'class') { -%>
+  <div class="<%- selector.name -%>" <%- inputs.attributes.join(' ') -%> <%- outputs.attributes.join(' ') -%>></div>
+<% } -%>
   `
 })
 class DirectiveTestComponent {

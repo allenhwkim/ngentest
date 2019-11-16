@@ -87,6 +87,7 @@ class NgClassWriter {
       const backupTime = (new Date()).toISOString().replace(/[^\d]/g, '').slice(0, -9);
       const backupContents = fs.readFileSync(specPath, 'utf8');
       fs.writeFileSync(`${specPath}.${backupTime}`, backupContents, 'utf8'); // write backup
+      generated = generated.replace(/\r\n/g, '\n');
       fs.writeFileSync(specPath, generated);
       console.log('Generated unit test to', specPath);
     };

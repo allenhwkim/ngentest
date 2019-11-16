@@ -21,6 +21,18 @@ class DirectiveData {
     this._getProviderMocks = Base.getProviderMocks.bind(this);
   }
 
+  getSelector (typescript) {
+    const re = /@Directive\s*\(\s*{[^}]+selector:\s*['"](.*)['"]/
+    const str = typescript.match(re)[1];
+    if (str.match(/^\[/)) {
+      return { type: 'attribute', name: str.match(/[^\[\]]+/)[0] };
+    } else if (str.match(/^\./)) {
+      return { type: 'class', name: str.match(/[^\.]+/)[0] };
+    } else if (str.match(/^[a-z]/i)) {
+      return { type: 'element', name: str.match(/[a-z-]+/)[0] };
+    }
+  }
+
   getEjsData () {
     const result = {};
     this.template = fs.readFileSync(path.join(__dirname, 'directive.template.ts.ejs'), 'utf8');
@@ -33,6 +45,7 @@ class DirectiveData {
     result.functionTests = this._getItBlocks(this.klass);
     result.imports = this._getImports(this.klass);
     result.parsedImports = this.imports;
+    result.selector = this.getSelector(this.typescript);
 
     return result;
   }

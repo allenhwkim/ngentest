@@ -310,45 +310,52 @@ class Util {
   static getFuncMockJS (mockData, thisName = 'component') {
     const js = [];
     Object.entries(mockData.props).forEach(([key1, value]) => {
-      const valueFiltered = Object.entries(value).filter( ([k, v]) => k !== 'undefined');
-      valueFiltered.forEach(([key2, value2]) => {
-        js.push(`${thisName}.${key1} = ${thisName}.${key1} || {}`);
-        if (value2.type === 'Observable') {
-          const obsRetVal = Util.objToJS(value2.value).replace(/\{\s+\}/gm, '{}');
-          js.push(`${thisName}.${key1}.${key2} = observableOf(${obsRetVal})`);
-        } else if (typeof value2 === 'function' && key2.match(/^(get|post|put)$/) ) {
-          js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(observableOf('${key2}'));`);
-        } else if (typeof value2 === 'function' && JSON.stringify(value2()) === '{}') {
-          js.push(`${thisName}.${key1}.${key2} = jest.fn()`);
-        } else if (['forEach', 'map', 'reduce', 'slice'].includes(key2)) {
-          js.push(`${thisName}.${key1} = ['${key1}']`);
-        } else if (['length'].includes(key2)) {
-          // do nothing
-        } else if (typeof value2 === 'function') {
-          const fnValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
-          js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(${fnValue2})`);
-        } else if (Array.isArray(value2)) {
-          // const fnValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
-          js.push(`${thisName}.${key1}.${key2} = ['gentest']`);
-        } else {
-          const objVal21stKey = Object.keys(value2)[0];
-          if (['map', 'forEach', 'reduce', 'slice'].includes(objVal21stKey)) {
-            js.push(`${thisName}.${key1}.${key2} = ['${key2}']`);
-          } else if ([
-            'substr', 'replace', 'split',
-            'toLowerCase', 'toUpperCase', 'match'
-          ].includes(objVal21stKey)) {
-            js.push(`${thisName}.${key1}.${key2} = '${key2}'`);
+
+      if (typeof value === 'function') {
+        js.push(`${thisName}.${key1} = jest.fn()`);
+      } else {
+        const valueFiltered = Object.entries(value).filter( ([k, v]) => k !== 'undefined');
+        valueFiltered.forEach(([key2, value2]) => {
+          js.push(`${thisName}.${key1} = ${thisName}.${key1} || {}`);
+          if (value2.type === 'Observable') {
+            const obsRetVal = Util.objToJS(value2.value).replace(/\{\s+\}/gm, '{}');
+            js.push(`${thisName}.${key1}.${key2} = observableOf(${obsRetVal})`);
+          } else if (typeof value2 === 'function' && key2.match(/^(get|post|put)$/) ) {
+            js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(observableOf('${key2}'));`);
+          } else if (typeof value2 === 'function' && JSON.stringify(value2()) === '{}') {
+            js.push(`${thisName}.${key1}.${key2} = jest.fn()`);
+          } else if (['forEach', 'map', 'reduce', 'slice'].includes(key2)) {
+            js.push(`${thisName}.${key1} = ['${key1}']`);
+          } else if (['length'].includes(key2)) {
+            // do nothing
+          } else if (typeof value2 === 'function') {
+            const fnValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
+            js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(${fnValue2})`);
+          } else if (Array.isArray(value2)) {
+            // const fnValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
+            js.push(`${thisName}.${key1}.${key2} = ['gentest']`);
           } else {
-            const objValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
-            if (objValue2 === '{}') {
+            const objVal21stKey = Object.keys(value2)[0];
+            if (['map', 'forEach', 'reduce', 'slice'].includes(objVal21stKey)) {
+              js.push(`${thisName}.${key1}.${key2} = ['${key2}']`);
+            } else if ([
+              'substr', 'replace', 'split',
+              'toLowerCase', 'toUpperCase', 'match'
+            ].includes(objVal21stKey)) {
               js.push(`${thisName}.${key1}.${key2} = '${key2}'`);
             } else {
-              js.push(`${thisName}.${key1}.${key2} = ${objValue2}`);
+              const objValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
+              if (objValue2 === '{}') {
+                js.push(`${thisName}.${key1}.${key2} = '${key2}'`);
+              } else {
+                js.push(`${thisName}.${key1}.${key2} = ${objValue2}`);
+              }
             }
           }
-        }
-      });
+        });
+
+      }
+
     });
     Object.entries(mockData.globals).forEach(([key1, value]) => { // window, document
       Object.entries(value).forEach(([key2, value2]) => { // location
