@@ -59,7 +59,7 @@ function getTestGenerator (tsPath) {
 async function run (tsFile) {
   try {
     const testWriter = getTestGenerator(tsFile);
-    const { klass, typescript, ejsData } = await testWriter.getData(); // { klass, imports, parser, typescript, ejsData }
+    const { klass, typescript, ejsData } = await testWriter.getData();
 
     const result = ts.transpileModule(typescript, {
       compilerOptions: {

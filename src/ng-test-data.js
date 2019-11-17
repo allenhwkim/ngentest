@@ -1,8 +1,48 @@
 const path = require('path');
 const ejs = require('ejs');
 const fs = require('fs');
+const { TypescriptParser } = require('typescript-parser');
 
 const Util = require('./util.js');
+
+async function getKlass () {
+  const parser = new TypescriptParser();
+  const klassName = Util.getClassName(this.tsPath);
+  // const srcFile = createSourceFile('inline.tsx', this.typescript, ScriptTarget.ES2015, true, ScriptKind.TS);
+  // const parsed = parser['parseTypescript'](srcFile, '/');
+  const parsed = await parser.parseSource(this.typescript);
+
+  const klass =
+    parsed.declarations.find(decl => decl.name === klassName) ||
+    parsed.declarations.find(decl => decl.constructor.name === 'ClassDeclaration');
+
+  if (!klass) {
+    throw new Error(`Error:NgTypeScriptParser Could not find ` +
+      `${this.klassName || 'a class'} from ${this.tsPath}`);
+  }
+
+  return klass;
+}
+
+async function getKlassImports () {
+  const imports = {};
+
+  const parser = new TypescriptParser();
+  const parsed = await parser.parseSource(this.typescript);
+  // const srcFile = createSourceFile('inline.tsx', this.typescript, ScriptTarget.ES2015, true, ScriptKind.TS);
+  // const parsed = parser['parseTypescript'](srcFile, '/');
+  parsed.imports.forEach(mport => {
+    if (mport.constructor.name === 'NamedImport') {
+      mport.specifiers.forEach(specifier => {
+        imports[specifier.alias || specifier.specifier] = { mport, specifier };
+      });
+    } else if (mport.constructor.name === 'NamespaceImport') {
+      imports[mport.alias || mport.libraryName] = { mport };
+    }
+  });
+
+  return imports;
+}
 
 function getInputs (klass) {
   const inputs = { attributes: [], properties: [] };
@@ -95,6 +135,7 @@ function getProviders (klass) {
     const injectMatches = paramBody.match(/@Inject\(([A-Z0-9_]+)\)/i) || [];
     const injectClassName = injectMatches[1];
     const className = (param.type || '').replace(/<[^>]+>/, '');
+console.log('||||||||||||||||||||||||', {param, className, imports: this.imports})
     const iimport = this.imports[className];
 
     if (injectClassName === 'DOCUMENT') {
@@ -192,12 +233,16 @@ function writeGenerated (generated, toFile) {
 }
 
 const NgTestData = {
-  getInputs,
-  getOutputs,
-  getItBlocks,
-  getImports,
-  getProviders,
-  getProviderMocks,
+  getKlass, // class info.
+  getKlassImports, // imports info.
+
+  getInputs, // input coddes
+  getOutputs, // output codes
+  getItBlocks, // jest it statements code
+  getImports, // import statements code
+  getProviders, // module provider code
+  getProviderMocks, // module provider mock code
+
   getGenerated,
   writeGenerated
 };

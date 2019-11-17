@@ -2,7 +2,6 @@ const path = require('path');
 const fs = require('fs');
 
 const Base = require('../ng-test-data.js');
-const NgTypescriptParser = require('../ng-typescript-parser');
 
 class InjectableData {
   constructor (tsPath) {
@@ -14,7 +13,6 @@ class InjectableData {
     }
 
     this.tsPath = tsPath;
-    this.parser = new NgTypescriptParser(this.tsPath);
     this.typescript = fs.readFileSync(path.resolve(tsPath), 'utf8');
 
     this._getInputs = Base.getInputs.bind(this);
@@ -25,6 +23,8 @@ class InjectableData {
     this.getProviderMocks = Base.getProviderMocks.bind(this);
     this.getGenerated = Base.getGenerated.bind(this);
     this.writeGenerated = Base.writeGenerated.bind(this);
+    this.getKlass = Base.getKlass.bind(this);
+    this.getKlassImports = Base.getKlassImports.bind(this);
   }
 
   getEjsData () {
@@ -41,14 +41,12 @@ class InjectableData {
   }
 
   async getData () {
-    this.klass = await this.parser.getKlass();
-    this.imports = await this.parser.getImports();
+    this.klass = await this.getKlass();
+    this.imports = await this.getKlassImports();
 
     return {
       klass: this.klass,
-      imports: this.imports,
       typescript: this.typescript,
-      parser: this.parser,
       ejsData: this.getEjsData()
     };
   }
