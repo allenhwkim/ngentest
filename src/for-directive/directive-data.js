@@ -1,16 +1,20 @@
 const path = require('path');
 const fs = require('fs');
-const ejs = require('ejs');
 
 const Base = require('../ng-test-data.js');
+const NgTypescriptParser = require('../ng-typescript-parser');
 
 class DirectiveData {
-  constructor ({ tsPath, klass, imports }) {
+  constructor (tsPath) {
     // this.template;
-    this.imports = imports;
-    this.klass = klass;
+    if (tsPath && fs.existsSync(tsPath)) {
+      this.tsPath = tsPath;
+    } else {
+      throw new Error(`Error. invalid typescript file. e.g., Usage $0 ${tsPath} [options]`);
+    }
 
     this.tsPath = tsPath;
+    this.parser = new NgTypescriptParser(this.tsPath);
     this.typescript = fs.readFileSync(path.resolve(tsPath), 'utf8');
 
     this._getInputs = Base.getInputs.bind(this);
@@ -18,7 +22,9 @@ class DirectiveData {
     this._getItBlocks = Base.getItBlocks.bind(this);
     this._getImports = Base.getImports.bind(this);
     this._getProviders = Base.getProviders.bind(this);
-    this._getProviderMocks = Base.getProviderMocks.bind(this);
+    this.getProviderMocks = Base.getProviderMocks.bind(this);
+    this.getGenerated = Base.getGenerated.bind(this);
+    this.writeGenerated = Base.writeGenerated.bind(this);
   }
 
   getSelector (typescript) {
@@ -50,9 +56,17 @@ class DirectiveData {
     return result;
   }
 
-  getGenerated (ejsData) {
-    const generated = ejs.render(this.template, ejsData).replace(/\n\s+$/gm, '\n');
-    return generated;
+  async getData () {
+    this.klass = await this.parser.getKlass();
+    this.imports = await this.parser.getImports();
+
+    return {
+      klass: this.klass,
+      imports: this.imports,
+      typescript: this.typescript,
+      parser: this.parser,
+      ejsData: this.getEjsData()
+    };
   }
 
 }

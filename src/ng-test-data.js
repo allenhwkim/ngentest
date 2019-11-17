@@ -1,4 +1,6 @@
 const path = require('path');
+const ejs = require('ejs');
+const fs = require('fs');
 
 const Util = require('./util.js');
 
@@ -90,7 +92,7 @@ function getProviders (klass) {
 
   constructorParams.forEach( (param, index) => { // name, type, start, end
     const paramBody = this.typescript.substring(param.start, param.end);
-    const injectMatches = paramBody.match(/@Inject\(([A-Z0-9_]+)\)/) || [];
+    const injectMatches = paramBody.match(/@Inject\(([A-Z0-9_]+)\)/i) || [];
     const injectClassName = injectMatches[1];
     const className = (param.type || '').replace(/<[^>]+>/, '');
     const iimport = this.imports[className];
@@ -101,6 +103,8 @@ function getProviders (klass) {
       providers[param.name] = `{ provide: 'PLATFORM_ID', useValue: 'browser' }`;
     } else if (injectClassName === 'LOCALE_ID') {
       providers[param.name] = `{ provide: 'LOCALE_ID', useValue: 'en' }`;
+    } else if (injectClassName) {
+      providers[param.name] = `{ provide: ${injectClassName}, useValue: ${injectClassName} }`;
     } else if (param.type.match(/^(ElementRef|Router|HttpClient|TranslateService)$/)) {
       providers[param.name] = `{ provide: ${param.type}, useClass: Mock${param.type} }`;
     } else if (iimport && iimport.mport.libraryName.match(/^\./)) { // user-defined classes
@@ -154,13 +158,48 @@ function getProviderMocks (klass, ctorParams) {
   return mocks;
 }
 
+function getGenerated (ejsData) {
+  const generated = ejs.render(this.template, ejsData).replace(/\n\s+$/gm, '\n');
+  return generated;
+}
+
+function writeGenerated (generated, toFile) {
+  const specPath = path.resolve(this.tsPath.replace(/\.ts$/, '.spec.ts'));
+  const writeToFile = function () {
+    const backupTime = (new Date()).toISOString().replace(/[^\d]/g, '').slice(0, -9);
+    const backupContents = fs.readFileSync(specPath, 'utf8');
+    fs.writeFileSync(`${specPath}.${backupTime}`, backupContents, 'utf8'); // write backup
+    generated = generated.replace(/\r\n/g, '\n');
+    fs.writeFileSync(specPath, generated);
+    console.log('Generated unit test to', specPath);
+  };
+
+  if (toFile && fs.existsSync(specPath)) {
+    const readline = require('readline');
+    const rl = readline.createInterface(process.stdin, process.stdout);
+    console.warn('\x1b[33m%s\x1b[0m',
+      `WARNING!!, Spec file, ${specPath} already exists. Writing to console`);
+    rl.question('Continue? ', answer => {
+      toFile = !!answer.match(/y/i);
+      toFile ? writeToFile() : process.stdout.write(generated);
+      rl.close();
+    });
+  } else if (toFile) {
+    writeToFile();
+  } else {
+    process.stdout.write(generated);
+  }
+}
+
 const NgTestData = {
   getInputs,
   getOutputs,
   getItBlocks,
   getImports,
   getProviders,
-  getProviderMocks
+  getProviderMocks,
+  getGenerated,
+  writeGenerated
 };
 
 module.exports = NgTestData;

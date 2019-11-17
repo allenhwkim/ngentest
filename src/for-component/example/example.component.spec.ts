@@ -1,11 +1,11 @@
 // tslint:disable
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Injectable, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Pipe, PipeTransform, Injectable, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { By } from '@angular/platform-browser';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
-import { Component, PLATFORM_ID, Object } from '@angular/core';
+import { Component, PLATFORM_ID } from '@angular/core';
 import { ExampleComponent } from './example.component';
 import { AuthGuardService } from './auth-guard.service';
 import { CookieService } from './cookie.service';
@@ -20,7 +20,7 @@ class MockAuthGuardService {
       bar: {
         baz : function() {
           return {
-            isLoggedIn: {}
+            isLoggedIn: '[object Object]'
           };
         }
       }
@@ -47,7 +47,7 @@ class MockCookieService {
 @Injectable()
 class MockAppLoadService {
   i18n = {
-    customElement: {}
+    customElement: '[object Object]'
   };
 }
 
@@ -57,7 +57,7 @@ class MockRouter {
     return {
       foo : function() {
         return {
-          bar: {}
+          bar: '[object Object]'
         };
       }
     };
@@ -67,19 +67,25 @@ class MockRouter {
 
 @Injectable()
 class MockCommonUtilsService {}
+
+@Pipe({name: 'translate'})
+class TranslatePipe implements PipeTransform { 
+  transform(value) { return value; } 
+}
+
 describe('ExampleComponent', () => {
   let fixture;
   let component;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ ExampleComponent ],
+      declarations: [ ExampleComponent, TranslatePipe ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
       providers: [
         { provide: AuthGuardService, useClass: MockAuthGuardService },
         { provide: CookieService, useClass: MockCookieService },
         { provide: AppLoadService, useClass: MockAppLoadService },
-        { provide: PLATFORM_ID, useValue: 'browser' },
+        { provide: 'PLATFORM_ID', useValue: 'browser' },
         { provide: Router, useClass: MockRouter },
         { provide: CommonUtilsService, useClass: MockCommonUtilsService }      ]
     }).compileComponents();
@@ -87,15 +93,22 @@ describe('ExampleComponent', () => {
     component = fixture.debugElement.componentInstance;
   });
 
-  it('should create a component', async () => {
+  it('should run #constructor()', async () => {
     expect(component).toBeTruthy();
   });
 
   it('should run #ngOnInit()', async () => {
     component.router = component.router || {};
-    component.router.events = observableOf({
-      urlAfterRedirects: "gentest"
-    });
+    component.router.events = {
+      subscribe : function() {
+        return {
+          type: "Observable",
+          value: {
+            urlAfterRedirects : 'urlAfterRedirects'
+          }
+        };
+      }
+    };
     component.menuEl = component.menuEl || {};
     component.menuEl.nativeElement = {
       highlightMenu : function() {
@@ -103,46 +116,45 @@ describe('ExampleComponent', () => {
       }
     };
     component.ngOnInit();
+
   });
 
   it('should run #logout()', async () => {
     component.authGuardSvc = component.authGuardSvc || {};
-    component.authGuardSvc.logoff = jest.fn().mockReturnValue(function() {
-      return {};
-    });
+    component.authGuardSvc.logoff = jest.fn();
     component.logout();
+    expect(component.authGuardSvc.logoff).toHaveBeenCalled();
   });
 
   it('should run #changeLanguage()', async () => {
     component.cookie = component.cookie || {};
-    component.cookie.get = jest.fn().mockReturnValue(function() {
-      return {};
-    });
+    component.cookie.get = jest.fn().mockReturnValue(observableOf('get'));;
     window.location.reload = jest.fn();
     component.changeLanguage({});
+    expect(component.cookie.get).toHaveBeenCalled();;
+    expect(window.location.reload).toHaveBeenCalled();
   });
 
   it('should run #onDeactivate()', async () => {
     window.scrollTo = jest.fn();
     component.onDeactivate();
+    expect(window.scrollTo).toHaveBeenCalled();
   });
 
   it('should run #changeRoute()', async () => {
     component.router = component.router || {};
-    component.router.navigate = jest.fn().mockReturnValue(function() {
-      return {};
-    });
+    component.router.navigate = jest.fn();
     component.changeRoute({
-      detail: "gentest"
+      detail : 'detail'
     });
+    expect(component.router.navigate).toHaveBeenCalled();
   });
 
   it('should run #reportIssue()', async () => {
     component.commonUtilsSvc = component.commonUtilsSvc || {};
-    component.commonUtilsSvc.reportIssue = jest.fn().mockReturnValue(function() {
-      return {};
-    });
+    component.commonUtilsSvc.reportIssue = jest.fn();
     component.reportIssue({});
+    expect(component.commonUtilsSvc.reportIssue).toHaveBeenCalled();
   });
 
 });

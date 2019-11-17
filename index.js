@@ -6,7 +6,7 @@ const yargs = require('yargs');
 const ts = require('typescript');
 const requireFromString = require('require-from-string');
 
-const NgClassWriter = require('./src/ng-class-writer.js');
+// const NgClassWriter = require('./src/ng-class-writer.js');
 const NgFuncWriter = require('./src/ng-func-writer.js');
 const Util = require('./src/util.js');
 
@@ -39,9 +39,27 @@ function getFuncMockData (Klass, funcName, props) {
   return funcMockData;
 }
 
+const ComponentData = require('./src/for-component/component-data.js');
+const DirectiveData = require('./src/for-directive/directive-data.js');
+const InjectableData = require('./src/for-injectable/injectable-data.js');
+const PipeData = require('./src/for-pipe/pipe-data.js');
+const ClassData = require('./src/for-class/class-data.js');
+
+function getTestGenerator (tsPath) {
+  const typescript = fs.readFileSync(path.resolve(tsPath), 'utf8');
+  const angularType = Util.getAngularType(typescript).toLowerCase();
+  const testGenerator = /* eslint-disable */
+    angularType === 'component' ? new ComponentData(tsPath) :
+    angularType === 'directive' ? new DirectiveData(tsPath) :
+    angularType === 'service' ? new InjectableData(tsPath) :
+    angularType === 'pipe' ? new PipeData(tsPath) :
+    new ClassData(tsPath); /* eslint-enable */
+  return testGenerator;
+}
+
 async function run (tsFile) {
   try {
-    const testWriter = new NgClassWriter(tsFile);
+    const testWriter = getTestGenerator(tsFile);
     const { klass, typescript, ejsData } = await testWriter.getData(); // { klass, imports, parser, typescript, ejsData }
 
     const result = ts.transpileModule(typescript, {
@@ -67,7 +85,7 @@ async function run (tsFile) {
     // const ctorParams = Object.entries(ctorMockData.params).map( ([key, val]) => ejsData.providers[key].useValue || val );
     // console.log('CHECKI#NG IF CONSTRUCTOR WORKS', new Klass(...ctorParams), 'SUCCESS!!\n');
 
-    const angularType = testWriter.getAngularType().toLowerCase();
+    const angularType = Util.getAngularType(typescript).toLowerCase();
     // TODO:
     // . move method code into class-writer to get functionTests
     // . create a function to get one functionTest code

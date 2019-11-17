@@ -6,6 +6,13 @@ class Util {
   static get DEBUG () { return !!Util.__debug; }
   static set DEBUG (bool) { Util.__debug = bool; }
 
+  static getAngularType (typescript) {
+    return typescript.match(/^\s*@Component\s*\(/m) ? 'component' : /* eslint-disable */
+      typescript.match(/^\s*@Directive\s*\(/m) ? 'directive' :
+      typescript.match(/^\s*@Injectable\s*\(/m) ? 'service' :
+      typescript.match(/^\s*@Pipe\s*\(/m) ? 'pipe' : 'obj'; /* eslint-enable */
+  }
+
   static getClassName (tsPath) {
     return path.basename(tsPath)
       .replace(/\.[a-z]+$/, '') // remove extension
