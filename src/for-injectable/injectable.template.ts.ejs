@@ -1,4 +1,6 @@
 import { async } from '@angular/core/testing';
+import { Injectable } from '@angular/core';
+
 <% for(var key in imports) { -%>
 import {<%- imports[key].map(el => `${el}`).join(', ') -%>} from '<%- key -%>';
 <% } -%>
