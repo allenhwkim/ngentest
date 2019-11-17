@@ -6,7 +6,6 @@ const yargs = require('yargs');
 const ts = require('typescript');
 const requireFromString = require('require-from-string');
 
-// const NgClassWriter = require('./src/ng-class-writer.js');
 const NgFuncWriter = require('./src/ng-func-writer.js');
 const Util = require('./src/util.js');
 
