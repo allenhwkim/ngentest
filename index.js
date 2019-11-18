@@ -83,6 +83,7 @@ async function run (tsFile) {
     for (var key in ejsData.providerMocks) {
       ejsData.providerMocks[key] = Util.indent(ejsData.providerMocks[key]).replace(/\{\s+\}/gm, '{}');
     }
+    ejsData.functionTests = {};
 
     Util.DEBUG && console.log(`  === RESULT 'ctorMockData' ===`, ctorMockData);
     Util.DEBUG && console.log('...................... ejsData   ..........\n', ejsData);

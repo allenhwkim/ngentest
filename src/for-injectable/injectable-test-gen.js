@@ -17,7 +17,7 @@ class InjectableTestGen {
 
     this._getInputs = Base.getInputs.bind(this);
     this._getOutputs = Base.getOutputs.bind(this);
-    this._getItBlocks = Base.getItBlocks.bind(this);
+    // this._getItBlocks = Base.getItBlocks.bind(this);
     this._getImports = Base.getImports.bind(this);
     this._getProviders = Base.getProviders.bind(this);
     this.getProviderMocks = Base.getProviderMocks.bind(this);
@@ -33,7 +33,7 @@ class InjectableTestGen {
 
     result.className = this.klass.name;
     result.providers = this._getProviders(this.klass);
-    result.functionTests = this._getItBlocks(this.klass);
+    // result.functionTests = this._getItBlocks(this.klass);
     result.imports = this._getImports(this.klass);
     result.parsedImports = this.imports;
 

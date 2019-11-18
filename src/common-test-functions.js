@@ -78,19 +78,19 @@ function getOutputs (klass) {
 }
 
 // Iterate methods, getnerate test with the function with parameter;
-function getItBlocks (klass) {
-  const blocks = {};
-  (klass.methods || []).forEach(method => {
-    const testName = `should run #${method.name}()`;
-    // const parameters = (method.parameters || []).map(param => param.name).join(', ');
+// function getItBlocks (klass) {
+//   const blocks = {};
+//   (klass.methods || []).forEach(method => {
+//     const testName = `should run #${method.name}()`;
+//     // const parameters = (method.parameters || []).map(param => param.name).join(', ');
 
-    blocks[method.name] = Util.indent(`
-      it('${testName}', async () => {
-      });`, '  ');
-  });
+//     blocks[method.name] = Util.indent(`
+//       it('${testName}', async () => {
+//       });`, '  ');
+//   });
 
-  return blocks;
-}
+//   return blocks;
+// }
 
 function getImports (klass) {
   const imports = {};
@@ -256,7 +256,7 @@ const CommonTestFunctions = {
 
   getInputs, // input coddes
   getOutputs, // output codes
-  getItBlocks, // jest it statements code
+  // getItBlocks, // jest it statements code
   getImports, // import statements code
   getProviders, // module provider code
   getProviderMocks, // module provider mock code
