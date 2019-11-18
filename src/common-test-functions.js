@@ -99,7 +99,7 @@ function getImports (klass) {
   imports['@angular/core'] = ['Component'];
   imports[`./${path.basename(this.tsPath)}`.replace(/.ts$/, '')] = [klass.name];
 
-  constructorParams.forEach( (param, index) => {
+  constructorParams.forEach((param, index) => {
     const paramBody = this.typescript.substring(param.start, param.end);
 
     const injectMatches = paramBody.match(/@Inject\(([A-Z0-9_]+)\)/) || [];
@@ -130,12 +130,11 @@ function getProviders (klass) {
   const constructorParams = (klass.ctor && klass.ctor.parameters) || [];
   const providers = {};
 
-  constructorParams.forEach( (param, index) => { // name, type, start, end
+  constructorParams.forEach((param, index) => { // name, type, start, end
     const paramBody = this.typescript.substring(param.start, param.end);
     const injectMatches = paramBody.match(/@Inject\(([A-Z0-9_]+)\)/i) || [];
     const injectClassName = injectMatches[1];
     const className = (param.type || '').replace(/<[^>]+>/, '');
-console.log('||||||||||||||||||||||||', {param, className, imports: this.imports})
     const iimport = this.imports[className];
 
     if (injectClassName === 'DOCUMENT') {
@@ -162,12 +161,12 @@ console.log('||||||||||||||||||||||||', {param, className, imports: this.imports
 /* ctorParams : { key: <value in JS object> */
 function getProviderMocks (klass, ctorParams) {
   const mocks = {};
-  const providers = this._getProviders(klass);
+  // const providers = this._getProviders(klass);
   /* { var: { provide: 'Class', useClass: 'MockClass'}, ...} */
 
   function getCtorVarsJS (varName) {
     const vars = ctorParams[varName];
-    return Object.entries(vars).map( ([key, value]) => {
+    return Object.entries(vars).map(([key, value]) => {
       // console.log(`>>>>>>>>>>>>>>>> value`, value);
       return `${key} = ${Util.objToJS(value)};`;
     });
@@ -204,30 +203,49 @@ function getGenerated (ejsData) {
   return generated;
 }
 
-function writeGenerated (generated, toFile) {
+function writeGenerated (generated, toFile, force) {
   const specPath = path.resolve(this.tsPath.replace(/\.ts$/, '.spec.ts'));
+  generated = generated.replace(/\r\n/g, '\n');
+
   const writeToFile = function () {
-    const backupTime = (new Date()).toISOString().replace(/[^\d]/g, '').slice(0, -9);
-    const backupContents = fs.readFileSync(specPath, 'utf8');
-    fs.writeFileSync(`${specPath}.${backupTime}`, backupContents, 'utf8'); // write backup
-    generated = generated.replace(/\r\n/g, '\n');
     fs.writeFileSync(specPath, generated);
     console.log('Generated unit test to', specPath);
   };
 
-  if (toFile && fs.existsSync(specPath)) {
+  const backupExistingFile = function () {
+    if (fs.existsSync(specPath)) {
+      const backupTime = (new Date()).toISOString().replace(/[^\d]/g, '').slice(0, -5);
+      const backupContents = fs.readFileSync(specPath, 'utf8');
+      if (backupContents !== generated) {
+        fs.writeFileSync(`${specPath}.${backupTime}`, backupContents, 'utf8'); // write backup
+        console.log('Backup the exisiting file to', `${specPath}.${backupTime}`);
+      }
+    }
+  };
+
+  const specFileExists = fs.existsSync(specPath);
+
+  if (toFile && specFileExists && force) {
+    backupExistingFile();
+    writeToFile();
+  } else if (toFile && specFileExists && !force) {
     const readline = require('readline');
     const rl = readline.createInterface(process.stdin, process.stdout);
     console.warn('\x1b[33m%s\x1b[0m',
-      `WARNING!!, Spec file, ${specPath} already exists. Writing to console`);
+      `WARNING!!, Spec file, ${specPath} already exists. Overwrite it?`);
     rl.question('Continue? ', answer => {
-      toFile = !!answer.match(/y/i);
-      toFile ? writeToFile() : process.stdout.write(generated);
+      if (answer.match(/y/i)) {
+        backupExistingFile();
+        writeToFile();
+      } else {
+        process.stdout.write(generated);
+      }
       rl.close();
     });
-  } else if (toFile) {
+  } else if (toFile && !specFileExists) {
+    backupExistingFile();
     writeToFile();
-  } else {
+  } else if (!toFile) {
     process.stdout.write(generated);
   }
 }

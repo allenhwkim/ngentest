@@ -17,6 +17,7 @@ const ClassTestGen = require('./src/for-class/class-test-gen.js');
 const argv = yargs.usage('Usage: $0 <tsFile> [options]')
   .options({
     's': { alias: 'spec', describe: 'write the spec file along with source file', type: 'boolean' },
+    'f': { alias: 'force', describe: 'Do not ask question when overwrite spec file', type: 'boolean' },
     'v': { alias: 'verbose', describe: 'log verbose debug messages', type: 'boolean' }
   })
   .example('$0 my.component.ts', 'generate Angular unit test for my.component.ts')
@@ -118,7 +119,7 @@ async function run (tsFile) {
     });
 
     const generated = testGenerator.getGenerated(ejsData);
-    testGenerator.writeGenerated(generated, argv.spec);
+    testGenerator.writeGenerated(generated, argv.spec, argv.force);
   } catch (e) {
     console.error(tsFile);
     console.error(e);

@@ -5,17 +5,15 @@ const assert = require('assert');
 const fs = require('fs');
 
 const srcFiles = [
-  'my.component.ts',
-  'my.pipe.ts',
-  'my.service.ts',
-  'my.directive.ts',
-  'my.module.ts',
-  'my.route.ts'
+  `${path.join('src', 'for-class', 'example', 'example.klass.ts')}`,
+  `${path.join('src', 'for-component', 'example', 'example.component.ts')}`,
+  `${path.join('src', 'for-directive', 'example', 'example.directive.ts')}`,
+  `${path.join('src', 'for-injectable', 'example', 'example.service.ts')}`,
+  `${path.join('src', 'for-pipe', 'example', 'example.pipe.ts')}`
 ];
 
-srcFiles.forEach(file => {
-  const filePath = path.join(__dirname, 'src', 'examples', file);
+srcFiles.forEach(filePath => {
   const output = '' + execSync(`./index.js ${filePath}`);
   const expected = '' + fs.readFileSync(filePath.replace('.ts', '.spec.ts'));
-  assert.equal(output.trim(), expected.trim());
+  assert.strictEqual(output.trim(), expected.trim());
 });
