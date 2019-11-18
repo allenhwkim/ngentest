@@ -36,12 +36,12 @@
     "ejs": "^2.6.1",
     "typescript": "^3.7.2",
     "typescript-parser": "^2.6.1",
-    "yargs": "^11.0.0"
-  },
-  "devDependencies": {
+    "yargs": "^11.0.0",
     "acorn": "^7.1.0",
     "indent.js": "^0.3.4",
-    "js-beautify": "^1.10.2",
+    "js-beautify": "^1.10.2"
+  },
+  "devDependencies": {
     "rxjs": "^6.5.3",
     "ts-node": "^8.4.1"
   }
