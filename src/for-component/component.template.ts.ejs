@@ -1,0 +1,46 @@
+// tslint:disable
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { Pipe, PipeTransform, Injectable, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { By } from '@angular/platform-browser';
+import { Observable, of as observableOf, throwError } from 'rxjs';
+
+<% for(var importLib in imports) { -%>
+import { <%- imports[importLib].map(el => `${el}`).join(', ') -%> } from '<%- importLib -%>';
+<% } -%>
+<%-                        -%>
+<% for(var klassName in providerMocks) { %>
+<%- providerMocks[klassName] -%>
+<% } -%>
+
+
+@Pipe({name: 'translate'})
+class TranslatePipe implements PipeTransform { 
+  transform(value) { return value; } 
+}
+
+describe('<%= className %>', () => {
+  let fixture;
+  let component;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [ <%= className %>, TranslatePipe ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
+      providers: [
+        <%- Object.entries(providers).map( ([_, value]) => value ).join(',\n        ') -%>
+      ]
+    }).compileComponents();
+    fixture = TestBed.createComponent(<%= className %>);
+    component = fixture.debugElement.componentInstance;
+  });
+
+  it('should run #constructor()', async () => {
+    expect(component).toBeTruthy();
+  });
+  
+  <% for(var key in functionTests) { %>
+  <%- functionTests[key] -%>
+  <% } %>
+  
+});

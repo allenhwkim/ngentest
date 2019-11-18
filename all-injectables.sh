@@ -1,0 +1,20 @@
+#!/bin/bash
+set -e
+./index.js ../src/actions/action-offer.service.ts
+./index.js ../src/billing/billing-header/billing-header.service.ts
+./index.js ../src/common/services/common.data.service.ts
+./index.js ../src/common/services/cookie.service.ts
+./index.js ../src/common/services/dialog.service.ts
+./index.js ../src/oneview-common/dialog/dialog.service.ts
+./index.js ../src/oneview-common/encryption/encryption.service.ts
+./index.js ../src/oneview-common/oneview-calendar/oneview-calendar.service.ts
+./index.js ../src/oneview-common/oneview-permitted/oneview-permission.service.ts
+./index.js ../src/overview/actions-offers/action-offers-data.service.ts
+./index.js ../src/overview/bill/bill-data.service.ts
+./index.js ../src/overview/interaction-list/interactions-data.service.ts
+./index.js ../src/overview/services/services-data.service.ts
+./index.js ../src/overview/share-everything/share-everything-data.service.ts
+./index.js ../src/overview/user-info-message/user-info-message.service.ts
+./index.js ../src/payment/change-payment-method/change-payment-method.service.ts
+./index.js ../src/profile/profile.service.ts
+./index.js ../src/translate/translate.service.ts
