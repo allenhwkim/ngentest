@@ -50,7 +50,7 @@ class DirectiveTestGen {
     // result.windowMocks = this._getWindowMocks(this.klass);
     // result.functionTests = this._getItBlocks(this.klass);
     result.imports = this._getImports(this.klass);
-    result.parsedImports = this.imports;
+    // result.parsedImports = this.imports;
     result.selector = this.getSelector(this.typescript);
 
     return result;

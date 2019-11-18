@@ -1,210 +1,102 @@
 # ngentest
 Angular5+ Unit Test Generator For Components, Directive, Services, and Pipes
 
-## How It Works
-1. Parse component/directive/service, then prepare the following data.
-    - className
-    - imports
-    - input/output attributes and properties
-    - mocks
-    - providers for TestBed
-    - list of functions to test
-2. Generate unit test from prepared data with .ejs template
-
 ## Install & Run
 ```
 $ npm install ngentest -g # to run this command anywhere
+$ ngentest -h
+Usage: index.js <tsFile> [options]
+
+Options:
+  --version      Show version number                                   [boolean]
+  -s, --spec     write the spec file along with source file            [boolean]
+  -f, --force    Do not ask question when overwrite spec file          [boolean]
+  -v, --verbose  log verbose debug messages                            [boolean]
+  -h             Show help                                             [boolean]
 $ ngentest my.component.ts # node_modules/.bin/gentest
 $ ngentest my.directive.ts -s # write unit test to my.directive.spec.ts
 $ ngentest my.pipe.ts > my.pipe.test.ts 
 $ ngentest my.service.ts
 ```
 
-## Examples
-### component unit test  generated
-[my.component.ts](./src/examples/my.component.ts)
+## How It works 
+
+1. Get data for test generation from typescript.
+
+    * inputs
+    * outputs
+    * providers
+    * imports
+    * selector (for directive only)
+    * constructor params
+    * provider mocks
+
+1. For each function in a class, generate function test and save it as function tests by
+
+    * generating function mock codes
+    * generating function call codes
+    * generating test assert codes
+
+1. Run EJS template with data to generate tests
+
+## Data Used For Test Generation
+
+### inputs
+Input Codes(related @Input)
+
+  * attributes. html-related codes. e.g., `[my-attr]="myAttr"` 
+  * properties, JS-related codes. e.g.,   `myAttr: DirectiveTestComponent`
+
+### outputs
+Output Codes(related @Output)
+
+  * attributes. html-related codes. e.g., `(onButtonPressed)="callMyFunc($event)"`
+  * properties. JS-related codes. e.g., `callMyFunc(event): void { /* */ }`
+
+### imports
+Import Codes(related import statement. grouped by library name)  e.g.,
 ```
-$ gentest my.component.ts > my.component.spec.ts
-```
-my.component.spec.ts
-```
-// tslint:disble
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import {MyComponent} from './src/examples/my.component';
-import {Directive, ElementRef, Renderer2, Inject, PLATFORM_ID} from '@angular/core';
-
-@Injectable()
-class MockElementRef  {
-  // constructor() { super(undefined); }
-  nativeElement = {}
-}
-(<any>window).IntersectionObserver = jest.fn();
-
-describe('MyComponent', () => {
-  let fixture;
-  let component;
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      declarations: [
-        MyComponent
-      ],
-      providers: [
-        {provide: ElementRef, useClass: MockElementRef},
-        Renderer2,
-        {provide: PLATFORM_ID,useValue: 'browser'},
-      ]
-    }).compileComponents();
-    fixture = TestBed.createComponent(MyComponent);
-    component = fixture.debugElement.componentInstance;
-  });
-
-  it('should create a component', async () => {
-    expect(component).toBeTruthy();
-  });
-
-
-  it('should run #ngOnInit()', async () => {
-    // ngOnInit();
-  });
-
-  it('should run #handleIntersect()', async () => {
-    // handleIntersect(entries, observer);
-  });
-
-  it('should run #defaultInviewHandler()', async () => {
-    // const result = defaultInviewHandler(entry);
-  });
-
-});
-```
-
-### directive unit test  generated
-[my.directive.ts](./src/examples/my.directive.ts)
-```bash
-$ gentest my.directive.ts > my.directrive.spec.ts
-```
-my.directive.spec.ts
-```
-// tslint:disable
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import {By} from '@angular/platform-browser';
-
-import {MyDirective} from './src/examples/my.directive';
-import {Directive, ElementRef, Renderer2, Inject, PLATFORM_ID} from '@angular/core';
-
-@Injectable()
-class MockElementRef {
-  // constructor() { super(undefined); }
-  nativeElement = {}
-}
-(<any>window).IntersectionObserver = jest.fn();
-
-@Component({
-  template: `
-    <div [options]="options" (nguiInview)="onNguiInview($event)" (nguiOutview)="onNguiOutview($event)"></div>
-  `
-})
-class DirectiveTestComponent {
-  options: any;
-
-  onNguiInview(event): void { /* */ }
-  onNguiOutview(event): void { /* */ }
-}
-
-describe('MyDirective', () => {
-  let fixture: ComponentFixture<TestComponent>;
-  let component: DirectiveTestComponent;
-  let directiveEl;
-  let directive;
-
-  beforeEach(async () => {
-    TestBed.configureTestingModule({
-      declarations: [MyDirective, DirectiveTestComponent],
-      providers: [
-        {provide: ElementRef, useClass: MockElementRef},
-        Renderer2,
-        {provide: PLATFORM_ID,useValue: 'browser'},
-      ]
-    }).compileComponents();
-    fixture = TestBed.createComponent(TestComponent);
-    component = fixture.componentInstance;
-    directiveEl = fixture.debugElement.query(By.directive(MyDirective));
-    directive = directiveEl.injector.get(MyDirective);
-  });
-
-  it("should run a directive", async () => {
-    expect(component).toBeTruthy();
-    expect(directive).toBeTruthy();
-  });
-
-
-  it('should run #ngOnInit()', async () => {
-    // ngOnInit();
-  });
-
-  it('should run #ngOnDestroy()', async () => {
-    // ngOnDestroy();
-  });
-
-  it('should run #handleIntersect()', async () => {
-    // handleIntersect(entries, observer);
-  });
-
-});
-```
-
-### service unit test generated
-[my.service.ts](./src/examples/my.service.ts)
-```bash
-$ gentest my.service.ts > my.service.spec.ts
-```
-my.directive.spec.ts
-```
-import {DynamicComponentService} from './src/examples/my.service';
-
-describe('DynamicComponentService', () => {
-  let service;
-
-
-  const factoryResolver = {
-    // mock properties here
+  {
+    '@angular/core': ['Component', 'Directive', 'Input', 'Output', 'Foo as myFoo']
   }
-
-  beforeEach(() => {
-    service = new DynamicComponentService(factoryResolver);
-  });
-
-
-  it('should run #createComponent()', async () => {
-    // const result = createComponent(component, into);
-  });
-
-  it('should run #insertComponent()', async () => {
-    // const result = insertComponent(componentRef);
-  });
-
-});
 ```
 
-### pipe unit test generated
-[my.pipe.ts](./src/examples/my.pipe.ts)
-```bash
-$ gentest my.pipe.ts > my.pipe.spec.ts
+### providers
+Module Provider Statement Codes. Keys are constructo variable names . e.g.,
 ```
-my.pipe.spec.ts
+  {
+    'document' : `{ provide: DOCUMENT, useClass: MockDocument }`,
+    'platform' : `{ provide: 'PLATFORM_ID', useValue: 'browser' }`,
+    'language' : `{ provide: 'LOCALE_ID', useValue: 'en' }`,
+    'myService' : `{ provide: MyService, useClass: MockMyService }`
+  }
 ```
-import {NguiHighlightPipe} from './src/examples/my.pipe';
 
-describe('NguiHighlightPipe', () => {
+### provider mocks
+Mock code for constructor with its properties/functions as an array. e.g.,
+```
+  {
+    ElementRef: ['nativeElement = {};'],
+    Router: ['navigate = jest.fn();'],
+    Document: ['querySelector = jest.fn();'],
+    MyService: []
+  }
+```
 
-  it('should run #transform', () => {
-    // const pipe = new NguiHighlightPipe();
-    // const result = pipe.transform(text, search);
-    // expect(result).toBe('<<EXPECTED>>');
-  });
-
-});
+### class imports (Used internally)
+Import info. from parsed typescript-parser. e.g., 
+```
+  {
+    ElementRef: {
+      mport: {
+        libraryName: '@angular/core',
+        alias: 'foo'
+      },
+      specifier: {
+        specifier: 'ElementRef',
+        alias: 'elRef'
+      }
+    },
+  }
 ```
 
