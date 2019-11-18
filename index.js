@@ -28,7 +28,7 @@ Util.DEBUG = argv.verbose;
 const tsFile = argv._[0];
 // const writeToSpec = argv.spec;
 if (!(tsFile && fs.existsSync(tsFile))) {
-  console.log('Error. invalid typescript file. e.g., Usage $0 <tsFile> [options]');
+  console.error('Error. invalid typescript file. e.g., Usage $0 <tsFile> [options]');
   process.exit(1);
 }
 
@@ -42,7 +42,7 @@ function getFuncMockData (Klass, funcName, props) {
   };
   funcTestGen.getExpressionStatements().forEach((expr, ndx) => {
     const code = funcTestGen.classCode.substring(expr.start, expr.end);
-    console.log('  *** EXPRESSION ***', ndx, code.replace(/\n+/g, '').replace(/\s+/g, ' '));
+    Util.DEBUG && console.log('  *** EXPRESSION ***', ndx, code.replace(/\n+/g, '').replace(/\s+/g, ' '));
     funcTestGen.setMockData(expr, funcMockData);
   });
 
@@ -74,7 +74,8 @@ async function run (tsFile) {
 
     const modjule = requireFromString(result.outputText);
     const Klass = modjule[ejsData.className];
-    console.warn('\x1b[36m%s\x1b[0m', `PROCESSING ${klass.ctor && klass.ctor.name} constructor`);
+    Util.DEBUG &&
+      console.warn('\x1b[36m%s\x1b[0m', `PROCESSING ${klass.ctor && klass.ctor.name} constructor`);
     const ctorMockData = getFuncMockData(Klass, 'constructor', {});
     const ctorParamJs = Util.getFuncParamJS(ctorMockData);
     ejsData.ctorParamJs = ctorParamJs;
@@ -83,9 +84,9 @@ async function run (tsFile) {
       ejsData.providerMocks[key] = Util.indent(ejsData.providerMocks[key]).replace(/\{\s+\}/gm, '{}');
     }
 
-    console.log(`  === RESULT 'ctorMockData' ===`, ctorMockData);
-    console.log('...................... ejsData   ..........\n', ejsData);
-    console.log('...................... ctorMockData        ..........\n', ctorMockData);
+    Util.DEBUG && console.log(`  === RESULT 'ctorMockData' ===`, ctorMockData);
+    Util.DEBUG && console.log('...................... ejsData   ..........\n', ejsData);
+    Util.DEBUG && console.log('...................... ctorMockData        ..........\n', ctorMockData);
     // const ctorParams = Object.entries(ctorMockData.params).map( ([key, val]) => ejsData.providers[key].useValue || val );
     // console.log('CHECKI#NG IF CONSTRUCTOR WORKS', new Klass(...ctorParams), 'SUCCESS!!\n');
 
@@ -100,7 +101,8 @@ async function run (tsFile) {
     //   . it does not write class-level test when file exists
     //      . writeClassTest()
     klass.methods.forEach(method => {
-      console.log('\x1b[36m%s\x1b[0m', `\nPROCESSING ${klass.ctor && klass.ctor.name}#${method.name}`);
+      Util.DEBUG &&
+        console.log('\x1b[36m%s\x1b[0m', `\nPROCESSING ${klass.ctor && klass.ctor.name}#${method.name}`);
       // const thisValues = Object.assign({}, ctorMockData.props);
       const funcMockData = getFuncMockData(Klass, method.name, {});
       const funcMockJS = Util.getFuncMockJS(funcMockData, angularType);

@@ -13,7 +13,15 @@ const srcFiles = [
 ];
 
 srcFiles.forEach(filePath => {
-  const output = '' + execSync(`./index.js ${filePath}`);
-  const expected = '' + fs.readFileSync(filePath.replace('.ts', '.spec.ts'));
-  assert.strictEqual(output.trim(), expected.trim());
+  const output = ('' + execSync(`./index.js ${filePath}`))
+    .replace(/\r\n/g, '\n');
+  const expected = ('' + fs.readFileSync(filePath.replace('.ts', '.spec.ts')))
+    .replace(/\r\n/g, '\n');
+  if (output === expected) {
+    console.log('passed check', filePath);
+  } else {
+    console.error('expected', expected);
+    console.error('result', output);
+    throw new Error('Error on', filePath);
+  }
 });
