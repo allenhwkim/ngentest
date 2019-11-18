@@ -227,7 +227,7 @@ class Util {
     };
 
     // const members = Util.getExprMembers(node).reverse();
-    const vars = getVars(node); // parenthesis taken care of array. 
+    const vars = getVars(node); // parenthesis taken care of array.
     const baseCode = vars.join('.');
     const last = vars[vars.length - 1];
 
@@ -307,7 +307,7 @@ class Util {
     const code2 = code.replace(/\n+/g, '').replace(/\s+/g, ' ');
     const paramExprs = [];
     paramNames.forEach(paramName => {
-      const matches = code2.match(new RegExp(`${paramName }(\\.[^\\s\\;]+)+`, 'ig'));
+      const matches = code2.match(new RegExp(`${paramName}(\\.[^\\s\\;]+)+`, 'ig'));
       paramExprs.push(matches);
     });
 
@@ -321,13 +321,13 @@ class Util {
       if (typeof value === 'function') {
         js.push(`${thisName}.${key1} = jest.fn()`);
       } else {
-        const valueFiltered = Object.entries(value).filter( ([k, v]) => k !== 'undefined');
+        const valueFiltered = Object.entries(value).filter(([k, v]) => k !== 'undefined');
         valueFiltered.forEach(([key2, value2]) => {
           js.push(`${thisName}.${key1} = ${thisName}.${key1} || {}`);
           if (value2.type === 'Observable') {
             const obsRetVal = Util.objToJS(value2.value).replace(/\{\s+\}/gm, '{}');
             js.push(`${thisName}.${key1}.${key2} = observableOf(${obsRetVal})`);
-          } else if (typeof value2 === 'function' && key2.match(/^(get|post|put)$/) ) {
+          } else if (typeof value2 === 'function' && key2.match(/^(get|post|put)$/)) {
             js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(observableOf('${key2}'));`);
           } else if (typeof value2 === 'function' && JSON.stringify(value2()) === '{}') {
             js.push(`${thisName}.${key1}.${key2} = jest.fn()`);

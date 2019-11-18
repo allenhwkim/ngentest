@@ -232,7 +232,7 @@ function writeGenerated (generated, toFile) {
   }
 }
 
-const NgTestData = {
+const CommonTestFunctions = {
   getKlass, // class info.
   getKlassImports, // imports info.
 
@@ -247,4 +247,4 @@ const NgTestData = {
   writeGenerated
 };
 
-module.exports = NgTestData;
+module.exports = CommonTestFunctions;

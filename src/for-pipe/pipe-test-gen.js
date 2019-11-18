@@ -1,9 +1,9 @@
 const path = require('path');
 const fs = require('fs');
 
-const Base = require('../ng-test-data.js');
+const Base = require('../common-test-functions.js');
 
-class PipeData {
+class PipeTestGen {
   constructor (tsPath) {
     // this.template;
     if (tsPath && fs.existsSync(tsPath)) {
@@ -52,4 +52,4 @@ class PipeData {
 
 }
 
-module.exports = PipeData;
+module.exports = PipeTestGen;

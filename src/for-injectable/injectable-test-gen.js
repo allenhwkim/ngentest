@@ -1,9 +1,9 @@
 const path = require('path');
 const fs = require('fs');
 
-const Base = require('../ng-test-data.js');
+const Base = require('../common-test-functions.js');
 
-class ClassData {
+class InjectableTestGen {
   constructor (tsPath) {
     // this.template;
     if (tsPath && fs.existsSync(tsPath)) {
@@ -29,11 +29,9 @@ class ClassData {
 
   getEjsData () {
     const result = {};
-    this.template = fs.readFileSync(path.join(__dirname, 'class.template.ts.ejs'), 'utf8');
+    this.template = fs.readFileSync(path.join(__dirname, 'injectable.template.ts.ejs'), 'utf8');
 
     result.className = this.klass.name;
-    result.inputs = this._getInputs(this.klass);
-    result.outputs = this._getOutputs(this.klass);
     result.providers = this._getProviders(this.klass);
     result.functionTests = this._getItBlocks(this.klass);
     result.imports = this._getImports(this.klass);
@@ -55,4 +53,4 @@ class ClassData {
 
 }
 
-module.exports = ClassData;
+module.exports = InjectableTestGen;

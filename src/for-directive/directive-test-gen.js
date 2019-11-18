@@ -1,9 +1,9 @@
 const path = require('path');
 const fs = require('fs');
 
-const Base = require('../ng-test-data.js');
+const Base = require('../common-test-functions.js');
 
-class InjectableData {
+class DirectiveTestGen {
   constructor (tsPath) {
     // this.template;
     if (tsPath && fs.existsSync(tsPath)) {
@@ -27,15 +27,31 @@ class InjectableData {
     this.getKlassImports = Base.getKlassImports.bind(this);
   }
 
+  getSelector (typescript) {
+    const re = /@Directive\s*\(\s*{[^}]+selector:\s*['"](.*)['"]/
+    const str = typescript.match(re)[1];
+    if (str.match(/^\[/)) {
+      return { type: 'attribute', name: str.match(/[^\[\]]+/)[0] };
+    } else if (str.match(/^\./)) {
+      return { type: 'class', name: str.match(/[^\.]+/)[0] };
+    } else if (str.match(/^[a-z]/i)) {
+      return { type: 'element', name: str.match(/[a-z-]+/)[0] };
+    }
+  }
+
   getEjsData () {
     const result = {};
-    this.template = fs.readFileSync(path.join(__dirname, 'injectable.template.ts.ejs'), 'utf8');
+    this.template = fs.readFileSync(path.join(__dirname, 'directive.template.ts.ejs'), 'utf8');
 
     result.className = this.klass.name;
+    result.inputs = this._getInputs(this.klass);
+    result.outputs = this._getOutputs(this.klass);
     result.providers = this._getProviders(this.klass);
+    // result.windowMocks = this._getWindowMocks(this.klass);
     result.functionTests = this._getItBlocks(this.klass);
     result.imports = this._getImports(this.klass);
     result.parsedImports = this.imports;
+    result.selector = this.getSelector(this.typescript);
 
     return result;
   }
@@ -53,4 +69,4 @@ class InjectableData {
 
 }
 
-module.exports = InjectableData;
+module.exports = DirectiveTestGen;

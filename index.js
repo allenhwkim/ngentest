@@ -1,13 +1,18 @@
 #!/usr/bin/env node
-
 const fs = require('fs');
 const path = require('path'); // eslint-disable-line
 const yargs = require('yargs');
 const ts = require('typescript');
 const requireFromString = require('require-from-string');
 
-const NgFuncWriter = require('./src/ng-func-writer.js');
 const Util = require('./src/util.js');
+const FuncTestGen = require('./src/func-test-gen.js');
+
+const ComponentTestGen = require('./src/for-component/component-test-gen.js');
+const DirectiveTestGen = require('./src/for-directive/directive-test-gen.js');
+const InjectableTestGen = require('./src/for-injectable/injectable-test-gen.js');
+const PipeTestGen = require('./src/for-pipe/pipe-test-gen.js');
+const ClassTestGen = require('./src/for-class/class-test-gen.js');
 
 const argv = yargs.usage('Usage: $0 <tsFile> [options]')
   .options({
@@ -27,39 +32,38 @@ if (!(tsFile && fs.existsSync(tsFile))) {
 }
 
 function getFuncMockData (Klass, funcName, props) {
-  const funcWriter = new NgFuncWriter(Klass, funcName);
-  const funcMockData = { props, params: funcWriter.parameters, map: {}, globals: {} };
-  funcWriter.expressions.forEach((expr, ndx) => {
-    const code = funcWriter.classCode.substring(expr.start, expr.end);
+  const funcTestGen = new FuncTestGen(Klass, funcName);
+  const funcMockData = {
+    props,
+    params: funcTestGen.getInitialParameters(),
+    map: {},
+    globals: {}
+  };
+  funcTestGen.getExpressionStatements().forEach((expr, ndx) => {
+    const code = funcTestGen.classCode.substring(expr.start, expr.end);
     console.log('  *** EXPRESSION ***', ndx, code.replace(/\n+/g, '').replace(/\s+/g, ' '));
-    funcWriter.setMockData(expr, funcMockData);
+    funcTestGen.setMockData(expr, funcMockData);
   });
 
   return funcMockData;
 }
 
-const ComponentData = require('./src/for-component/component-data.js');
-const DirectiveData = require('./src/for-directive/directive-data.js');
-const InjectableData = require('./src/for-injectable/injectable-data.js');
-const PipeData = require('./src/for-pipe/pipe-data.js');
-const ClassData = require('./src/for-class/class-data.js');
-
 function getTestGenerator (tsPath) {
   const typescript = fs.readFileSync(path.resolve(tsPath), 'utf8');
   const angularType = Util.getAngularType(typescript).toLowerCase();
   const testGenerator = /* eslint-disable */
-    angularType === 'component' ? new ComponentData(tsPath) :
-    angularType === 'directive' ? new DirectiveData(tsPath) :
-    angularType === 'service' ? new InjectableData(tsPath) :
-    angularType === 'pipe' ? new PipeData(tsPath) :
-    new ClassData(tsPath); /* eslint-enable */
+    angularType === 'component' ? new ComponentTestGen(tsPath) :
+    angularType === 'directive' ? new DirectiveTestGen(tsPath) :
+    angularType === 'service' ? new InjectableTestGen(tsPath) :
+    angularType === 'pipe' ? new PipeTestGen(tsPath) :
+    new ClassTestGen(tsPath); /* eslint-enable */
   return testGenerator;
 }
 
 async function run (tsFile) {
   try {
-    const testWriter = getTestGenerator(tsFile);
-    const { klass, typescript, ejsData } = await testWriter.getData();
+    const testGenerator = getTestGenerator(tsFile);
+    const { klass, typescript, ejsData } = await testGenerator.getData();
 
     const result = ts.transpileModule(typescript, {
       compilerOptions: {
@@ -73,7 +77,7 @@ async function run (tsFile) {
     const ctorMockData = getFuncMockData(Klass, 'constructor', {});
     const ctorParamJs = Util.getFuncParamJS(ctorMockData);
     ejsData.ctorParamJs = ctorParamJs;
-    ejsData.providerMocks = testWriter.getProviderMocks(klass, ctorMockData.params);
+    ejsData.providerMocks = testGenerator.getProviderMocks(klass, ctorMockData.params);
     for (var key in ejsData.providerMocks) {
       ejsData.providerMocks[key] = Util.indent(ejsData.providerMocks[key]).replace(/\{\s+\}/gm, '{}');
     }
@@ -113,8 +117,8 @@ async function run (tsFile) {
       `, '  ');
     });
 
-    const generated = testWriter.getGenerated(ejsData);
-    testWriter.writeGenerated(generated, argv.spec);
+    const generated = testGenerator.getGenerated(ejsData);
+    testGenerator.writeGenerated(generated, argv.spec);
   } catch (e) {
     console.error(tsFile);
     console.error(e);

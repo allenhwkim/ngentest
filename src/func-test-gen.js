@@ -1,35 +1,37 @@
 const jsParser = require('acorn').Parser;
 const Util = require('./util.js');
 
-class NgFuncWriter {
-
-  get parameters () {
-    const params = {};
-    if (this.methodDefinition) {
-      this.methodDefinition.value.params.forEach(el => (params[el.name] = {}));
-    }
-    return params;
-  }
-
-  get expressions () {
-    if (this.methodDefinition) {
-      const block = this.methodDefinition.value.body;
-      return block.body; // array of ExpressionStatements
-    }
-    return [];
-  }
+class FuncTestGen {
 
   constructor (Klass, funcName) {
     this.Klass = Klass;
     this.funcName = funcName;
     this.classCode = '' + Klass.prototype.constructor;
     this.klassDecl = jsParser.parse(this.classCode).body[0];
-    this.methodDefinition = this.klassDecl.body.body.find(node => node.key.name === this.funcName);
   }
 
   getCode (node) {
     return this.classCode.substring(node.start, node.end);
   }
+
+  getInitialParameters () {
+    const params = {};
+    const methodDefinition = this.klassDecl.body.body.find(node => node.key.name === this.funcName);
+    if (methodDefinition) {
+      methodDefinition.value.params.forEach(el => (params[el.name] = {}));
+    }
+    return params;
+  }
+
+  getExpressionStatements () {
+    const methodDefinition = this.klassDecl.body.body.find(node => node.key.name === this.funcName);
+    if (methodDefinition) {
+      const block = methodDefinition.value.body;
+      return block.body; // array of ExpressionStatements
+    }
+    return [];
+  }
+
   /**
    * Iterate function expressions one by one
    *  then, sets the given props, params, maps from the expressinns
@@ -206,7 +208,7 @@ class NgFuncWriter {
       obj = Util.getObjectFromExpression(nodeToUse, returns);
       const code = this.getCode(codeOrNode);
       [one, two] = code.split('.'); // this.prop
-      Util.DEBUG && console.log('  setPropsOrParams',  { code, type: codeOrNode.type });
+      Util.DEBUG && console.log('  setPropsOrParams', { code, type: codeOrNode.type });
     }
 
     if (one === 'this' && two && map[`this.${two}`]) {
@@ -222,4 +224,4 @@ class NgFuncWriter {
 
 }
 
-module.exports = NgFuncWriter;
+module.exports = FuncTestGen;

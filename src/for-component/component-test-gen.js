@@ -1,9 +1,9 @@
 const path = require('path');
 const fs = require('fs');
 
-const Base = require('../ng-test-data.js');
+const Base = require('../common-test-functions.js');
 
-class ComponentData {
+class ComponentTestGen {
   constructor (tsPath) {
     if (tsPath && fs.existsSync(tsPath)) {
       this.tsPath = tsPath;
@@ -56,4 +56,4 @@ class ComponentData {
 
 }
 
-module.exports = ComponentData;
+module.exports = ComponentTestGen;
