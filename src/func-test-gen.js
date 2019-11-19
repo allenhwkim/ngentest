@@ -151,15 +151,23 @@ class FuncTestGen {
       this.setPropsOrParams(node.test, mockData);
       this.setPropsOrParams(node.body, mockData);
     } else if (node.type === 'CallExpression') {
-      // e.g. this.router.events.subscribe(event => xxxxxxx)
-      // e.g. this.foo.bar.x(1,2,3);
+      // procesa call expression
+      // if this call expression is a typical pattern,
+      // e.g. xxx.forEach() for string, xxx.replace() for string
+      // then, change the expression, then process it. 
+      // For example, from this.x.substr() to thix.x as string
       const funcReturn = Util.getExprReturn(node, this.classCode) || {};
       // {code: 'this.router.events', type: 'Observable', value: Observable.of(event)}
       Util.DEBUG && console.log('    *** EXPRESSION CallExpression ***', funcReturn.code);
       this.setPropsOrParams(funcReturn.code, mockData, funcReturn.value);
+      
+      // procesa call arguments
+      node.arguments.forEach(argument => this.setMockData(argument, mockData));
 
+      // What if call argument is a function?
       const funcExpArg = Util.getFuncExprArg(node);
-      if (funcExpArg) {
+      funcExpArg && this.setMockData(funcExpArg, mockData);
+      if (funcExpArg) { // process function expression
         this.setMockData(funcExpArg, mockData);
       }
     } else if (node.type === 'AssignmentExpression') {

@@ -41,6 +41,7 @@ export class ExampleComponent implements OnInit {
   }
 
   ngOnInit() {
+    const thresholdAmount = Number(this.adjustmentsDetailsCms.location.threshold);
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         setTimeout(_ => {

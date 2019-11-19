@@ -32,16 +32,21 @@
   },
   "homepage": "https://github.com/allenhwkim/ng-gen-test#readme",
   "dependencies": {
+    "acorn": "^7.1.0",
     "check-engines": "^1.5.0",
     "ejs": "^2.6.1",
+    "indent.js": "^0.3.4",
+    "js-beautify": "^1.10.2",
+    "require-from-string": "^2.0.2",
     "typescript": "^3.7.2",
     "typescript-parser": "^2.6.1",
-    "yargs": "^11.0.0",
-    "acorn": "^7.1.0",
-    "indent.js": "^0.3.4",
-    "js-beautify": "^1.10.2"
+    "yargs": "^11.0.0"
   },
   "devDependencies": {
+    "@angular/common": "^8.2.14",
+    "@angular/core": "^8.2.14",
+    "@angular/platform-browser": "^8.2.14",
+    "@angular/router": "^8.2.14",
     "rxjs": "^6.5.3",
     "ts-node": "^8.4.1"
   }
