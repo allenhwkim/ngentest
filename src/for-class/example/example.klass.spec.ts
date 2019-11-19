@@ -26,7 +26,9 @@ describe('ExampleKlass', () => {
 
   it('should run #toggleCart()', async () => {
     obj.dispatchEvent = jest.fn();
-    obj.toggleCart({});
+    obj.toggleCart({
+      type: '[object Object]'
+    });
     expect(obj.dispatchEvent).toHaveBeenCalled();
   });
 
@@ -43,10 +45,10 @@ describe('ExampleKlass', () => {
     obj.appendItems = jest.fn();
     obj.setShoppingCart({
       ppc: {
-        concat : function() {
-          return {};
-        }
-      }
+        concat : jest.fn()
+      },
+      hup: '[object Object]',
+      nac: '[object Object]'
     });
     expect(obj.removeItems).toHaveBeenCalled();
     expect(obj.querySelector).toHaveBeenCalled();
@@ -58,6 +60,10 @@ describe('ExampleKlass', () => {
     obj.getQuotationTemplate = jest.fn();
     obj.i18n = obj.i18n || {};
     obj.i18n.myQuotes = 'myQuotes';
+    obj.cancelOrder = obj.cancelOrder || {};
+    obj.cancelOrder.bind = jest.fn();
+    obj.itemClicked = obj.itemClicked || {};
+    obj.itemClicked.bind = jest.fn();
     obj.appendItems({
       forEach : function() {
         return ["ngentest"];
@@ -65,6 +71,8 @@ describe('ExampleKlass', () => {
     });
     expect(obj.querySelector).toHaveBeenCalled();
     expect(obj.getQuotationTemplate).toHaveBeenCalled();
+    expect(obj.cancelOrder.bind).toHaveBeenCalled();
+    expect(obj.itemClicked.bind).toHaveBeenCalled();
   });
 
   it('should run #getQuotationTemplate()', async () => {
@@ -99,9 +107,7 @@ describe('ExampleKlass', () => {
   it('should run #cancelOrder()', async () => {
 
     obj.cancelOrder({
-      stopPropagation : function() {
-        return {};
-      },
+      stopPropagation : jest.fn(),
       currentTarget: {
         parentElement: {
           parentElement: '[object Object]'
@@ -119,9 +125,7 @@ describe('ExampleKlass', () => {
     obj.classList.remove = jest.fn();
     obj.itemClicked({
       currentTarget: {
-        getAttribute : function() {
-          return {};
-        }
+        getAttribute : jest.fn()
       }
     });
     expect(obj.cartData.find).toHaveBeenCalled();

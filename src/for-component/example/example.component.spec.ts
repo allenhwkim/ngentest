@@ -1,7 +1,8 @@
 // tslint:disable
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Pipe, PipeTransform, Injectable, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Pipe, PipeTransform, Injectable, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
@@ -36,9 +37,7 @@ class MockCookieService {
   foo = function() {
     return {
       bar: {
-        baz : function() {
-          return {};
-        }
+        baz : jest.fn()
       }
     };
   };
@@ -79,8 +78,9 @@ describe('ExampleComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
+      imports: [ FormsModule, ReactiveFormsModule ],
       declarations: [ ExampleComponent, TranslatePipe ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [
         { provide: AuthGuardService, useClass: MockAuthGuardService },
         { provide: CookieService, useClass: MockCookieService },
@@ -98,6 +98,10 @@ describe('ExampleComponent', () => {
   });
 
   it('should run #ngOnInit()', async () => {
+    component.adjustmentsDetailsCms = component.adjustmentsDetailsCms || {};
+    component.adjustmentsDetailsCms.location = {
+      threshold: '[object Object]'
+    };
     component.router = component.router || {};
     component.router.events = {
       subscribe : function() {
@@ -111,9 +115,7 @@ describe('ExampleComponent', () => {
     };
     component.menuEl = component.menuEl || {};
     component.menuEl.nativeElement = {
-      highlightMenu : function() {
-        return {};
-      }
+      highlightMenu : jest.fn()
     };
     component.ngOnInit();
 

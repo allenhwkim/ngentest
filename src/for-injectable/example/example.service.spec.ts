@@ -15,7 +15,9 @@ describe('DynamicComponentService', () => {
   it('should run #createComponent()', async () => {
     service.factoryResolver = service.factoryResolver || {};
     service.factoryResolver.resolveComponentFactory = jest.fn();
-    service.createComponent({}, {});
+    service.createComponent({}, {}, {
+      parentInjector: '[object Object]'
+    });
     expect(service.factoryResolver.resolveComponentFactory).toHaveBeenCalled();
   });
 
@@ -25,14 +27,13 @@ describe('DynamicComponentService', () => {
     service.insertComponent({
       location: {
         nativeElement: {
-          setAttribute : function() {
-            return {};
-          }
+          setAttribute : jest.fn()
         }
       },
       instance: {
         id: '[object Object]'
-      }
+      },
+      hostView: '[object Object]'
     });
     expect(service.rootViewContainer.insert).toHaveBeenCalled();
   });
