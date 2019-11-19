@@ -72,7 +72,9 @@ async function run (tsFile) {
       }
     });
 
-    const modjule = requireFromString(result.outputText);
+    // replace invalid require statements
+    const replacedOutputText = result.outputText.replace(/require\("\.[^\)]+\)/gm, '{}');
+    const modjule = requireFromString(replacedOutputText);
     const Klass = modjule[ejsData.className];
     Util.DEBUG &&
       console.warn('\x1b[36m%s\x1b[0m', `PROCESSING ${klass.ctor && klass.ctor.name} constructor`);

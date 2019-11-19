@@ -130,10 +130,10 @@ describe('ExampleComponent', () => {
 
   it('should run #changeLanguage()', async () => {
     component.cookie = component.cookie || {};
-    component.cookie.get = jest.fn().mockReturnValue(observableOf('get'));;
+    component.cookie.get = jest.fn();
     window.location.reload = jest.fn();
     component.changeLanguage({});
-    expect(component.cookie.get).toHaveBeenCalled();;
+    expect(component.cookie.get).toHaveBeenCalled();
     expect(window.location.reload).toHaveBeenCalled();
   });
 

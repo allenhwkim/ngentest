@@ -100,3 +100,15 @@ Import info. from parsed typescript-parser. e.g.,
   }
 ```
 
+## For Developers: To make it sure it does not break any feature
+
+There are example directory under `src/for-*`. The example directory has typescript files and its generated spec files.
+The generaged spec files are the last output of the generated test, e.g., `src/for-component/example/example.component.spec.ts`.
+
+Whenever you change the code, run `npm test`. This will run `./test.js` and compare the output of generated test and the file which is saved last time.
+
+If you are satisfied the result, regenerate spec files and save it by running `sh all-examples.sh`.
+
+
+
+

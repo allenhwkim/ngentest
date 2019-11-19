@@ -16,7 +16,7 @@ class Util {
   static getClassName (tsPath) {
     return path.basename(tsPath)
       .replace(/\.[a-z]+$/, '') // remove extension
-      .split(/[^a-z]/i) // each word
+      .split(/[^a-z0-9]/i) // each word
       .map(el => el[0].toUpperCase() + el.slice(1)) // capitalize 1st ch.
       .join('');
   }
@@ -333,7 +333,7 @@ class Util {
           if (value2.type === 'Observable') {
             const obsRetVal = Util.objToJS(value2.value).replace(/\{\s+\}/gm, '{}');
             js.push(`${thisName}.${key1}.${key2} = observableOf(${obsRetVal})`);
-          } else if (typeof value2 === 'function' && key2.match(/^(get|post|put)$/)) {
+          } else if (typeof value2 === 'function' && key2.match(/^(post|put)$/)) {
             js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(observableOf('${key2}'));`);
           } else if (typeof value2 === 'function' && JSON.stringify(value2()) === '{}') {
             js.push(`${thisName}.${key1}.${key2} = jest.fn()`);

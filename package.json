@@ -45,8 +45,10 @@
   "devDependencies": {
     "@angular/common": "^8.2.14",
     "@angular/core": "^8.2.14",
+    "@angular/forms": "^8.2.14",
     "@angular/platform-browser": "^8.2.14",
     "@angular/router": "^8.2.14",
+    "date-fns": "^2.0.0",
     "rxjs": "^6.5.3",
     "ts-node": "^8.4.1"
   }
