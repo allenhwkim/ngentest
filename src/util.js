@@ -47,7 +47,8 @@ class Util {
       for (var key in obj) {
         if (key === 'undefined' || !obj.hasOwnProperty(key)) { continue; }
 
-        const obj1stKey = (typeof obj[key] === 'object') && Object.keys(obj[key])[0];
+        const obj1stKey = (typeof obj[key] === 'object') &&
+          Object.keys(obj[key]).filter(k => k !== 'undefined')[0];
         if (typeof obj[key] === 'object' && !obj1stKey) { // is empty obj, e.g. {}
           exprs.push(`${key}: '${obj[key]}'`);
         } else if (obj1stKey && obj1stKey.match(/trim|substr|replace|split/)) { // string in form of an object
@@ -217,6 +218,7 @@ class Util {
    * e.g. for 'foo.bar.forEach(...)', 'foo.bar' returns array
    */
   static getExprReturn (node, classCode) {
+
 
     const code = classCode.substring(node.start, node.end);
     const getVars = function (node) {
@@ -402,7 +404,8 @@ class Util {
   static getFuncParamJS (mockData) {
     const js = [];
     Object.entries(mockData.params).forEach(([key2, value2]) => {
-      const value21stKey = typeof value2 === 'object' && Object.keys(value2)[0];
+      const value21stKey = typeof value2 === 'object' &&
+        Object.keys(value2).filter(k => k !== 'undefined')[0];
       if (key2 === 'undefined') {
         // ignore this
       } else if (value2.type === 'Observable') {

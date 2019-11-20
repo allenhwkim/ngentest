@@ -81,40 +81,34 @@ class FuncTestGen {
     }
     const code = this.getCode(node);
 
+    Util.DEBUG && console.log('    *** EXPRESSION ' + node.type + ' ***', this.getCode(node));
     if ([
       'BreakStatement',
       'Identifier',
       'Literal',
-      'NewExpression',
       'ThisExpression',
       'ThrowStatement'
     ].includes(node.type)) {
       // ignore these expressions/statements
-      Util.DEBUG && console.log('    *** EXPRESSION ' + node.type + ' ***', this.getCode(node));
+    } else if (node.type === 'NewExpression') {
+      node.arguments.forEach(argument => this.setMockData(argument, mockData));
     } else if (node.type === 'ArrayExpression') {
-      Util.DEBUG && console.log('    *** EXPRESSION ArrayExpression ***', this.getCode(node));
       node.elements.forEach(element => element && this.setMockData(element, mockData));
     } else if (node.type === 'ArrayPattern') {
-      Util.DEBUG && console.log('    *** EXPRESSION ArrayPattern ***', this.getCode(node));
       node.elements.forEach(element => element && this.setMockData(element, mockData));
     } else if (node.type === 'TemplateLiteral') {
-      Util.DEBUG && console.log('    *** EXPRESSION TemplateLiteral ***', this.getCode(node));
       node.expressions.forEach(expr => expr && this.setMockData(expr, mockData));
     } else if (node.type === 'VariableDeclaration') {
-      Util.DEBUG && console.log('    *** EXPRESSION VariableDeclaration ***', this.getCode(node));
       node.declarations.forEach(decl => {
         decl.init && this.setMockData(decl.init, mockData);
       });
     } else if (node.type === 'ReturnStatement') {
-      Util.DEBUG && console.log('    *** EXPRESSION ReturnStatement ***', this.getCode(node));
       node.argument && this.setMockData(node.argument, mockData);
     } else if (node.type === 'IfStatement') {
-      Util.DEBUG && console.log('    *** EXPRESSION IfStatement ***', this.getCode(node));
       this.setMockData(node.test, mockData);
       this.setMockData(node.consequent, mockData);
       node.alternate && this.setMockData(node.alternate, mockData);
     } else if (node.type === 'WhileStatement') {
-      Util.DEBUG && console.log('    *** EXPRESSION WhileStatement ***', this.getCode(node));
       this.setMockData(node.test, mockData);
       this.setMockData(node.body, mockData);
     } else if (node.type === 'SwitchStatement') {
@@ -124,16 +118,13 @@ class FuncTestGen {
         kase.consequent.forEach(stmt => stmt && this.setMockData(stmt, mockData));
       });
     } else if (node.type === 'ConditionalExpression') {
-      Util.DEBUG && console.log('    *** EXPRESSION ConditionalExpression ***', this.getCode(node));
       this.setMockData(node.test, mockData);
       this.setMockData(node.consequent, mockData);
       this.setMockData(node.alternate, mockData);
     } else if (node.type === 'ForInStatement') {
-      Util.DEBUG && console.log('    *** EXPRESSION ForInStatement ***', this.getCode(node));
       this.setMockData(node.left, mockData);
       this.setMockData(node.body, mockData);
     } else if (node.type === 'LogicalExpression') {
-      Util.DEBUG && console.log('    *** EXPRESSION LogicalExpression ***', this.getCode(node));
       this.setMockData(node.left, mockData);
       this.setMockData(node.right, mockData);
     } else if (node.type === 'BlockStatement') {
@@ -149,10 +140,8 @@ class FuncTestGen {
         this.setMockData(property.value, mockData);
       });
     } else if (node.type === 'MemberExpression') { // this.xxxx, foo.xxxx
-      Util.DEBUG && console.log('    *** EXPRESSION MemberExpression ***', this.getCode(node));
       this.setPropsOrParams(node, mockData);
     } else if (node.type === 'WhileExpression') { // this.xxxx, foo.xxxx
-      Util.DEBUG && console.log('    *** EXPRESSION WhileExpression ***', this.getCode(node));
       this.setPropsOrParams(node.test, mockData);
       this.setPropsOrParams(node.body, mockData);
     } else if (node.type === 'CallExpression') {
@@ -161,7 +150,6 @@ class FuncTestGen {
       // e.g. xxx.forEach() for string, xxx.replace() for string
       // then, change the expression, then process it. 
       // For example, from this.x.substr() to thix.x as string
-      Util.DEBUG && console.log('    *** EXPRESSION CallExpression ***', this.getCode(node));
       const funcReturn = Util.getExprReturn(node, this.classCode) || {};
       // {code: 'this.router.events', type: 'Observable', value: Observable.of(event)}
       this.setPropsOrParams(funcReturn.code, mockData, funcReturn.value);
@@ -175,7 +163,6 @@ class FuncTestGen {
         this.setMockData(funcExpArg, mockData);
       }
     } else if (node.type === 'AssignmentExpression') {
-      Util.DEBUG && console.log('    *** EXPRESSION AssignmentExpression ***', this.getCode(node));
       const rightObj = node.right.type === 'LogicalExpression' ? node.right.left : node.right;
       const leftCode = this.getCode(node.left);
       const rightCode = this.getCode(rightObj);
