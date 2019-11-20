@@ -100,7 +100,7 @@ describe('ExampleKlass', () => {
     obj.i18n = obj.i18n || {};
     obj.i18n.expires = 'expires';
     obj.getQuotationTemplate({
-      quoteExpired: {},
+      quoteExpired: '[object Object]',
       orderId: '[object Object]'
     }, {});
 

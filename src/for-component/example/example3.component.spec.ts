@@ -1,6 +1,6 @@
 // tslint:disable
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Pipe, PipeTransform, Injectable, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
+import { Pipe, PipeTransform, Injectable, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, Input, Output } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -21,10 +21,27 @@ class MockDialogService {}
 
 @Injectable()
 class MockBillingHeaderService {}
+@Directive({ selector: '[oneviewPermitted]' }) // TODO, template must be user-configurable
+class OneviewPermittedDirective {
+  @Input() oneviewPermitted;
+}
 
-@Pipe({name: 'translate'})
-class TranslatePipe implements PipeTransform { 
-  transform(value) { return value; } 
+@Directive({ selector: '[oneviewDecimal]' }) // TODO, template must be user-configurable
+class OneviewDecimalDirective {}
+
+@Pipe({name: 'translate'}) // TODO, template must be user-configurable
+class TranslatePipe implements PipeTransform {
+  transform(value) { return value; }
+}
+
+@Pipe({name: 'phoneNumber'}) // TODO, template must be user-configurable
+class PhoneNumberPipe implements PipeTransform {
+  transform(value) { return value; }
+}
+
+@Pipe({name: 'safeHtml'}) // TODO, template must be user-configurable
+class SafeHtmlPipe implements PipeTransform {
+  transform(value) { return value; }
 }
 
 describe('BillingHeaderComponent', () => {
@@ -34,7 +51,10 @@ describe('BillingHeaderComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, ReactiveFormsModule ],
-      declarations: [ BillingHeaderComponent, TranslatePipe ],
+      declarations: [
+        BillingHeaderComponent, TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
+        OneviewDecimalDirective, OneviewPermittedDirective
+      ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [
         { provide: ElementRef, useClass: MockElementRef },
@@ -170,8 +190,8 @@ describe('BillingHeaderComponent', () => {
   it('should run #getStartEndDates()', async () => {
 
     component.getStartEndDates({
-      startDate: {},
-      endDate: {}
+      startDate : 'startDate',
+      endDate : 'endDate'
     });
 
   });

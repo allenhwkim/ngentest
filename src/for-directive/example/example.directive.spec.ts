@@ -52,11 +52,14 @@ describe('MyDirective', () => {
   });
 
   it('should run #ngOnInit()', async () => {
+    directive.handleIntersect = directive.handleIntersect || {};
+    directive.handleIntersect.bind = jest.fn();
     directive.observer = directive.observer || {};
     directive.observer.observe = jest.fn();
     directive.element = directive.element || {};
     directive.element.nativeElement = 'nativeElement';
     directive.ngOnInit();
+    expect(directive.handleIntersect.bind).toHaveBeenCalled();
     expect(directive.observer.observe).toHaveBeenCalled();
   });
 
