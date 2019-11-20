@@ -58,7 +58,7 @@ class FuncTestGen {
       nodeIn.type === 'ForInStatement' ? nodeIn :
       nodeIn.type === 'FunctionExpression' ? nodeIn.body :
       nodeIn.type === 'Identifier' ? nodeIn :
-      nodeIn.type === 'IfStatement' ? nodeIn.consequent : // node.test (consequent)
+      nodeIn.type === 'IfStatement' ? nodeIn : // node.test, consequent, alternate
       nodeIn.type === 'Literal' ? nodeIn :
       nodeIn.type === 'LogicalExpression' ? nodeIn :
       nodeIn.type === 'MemberExpression' ? nodeIn :
@@ -108,6 +108,11 @@ class FuncTestGen {
     } else if (node.type === 'ReturnStatement') {
       Util.DEBUG && console.log('    *** EXPRESSION ReturnStatement ***', this.getCode(node));
       node.argument && this.setMockData(node.argument, mockData);
+    } else if (node.type === 'IfStatement') {
+      Util.DEBUG && console.log('    *** EXPRESSION IfStatement ***', this.getCode(node));
+      this.setMockData(node.test, mockData);
+      this.setMockData(node.consequent, mockData);
+      node.alternate && this.setMockData(node.alternate, mockData);
     } else if (node.type === 'WhileStatement') {
       Util.DEBUG && console.log('    *** EXPRESSION WhileStatement ***', this.getCode(node));
       this.setMockData(node.test, mockData);
@@ -156,9 +161,9 @@ class FuncTestGen {
       // e.g. xxx.forEach() for string, xxx.replace() for string
       // then, change the expression, then process it. 
       // For example, from this.x.substr() to thix.x as string
+      Util.DEBUG && console.log('    *** EXPRESSION CallExpression ***', this.getCode(node));
       const funcReturn = Util.getExprReturn(node, this.classCode) || {};
       // {code: 'this.router.events', type: 'Observable', value: Observable.of(event)}
-      Util.DEBUG && console.log('    *** EXPRESSION CallExpression ***', funcReturn.code);
       this.setPropsOrParams(funcReturn.code, mockData, funcReturn.value);
       
       // procesa call arguments
@@ -166,7 +171,6 @@ class FuncTestGen {
 
       // What if call argument is a function?
       const funcExpArg = Util.getFuncExprArg(node);
-      funcExpArg && this.setMockData(funcExpArg, mockData);
       if (funcExpArg) { // process function expression
         this.setMockData(funcExpArg, mockData);
       }
@@ -203,10 +207,11 @@ class FuncTestGen {
   setPropsOrParams (codeOrNode, mockData, returns) { // MemberExpression, CallExpression
     const { props, params, map, globals } = mockData;
     // console.log('.......... codeOrNode...', codeOrNode);
-    let nodeToUse, obj, one, two;
+    let nodeToUse, obj, one, two, code;
     if (typeof codeOrNode === 'string') {
       nodeToUse = Util.getNode(codeOrNode);
       obj = Util.getObjectFromExpression(nodeToUse, returns);
+      code = codeOrNode;
       [one, two] = codeOrNode.split('.'); // this.prop
     } else {
       nodeToUse = /* eslint-disable */
@@ -214,11 +219,10 @@ class FuncTestGen {
         codeOrNode.type === 'BinaryExpression' ? codeOrNode.left :
         codeOrNode; /* eslint-enable */
       obj = Util.getObjectFromExpression(nodeToUse, returns);
-      const code = this.getCode(codeOrNode);
+      code = this.getCode(codeOrNode);
       [one, two] = code.split('.'); // this.prop
       Util.DEBUG && console.log('  setPropsOrParams', { code, type: codeOrNode.type });
     }
-
     if (one === 'this' && two && map[`this.${two}`]) {
       Util.assign(obj.this, params);
     } else if (one === 'this' && two) {

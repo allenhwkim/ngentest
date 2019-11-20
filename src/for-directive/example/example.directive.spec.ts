@@ -70,12 +70,15 @@ describe('MyDirective', () => {
   it('should run #handleIntersect()', async () => {
     directive.nguiInview = directive.nguiInview || {};
     directive.nguiInview.emit = jest.fn();
+    directive.nguiOutview = directive.nguiOutview || {};
+    directive.nguiOutview.emit = jest.fn();
     directive.handleIntersect({
       forEach : function() {
         return ["ngentest"];
       }
     }, {});
     expect(directive.nguiInview.emit).toHaveBeenCalled();
+    expect(directive.nguiOutview.emit).toHaveBeenCalled();
   });
 
 });

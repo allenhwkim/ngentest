@@ -33,9 +33,11 @@ describe('ExampleKlass', () => {
   });
 
   it('should run #cartClicked()', async () => {
+    obj.querySelector = jest.fn();
     obj.classList = obj.classList || {};
     obj.classList.add = jest.fn();
     obj.cartClicked({});
+    expect(obj.querySelector).toHaveBeenCalled();
     expect(obj.classList.add).toHaveBeenCalled();
   });
 
@@ -43,16 +45,25 @@ describe('ExampleKlass', () => {
     obj.removeItems = jest.fn();
     obj.querySelector = jest.fn();
     obj.appendItems = jest.fn();
+    obj.classList = obj.classList || {};
+    obj.classList.remove = jest.fn();
     obj.setShoppingCart({
+      success: '[object Object]',
       ppc: {
+        length: '[object Object]',
         concat : jest.fn()
       },
-      hup: '[object Object]',
-      nac: '[object Object]'
+      hup: {
+        length: '[object Object]'
+      },
+      nac: {
+        length: '[object Object]'
+      }
     });
     expect(obj.removeItems).toHaveBeenCalled();
     expect(obj.querySelector).toHaveBeenCalled();
     expect(obj.appendItems).toHaveBeenCalled();
+    expect(obj.classList.remove).toHaveBeenCalled();
   });
 
   it('should run #appendItems()', async () => {
@@ -60,6 +71,9 @@ describe('ExampleKlass', () => {
     obj.getQuotationTemplate = jest.fn();
     obj.i18n = obj.i18n || {};
     obj.i18n.myQuotes = 'myQuotes';
+    obj.i18n = obj.i18n || {};
+    obj.i18n.myShoppingList = 'myShoppingList';
+    obj.getOrderTemplate = jest.fn();
     obj.cancelOrder = obj.cancelOrder || {};
     obj.cancelOrder.bind = jest.fn();
     obj.itemClicked = obj.itemClicked || {};
@@ -71,6 +85,7 @@ describe('ExampleKlass', () => {
     });
     expect(obj.querySelector).toHaveBeenCalled();
     expect(obj.getQuotationTemplate).toHaveBeenCalled();
+    expect(obj.getOrderTemplate).toHaveBeenCalled();
     expect(obj.cancelOrder.bind).toHaveBeenCalled();
     expect(obj.itemClicked.bind).toHaveBeenCalled();
   });

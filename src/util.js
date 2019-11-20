@@ -91,10 +91,15 @@ class Util {
       target[firstKey] = source[firstKey];
       return;
     }
-    if (typeof source[firstKey] !== 'function') {
+    if (typeof source[firstKey] === 'function') {
+      const sourceFuncRet = source[firstKey]();
+      const targetFuncRet = typeof source[firstKey] === 'function' ? target[firstKey]() : {};
+      const mergedFuncRet = Object.assign({}, sourceFuncRet, targetFuncRet);
+      target[firstKey] = function() { return mergedFuncRet; }
+    } else {
       Util.assign(source[firstKey], target[firstKey]);
+      return;
     }
-    return true;
   }
 
   static getNode (code) {
@@ -212,6 +217,7 @@ class Util {
    * e.g. for 'foo.bar.forEach(...)', 'foo.bar' returns array
    */
   static getExprReturn (node, classCode) {
+
     const code = classCode.substring(node.start, node.end);
     const getVars = function (node) {
       const members = Util.getExprMembers(node).reverse().join('.').replace(/\.\(/g, '(').split('.');
@@ -226,7 +232,9 @@ class Util {
           vars.push(el);
         }
 
-        flagged = el.match(/\(/) ? true :
+        flagged =
+          el.match(/\(.*\)$/) ? false :
+          el.match(/\(/) ? true :
           el.match(/\)$/) ? false : flagged;
       });
       return vars;
@@ -251,8 +259,9 @@ class Util {
       const funcCode = classCode.substring(funcExprArg.body.start, funcExprArg.body.end);
       const funcParam = Util.getFuncParamObj(funcExprArg, funcCode);
       const value = { type: 'Observable', value: funcParam || {} };
+      const baseKode = vars.slice(0, -1).join('.');
 
-      ret = { code: baseCode, type: 'Observable', value };
+      ret = { code: baseKode, type: 'Observable', value };
 
     } else if (last.match(/(map|forEach|reduce|slice)\(.*\)$/) && funcExprArg) {
 
@@ -342,7 +351,7 @@ class Util {
           } else if (['length'].includes(key2)) {
             // do nothing
           } else if (typeof value2 === 'function') {
-            const fnValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
+            const fnValue2 = Util.objToJS(value2()).replace(/\{\s+\}/gm, '{}');
             js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(${fnValue2})`);
           } else if (Array.isArray(value2)) {
             // const fnValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');

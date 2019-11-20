@@ -103,16 +103,9 @@ describe('ExampleComponent', () => {
       threshold: '[object Object]'
     };
     component.router = component.router || {};
-    component.router.events = {
-      subscribe : function() {
-        return {
-          type: "Observable",
-          value: {
-            urlAfterRedirects : 'urlAfterRedirects'
-          }
-        };
-      }
-    };
+    component.router.events = observableOf({
+      urlAfterRedirects : 'urlAfterRedirects'
+    });
     component.menuEl = component.menuEl || {};
     component.menuEl.nativeElement = {
       highlightMenu : jest.fn()

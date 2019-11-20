@@ -40,6 +40,10 @@ describe('<%= className %>', () => {
   it('should run #constructor()', async () => {
     expect(component).toBeTruthy();
   });
+
+  <% for(var key in accessorTests) { %>
+  <%- accessorTests[key] -%>
+  <% } %>
   
   <% for(var key in functionTests) { %>
   <%- functionTests[key] -%>

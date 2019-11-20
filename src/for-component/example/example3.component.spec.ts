@@ -50,6 +50,16 @@ describe('BillingHeaderComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should run SetterDeclaration #ptpInstallments', async () => {
+
+    component.ptpInstallments = {
+      count: '[object Object]',
+      upcomingInstallmentDate: '[object Object]',
+      upcomingAmount: '[object Object]'
+    };
+
+  });
+
   it('should run #ngOnInit()', async () => {
     component.accountSummary = component.accountSummary || {};
     component.accountSummary.accountStatus = 'accountStatus';
@@ -61,11 +71,13 @@ describe('BillingHeaderComponent', () => {
       }
     };
     component.setDebitCardDetails = jest.fn();
+    component.setCreditCardDetails = jest.fn();
     component.getCreditUsed = jest.fn();
     component.isInCreditLimitWarningStatus = jest.fn();
     component.ngOnInit();
     expect(component.setNotificationMessage).toHaveBeenCalled();
     expect(component.setDebitCardDetails).toHaveBeenCalled();
+    expect(component.setCreditCardDetails).toHaveBeenCalled();
     expect(component.getCreditUsed).toHaveBeenCalled();
     expect(component.isInCreditLimitWarningStatus).toHaveBeenCalled();
   });
@@ -86,6 +98,8 @@ describe('BillingHeaderComponent', () => {
     component.billingDetails.methodOfPayment = {
       creditCardDetails: '[object Object]'
     };
+    component.creditCard = component.creditCard || {};
+    component.creditCard.ccType = 'ccType';
     component.creditCard = component.creditCard || {};
     component.creditCard.ccExpiry = 'ccExpiry';
     component.billingHeader = component.billingHeader || {};
@@ -156,8 +170,8 @@ describe('BillingHeaderComponent', () => {
   it('should run #getStartEndDates()', async () => {
 
     component.getStartEndDates({
-      endDate: {},
-      startDate: {}
+      startDate: {},
+      endDate: {}
     });
 
   });
@@ -180,6 +194,8 @@ describe('BillingHeaderComponent', () => {
   });
 
   it('should run #isInCreditLimitWarningStatus()', async () => {
+    component.billingDetails = component.billingDetails || {};
+    component.billingDetails.creditLimit = 'creditLimit';
     component.getCLMPercentage = jest.fn();
     component.isInCreditLimitWarningStatus();
     expect(component.getCLMPercentage).toHaveBeenCalled();

@@ -36,6 +36,27 @@ describe('AdjustmentFormComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should run SetterDeclaration #showAutomaticAdjustmentFlow', async () => {
+    component.getControlsAndCreateForm = jest.fn();
+    component.showAutomaticAdjustmentFlow = {};
+    expect(component.getControlsAndCreateForm).toHaveBeenCalled();
+  });
+
+  it('should run GetterDeclaration #toolTipDescAndSites', async () => {
+    component.adjustmentsDetailsCms = component.adjustmentsDetailsCms || {};
+    component.adjustmentsDetailsCms.tooltip = {
+      amount: '[object Object]',
+      site: '[object Object]'
+    };
+    component.adjustmentsDetailsCms = component.adjustmentsDetailsCms || {};
+    component.adjustmentsDetailsCms.location = {
+      threshold: '[object Object]',
+      sites: '[object Object]'
+    };
+    const toolTipDescAndSites = component.toolTipDescAndSites;
+
+  });
+
   it('should run #ngOnInit()', async () => {
     component.getControlsAndCreateForm = jest.fn();
     component.ngOnInit();
@@ -90,40 +111,23 @@ describe('AdjustmentFormComponent', () => {
       threshold: '[object Object]'
     };
     component.adjustmentForm = component.adjustmentForm || {};
-    component.adjustmentForm.get = jest.fn().mockReturnValue(function() {
-      return {
-        valueChanges: {
-          subscribe : function() {
-            return {
-              type: "Observable",
-              value: '[object Object]'
-            };
-          }
-        }
-      };
+    component.adjustmentForm.get = jest.fn().mockReturnValue({
+      valueChanges : observableOf({})
     });
     component.adjustmentFieldInValidation = jest.fn();
     component.handleSiteField = jest.fn();
     component.handleAdjustmentValueChange();
-    expect(component.adjustmentForm.get).toHaveBeenCalled() {
-      return {
-        valueChanges: {
-          subscribe : function() {
-            return {
-              type: "Observable",
-              value: '[object Object]'
-            };
-          }
-        }
-      };
-    });
+    expect(component.adjustmentForm.get).toHaveBeenCalled();
     expect(component.adjustmentFieldInValidation).toHaveBeenCalled();
     expect(component.handleSiteField).toHaveBeenCalled();
   });
 
   it('should run #handleDaysAffected()', async () => {
     component.adjustmentForm = component.adjustmentForm || {};
-    component.adjustmentForm.get = jest.fn();
+    component.adjustmentForm.get = jest.fn().mockReturnValue({
+      setValue : jest.fn(),
+      valueChanges : observableOf({})
+    });
     component.wirelessPostpaidDetails = component.wirelessPostpaidDetails || {};
     component.wirelessPostpaidDetails.content = {
       postPaidPhoneDetails: {
@@ -135,9 +139,20 @@ describe('AdjustmentFormComponent', () => {
   });
 
   it('should run #getValidationAndSetSpecificErrorsForAmount()', async () => {
-
+    component.adjustmentsDetailsCms = component.adjustmentsDetailsCms || {};
+    component.adjustmentsDetailsCms.nextBillMaxAmount = 'nextBillMaxAmount';
+    component.adjustmentsDetailsCms = component.adjustmentsDetailsCms || {};
+    component.adjustmentsDetailsCms.adjustmentMaxAmount = 'adjustmentMaxAmount';
+    component.selectedBill = component.selectedBill || {};
+    component.selectedBill.content_id = 'content_id';
+    component.selectedCharge = component.selectedCharge || {};
+    component.selectedCharge.adjustableAmount = 'adjustableAmount';
+    component.adjustmentForm = component.adjustmentForm || {};
+    component.adjustmentForm.get = jest.fn().mockReturnValue({
+      valid: '[object Object]'
+    });
     component.getValidationAndSetSpecificErrorsForAmount();
-
+    expect(component.adjustmentForm.get).toHaveBeenCalled();
   });
 
   it('should run #handleSiteField()', async () => {

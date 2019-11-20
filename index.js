@@ -103,17 +103,50 @@ async function run (tsFile) {
     // . separte class-level test and function-level test so that
     //   . it does not write class-level test when file exists
     //      . writeClassTest()
-    klass.methods.forEach(method => {
+    // klass.accessors(properties, methods, ctor)
+    ejsData.accessorTests = {};
+    const methodName = undefined;
+    // const methodName = 'handleDaysAffected';
+    const klassAccessors = klass.accessors.filter(el => !methodName || (el.name === methodName));
+    klassAccessors.forEach(accessor => {
+      Util.DEBUG &&
+        console.log('\x1b[36m%s\x1b[0m', `\nPROCESSING ${klass.ctor && klass.ctor.name}#${accessor.name}`);
+
+      const type = accessor.constructor.name;
+      const funcMockData = getFuncMockData(Klass, accessor.name, {});
+      const funcMockJS = Util.getFuncMockJS(funcMockData, angularType);
+      const assertRE = /(.*?)\s*=\s*jest\.fn\(.*\)/;
+      const funcAssertJS = funcMockJS
+        .filter(el => el.match(assertRE))
+        .map(el => el.replace(assertRE, (_, m1) => `expect(${m1}).toHaveBeenCalled()`));
+      const funcParamJS = Util.getFuncParamJS(funcMockData);
+      const jsToRun = 
+        type === 'SetterDeclaration' ? `${angularType}.${accessor.name} = ${funcParamJS}`: 
+        type === 'GetterDeclaration' ? `const ${accessor.name} = ${angularType}.${accessor.name}` : '';
+      ejsData.accessorTests[accessor.name] = Util.indent(`
+        it('should run ${type} #${accessor.name}', async () => {
+          ${funcMockJS.join(';\n')}${funcMockJS.length ? ';' : ''}
+          ${jsToRun};
+          ${funcAssertJS.join(';\n')}${funcAssertJS.length ? ';' : ''}
+        });
+      `, '  ');
+    });
+
+    const klassMethods = klass.methods.filter(el => !methodName || (el.name === methodName));
+    klassMethods.forEach(method => {
       Util.DEBUG &&
         console.log('\x1b[36m%s\x1b[0m', `\nPROCESSING ${klass.ctor && klass.ctor.name}#${method.name}`);
       // const thisValues = Object.assign({}, ctorMockData.props);
       const funcMockData = getFuncMockData(Klass, method.name, {});
       const funcMockJS = Util.getFuncMockJS(funcMockData, angularType);
       const funcParamJS = Util.getFuncParamJS(funcMockData);
-      const assertRE = /(.*?)\s*=\s*jest\.fn\(.*\)/;
+      const assertRE = /(.*?)\s*=\s*jest\.fn\(.*/;
       const funcAssertJS = funcMockJS
         .filter(el => el.match(assertRE))
-        .map(el => el.replace(assertRE, (_, m1) => `expect(${m1}).toHaveBeenCalled()`));
+        .map(el => {
+          el = el.replace(/\n/g,' ');
+          return el.replace(assertRE, (_, m1) => `expect(${m1}).toHaveBeenCalled()`);
+        });
       ejsData.functionTests[method.name] = Util.indent(`
         it('should run #${method.name}()', async () => {
           ${funcMockJS.join(';\n')}${funcMockJS.length ? ';' : ''}
