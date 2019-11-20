@@ -347,7 +347,14 @@ class Util {
           } else if (typeof value2 === 'function' && key2.match(/^(post|put)$/)) {
             js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(observableOf('${key2}'));`);
           } else if (typeof value2 === 'function' && JSON.stringify(value2()) === '{}') {
-            js.push(`${thisName}.${key1}.${key2} = jest.fn()`);
+            const funcRetVal = value2();
+            const funcRet1stKey = Object.keys(funcRetVal).filter(el => el !== 'undefined')[0];
+            if (typeof funcRetVal === 'object' && funcRet1stKey) {
+              js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(${Util.objToJS(funcRetVal)})`);
+            } else {
+              js.push(`${thisName}.${key1}.${key2} = jest.fn()`);
+            }
+            // const funcRetValEmpty = Object.as`funcRetVal
           } else if (['forEach', 'map', 'reduce', 'slice'].includes(key2)) {
             js.push(`${thisName}.${key1} = ['${key1}']`);
           } else if (['length'].includes(key2)) {
