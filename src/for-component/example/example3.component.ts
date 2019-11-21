@@ -2,6 +2,7 @@ import { Component, Input, OnInit, Inject, LOCALE_ID, ElementRef } from '@angula
 import { lastDayOfMonth, differenceInCalendarDays, isWithinInterval, isSameDay } from 'date-fns';
 
 import { ChangePaymentMethodComponent } from '../../payment';
+import { PaymentService } from '../payment.service';
 import { BillingHeaderService } from './billing-header.service';
 import { DialogService } from '../../oneview-common/dialog/dialog.service';
 import { BillingDataService } from 'src/app/billing/billing-page/billing-data.service';
@@ -84,6 +85,7 @@ export class BillingHeaderComponent implements OnInit {
     private el: ElementRef,
     private dialog: DialogService,
     private billingHeader: BillingHeaderService,
+    private paymentService: PaymentService,
     private billingService: BillingDataService,
     @Inject(LOCALE_ID) private language: string) {}
 
@@ -102,6 +104,7 @@ export class BillingHeaderComponent implements OnInit {
 
     this.creditUsed = this.getCreditUsed() || 0;
     this.creditLimitWarningExists = this.isInCreditLimitWarningStatus();
+    this.paymentService.getCreditCardConfig().subscribe(config => (this.config = config));
     this.billingService
       .getBilling()
       .pipe(map((billing: any) => billing.methodOfPayment.mopType))

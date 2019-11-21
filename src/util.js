@@ -40,11 +40,11 @@ class Util {
       if (!objRet1stKey) {
         return 'jest.fn()';
       } else {
-        const funcRet = objRet.type === 'Observable' ?
-          `observableOf(${Util.objToJS(objRet.value, level + 1)})` :
-          Util.objToJS(objRet, level + 1);
+        const funcRet = Util.objToJS(objRet, level + 1);
         return `function() {\n${indent}  return ${funcRet};\n${indent}}`;
       }
+    } else if (obj.type === 'Observable') {
+      return `observableOf(${Util.objToJS(obj.value)})`;
     } else if (Array.isArray(obj)) {
       return JSON.stringify(obj);
     } else {

@@ -10,6 +10,7 @@ import { Component, ElementRef, LOCALE_ID } from '@angular/core';
 import { BillingHeaderComponent } from './example3.component';
 import { DialogService } from '../../oneview-common/dialog/dialog.service';
 import { BillingHeaderService } from './billing-header.service';
+import { PaymentService } from '../payment.service';
 import { BillingDataService } from 'src/app/billing/billing-page/billing-data.service';
 
 @Injectable()
@@ -22,6 +23,9 @@ class MockDialogService {}
 
 @Injectable()
 class MockBillingHeaderService {}
+
+@Injectable()
+class MockPaymentService {}
 
 @Injectable()
 class MockBillingDataService {}
@@ -62,6 +66,7 @@ describe('BillingHeaderComponent', () => {
         { provide: ElementRef, useClass: MockElementRef },
         { provide: DialogService, useClass: MockDialogService },
         { provide: BillingHeaderService, useClass: MockBillingHeaderService },
+        { provide: PaymentService, useClass: MockPaymentService },
         { provide: BillingDataService, useClass: MockBillingDataService },
         { provide: 'LOCALE_ID', useValue: 'en' }      ]
     }).compileComponents();
@@ -97,10 +102,12 @@ describe('BillingHeaderComponent', () => {
     component.setCreditCardDetails = jest.fn();
     component.getCreditUsed = jest.fn();
     component.isInCreditLimitWarningStatus = jest.fn();
+    component.paymentService = component.paymentService || {};
+    component.paymentService.getCreditCardConfig = jest.fn().mockReturnValue(observableOf({}));
     component.billingService = component.billingService || {};
     component.billingService.getBilling = jest.fn().mockReturnValue({
       pipe : function() {
-        return obserbvableOf({
+        return observableOf({
 
         });
       }
@@ -111,6 +118,7 @@ describe('BillingHeaderComponent', () => {
     expect(component.setCreditCardDetails).toHaveBeenCalled();
     expect(component.getCreditUsed).toHaveBeenCalled();
     expect(component.isInCreditLimitWarningStatus).toHaveBeenCalled();
+    expect(component.paymentService.getCreditCardConfig).toHaveBeenCalled();
     expect(component.billingService.getBilling).toHaveBeenCalled();
   });
 
