@@ -71,9 +71,6 @@ class OneviewPermittedDirective {
   @Input() oneviewPermitted;
 }
 
-@Directive({ selector: '[oneviewDecimal]' }) // TODO, template must be user-configurable
-class OneviewDecimalDirective {}
-
 @Pipe({name: 'translate'}) // TODO, template must be user-configurable
 class TranslatePipe implements PipeTransform {
   transform(value) { return value; }
