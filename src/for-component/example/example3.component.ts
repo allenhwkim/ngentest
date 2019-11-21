@@ -4,6 +4,7 @@ import { lastDayOfMonth, differenceInCalendarDays, isWithinInterval, isSameDay }
 import { ChangePaymentMethodComponent } from '../../payment';
 import { BillingHeaderService } from './billing-header.service';
 import { DialogService } from '../../oneview-common/dialog/dialog.service';
+import { BillingDataService } from 'src/app/billing/billing-page/billing-data.service';
 import { defer, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -83,6 +84,7 @@ export class BillingHeaderComponent implements OnInit {
     private el: ElementRef,
     private dialog: DialogService,
     private billingHeader: BillingHeaderService,
+    private billingService: BillingDataService,
     @Inject(LOCALE_ID) private language: string) {}
 
   ngOnInit() {
@@ -100,6 +102,10 @@ export class BillingHeaderComponent implements OnInit {
 
     this.creditUsed = this.getCreditUsed() || 0;
     this.creditLimitWarningExists = this.isInCreditLimitWarningStatus();
+    this.billingService
+      .getBilling()
+      .pipe(map((billing: any) => billing.methodOfPayment.mopType))
+      .subscribe(mopType => (this.methodOfPayment = mopType));
   }
 
   setDebitCardDetails() {

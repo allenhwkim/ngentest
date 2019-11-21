@@ -132,7 +132,7 @@ function getProviders (klass) {
       providers[param.name] = `{ provide: ${injectClassName}, useValue: ${injectClassName} }`;
     } else if (param.type.match(/^(ElementRef|Router|HttpClient|TranslateService)$/)) {
       providers[param.name] = `{ provide: ${param.type}, useClass: Mock${param.type} }`;
-    } else if (iimport && iimport.mport.libraryName.match(/^\./)) { // user-defined classes
+    } else if (iimport && iimport.mport.libraryName.match(/^(\.|src\/)/)) { // user-defined classes
       providers[param.name] = `{ provide: ${param.type}, useClass: Mock${param.type} }`;
     } else {
       providers[param.name] = param.type;
@@ -167,7 +167,7 @@ function getProviderMocks (klass, ctorParams) {
       param.type === 'Document' ? ['querySelector = jest.fn();'] :
       param.type === 'HttpClient' ? ['post = jest.fn();'] :
       param.type === 'TranslateService' ? ['translate = jest.fn();'] :
-      iimport && iimport.mport.libraryName.match(/^[\.]+/) ? []  : undefined;
+      iimport && iimport.mport.libraryName.match(/^(\.|src\/)/) ? []  : undefined;
       /* eslint-enable */
 
     if (typeVars) {
