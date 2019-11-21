@@ -39,7 +39,7 @@ describe('AdjustmentFormComponent', () => {
       imports: [ FormsModule, ReactiveFormsModule ],
       declarations: [
         AdjustmentFormComponent, TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
-        OneviewDecimalDirective, OneviewPermittedDirective
+        OneviewPermittedDirective
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [

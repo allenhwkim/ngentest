@@ -50,7 +50,7 @@ describe('BillingHeaderComponent', () => {
       imports: [ FormsModule, ReactiveFormsModule ],
       declarations: [
         BillingHeaderComponent, TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
-        OneviewDecimalDirective, OneviewPermittedDirective
+        OneviewPermittedDirective
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [

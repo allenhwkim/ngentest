@@ -95,7 +95,7 @@ describe('ExampleComponent', () => {
       imports: [ FormsModule, ReactiveFormsModule ],
       declarations: [
         ExampleComponent, TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
-        OneviewDecimalDirective, OneviewPermittedDirective
+        OneviewPermittedDirective
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [
