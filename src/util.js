@@ -41,7 +41,7 @@ class Util {
         return 'jest.fn()';
       } else {
         const funcRet = objRet.type === 'Observable' ?
-          `obserbvableOf(${Util.objToJS(objRet.value, level + 1)})` :
+          `observableOf(${Util.objToJS(objRet.value, level + 1)})` :
           Util.objToJS(objRet, level + 1);
         return `function() {\n${indent}  return ${funcRet};\n${indent}}`;
       }
