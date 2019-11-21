@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, Inject, LOCALE_ID, ElementRef } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { lastDayOfMonth, differenceInCalendarDays, isWithinInterval, isSameDay } from 'date-fns';
 
 import { ChangePaymentMethodComponent } from '../../payment';
@@ -82,6 +83,7 @@ export class BillingHeaderComponent implements OnInit {
   creditLimitWarningExists = false;
 
   constructor(
+    private route: ActivatedRoute,
     private el: ElementRef,
     private dialog: DialogService,
     private billingHeader: BillingHeaderService,
@@ -90,6 +92,7 @@ export class BillingHeaderComponent implements OnInit {
     @Inject(LOCALE_ID) private language: string) {}
 
   ngOnInit() {
+    const ctn = this.route.snapshot.params['ctn'];
     this.currentLanguage = this.language ? this.language : 'en';
     this.isSuspended = this.accountSummary.accountStatus.toUpperCase() === 'SUSPENDED';
     this.setNotificationMessage();

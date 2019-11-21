@@ -128,6 +128,18 @@ function getProviders (klass) {
       providers[param.name] = `{ provide: 'PLATFORM_ID', useValue: 'browser' }`;
     } else if (injectClassName === 'LOCALE_ID') {
       providers[param.name] = `{ provide: 'LOCALE_ID', useValue: 'en' }`;
+    } else if (param.type === 'ActivatedRoute') {
+      providers[param.name] = `{
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {url: 'url', params: {}, queryParams: {}, data: {}},
+            url: observableOf('url'),
+            params: observableOf({}),
+            queryParams: observableOf({}),
+            fragment: observableOf('fragment'),
+            data: observableOf({})
+          }
+        }`;
     } else if (injectClassName) {
       providers[param.name] = `{ provide: ${injectClassName}, useValue: ${injectClassName} }`;
     } else if (param.type.match(/^(ElementRef|Router|HttpClient|TranslateService)$/)) {

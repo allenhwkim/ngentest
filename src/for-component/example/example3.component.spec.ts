@@ -8,6 +8,7 @@ import { Observable, of as observableOf, throwError } from 'rxjs';
 
 import { Component, ElementRef, LOCALE_ID } from '@angular/core';
 import { BillingHeaderComponent } from './example3.component';
+import { ActivatedRoute } from '@angular/router';
 import { DialogService } from '../../oneview-common/dialog/dialog.service';
 import { BillingHeaderService } from './billing-header.service';
 import { PaymentService } from '../payment.service';
@@ -63,6 +64,17 @@ describe('BillingHeaderComponent', () => {
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {url: 'url', params: {}, queryParams: {}, data: {}},
+            url: observableOf('url'),
+            params: observableOf({}),
+            queryParams: observableOf({}),
+            fragment: observableOf('fragment'),
+            data: observableOf({})
+          }
+        },
         { provide: ElementRef, useClass: MockElementRef },
         { provide: DialogService, useClass: MockDialogService },
         { provide: BillingHeaderService, useClass: MockBillingHeaderService },
@@ -89,6 +101,10 @@ describe('BillingHeaderComponent', () => {
   });
 
   it('should run #ngOnInit()', async () => {
+    component.route = component.route || {};
+    component.route.snapshot = {
+      params: '[object Object]'
+    };
     component.accountSummary = component.accountSummary || {};
     component.accountSummary.accountStatus = 'accountStatus';
     component.setNotificationMessage = jest.fn();
