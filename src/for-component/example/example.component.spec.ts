@@ -31,9 +31,7 @@ class MockAuthGuardService {
 
 @Injectable()
 class MockCookieService {
-  get = function() {
-    return {};
-  };
+  get = jest.fn();
   foo = function() {
     return {
       bar: {
@@ -66,6 +64,7 @@ class MockRouter {
 
 @Injectable()
 class MockCommonUtilsService {}
+
 @Directive({ selector: '[oneviewPermitted]' }) // TODO, template must be user-configurable
 class OneviewPermittedDirective {
   @Input() oneviewPermitted;

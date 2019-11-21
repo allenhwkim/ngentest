@@ -34,12 +34,16 @@ class Util {
     const exprs = [];
     const indent = ' '.repeat(level * 2);
     if (typeof obj === 'function') {
-      if (JSON.stringify(obj) === '{}') {
+      const objRet = obj();
+      const objRet1stKey = typeof objRet === 'object' &&
+        Object.keys(objRet).filter(k => k !== 'undefined')[0];
+      if (!objRet1stKey) {
         return 'jest.fn()';
       } else {
-        return `function() {\n` +
-          `${indent}  return ${Util.objToJS(obj(), level + 2)};\n` +
-          `${indent}}`;
+        const funcRet = objRet.type === 'Observable' ?
+          `obserbvableOf(${Util.objToJS(objRet.value, level + 1)})` :
+          Util.objToJS(objRet, level + 1);
+        return `function() {\n${indent}  return ${funcRet};\n${indent}}`;
       }
     } else if (Array.isArray(obj)) {
       return JSON.stringify(obj);
@@ -59,14 +63,7 @@ class Util {
         } else if (typeof obj[key] === 'object') {
           exprs.push(`${key}: ${Util.objToJS(obj[key], level + 1)}`);
         } else if (typeof obj[key] === 'function') {
-          if (JSON.stringify(obj[key]()) === '{}') {
-            exprs.push(`${key} : jest.fn()`);
-          } else {
-            exprs.push(`${key} : ` +
-              `function() {\n` +
-              `${indent}  return ${Util.objToJS(obj[key](), level + 2)};\n` +
-              `${indent}}`);
-          }
+          exprs.push(`${key} : ${Util.objToJS(obj[key], level + 1)}`);
         } else if (typeof obj[key] === 'string') {
           exprs.push(`${key}: "${obj[key]}"`);
         } else {

@@ -10,6 +10,7 @@ import { Component, ElementRef, LOCALE_ID } from '@angular/core';
 import { BillingHeaderComponent } from './example3.component';
 import { DialogService } from '../../oneview-common/dialog/dialog.service';
 import { BillingHeaderService } from './billing-header.service';
+import { BillingDataService } from 'src/app/billing/billing-page/billing-data.service';
 
 @Injectable()
 class MockElementRef {
@@ -21,6 +22,10 @@ class MockDialogService {}
 
 @Injectable()
 class MockBillingHeaderService {}
+
+@Injectable()
+class MockBillingDataService {}
+
 @Directive({ selector: '[oneviewPermitted]' }) // TODO, template must be user-configurable
 class OneviewPermittedDirective {
   @Input() oneviewPermitted;
@@ -57,6 +62,7 @@ describe('BillingHeaderComponent', () => {
         { provide: ElementRef, useClass: MockElementRef },
         { provide: DialogService, useClass: MockDialogService },
         { provide: BillingHeaderService, useClass: MockBillingHeaderService },
+        { provide: BillingDataService, useClass: MockBillingDataService },
         { provide: 'LOCALE_ID', useValue: 'en' }      ]
     }).compileComponents();
     fixture = TestBed.createComponent(BillingHeaderComponent);
@@ -91,12 +97,21 @@ describe('BillingHeaderComponent', () => {
     component.setCreditCardDetails = jest.fn();
     component.getCreditUsed = jest.fn();
     component.isInCreditLimitWarningStatus = jest.fn();
+    component.billingService = component.billingService || {};
+    component.billingService.getBilling = jest.fn().mockReturnValue({
+      pipe : function() {
+        return obserbvableOf({
+
+        });
+      }
+    });
     component.ngOnInit();
     expect(component.setNotificationMessage).toHaveBeenCalled();
     expect(component.setDebitCardDetails).toHaveBeenCalled();
     expect(component.setCreditCardDetails).toHaveBeenCalled();
     expect(component.getCreditUsed).toHaveBeenCalled();
     expect(component.isInCreditLimitWarningStatus).toHaveBeenCalled();
+    expect(component.billingService.getBilling).toHaveBeenCalled();
   });
 
   it('should run #setDebitCardDetails()', async () => {
