@@ -284,6 +284,9 @@ class Util {
    *    {x : { y: z: function() {} }}
    */
   static getFuncParamObj (node, code) { // CallExpression
+    if (!node.params.length)
+      return false;
+
     const funcRetName = node.params[0].name;
     const codeReplaced = code.replace(/\n+/g, '').replace(/\s+/g, ' ');
     const funcRetExprs = codeReplaced.match(new RegExp(`${funcRetName}(\\.[^\\s\\;\\)]+)+`, 'ig'));
