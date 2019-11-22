@@ -163,8 +163,9 @@ function getProviderMocks (klass, ctorParams) {
 
   function getCtorVarsJS (varName) {
     const vars = ctorParams[varName];
+    delete vars.undefined; // TODO figure out why 'undefined' is here
     return Object.entries(vars).map(([key, value]) => {
-      // console.log(`>>>>>>>>>>>>>>>> value`, value);
+      // console.log(`>>>>>>>>>>>>>>>> `, {key, value});
       return `${key} = ${Util.objToJS(value)};`;
     });
   }

@@ -50,6 +50,8 @@ describe('<%= className %>', () => {
       providers: [
         <%- Object.entries(providers).map( ([_, value]) => value ).join(',\n        ') -%>
       ]
+    }).overrideComponent(<%= className %>, {
+      // set: { providers: [{ provide: MyComponentService, useClass: MyComponentService }] }
     }).compileComponents();
     fixture = TestBed.createComponent(<%= className %>);
     component = fixture.debugElement.componentInstance;

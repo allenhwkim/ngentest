@@ -18,6 +18,7 @@ const argv = yargs.usage('Usage: $0 <tsFile> [options]')
   .options({
     's': { alias: 'spec', describe: 'write the spec file along with source file', type: 'boolean' },
     'f': { alias: 'force', describe: 'Do not ask question when overwrite spec file', type: 'boolean' },
+    'm': { alias: 'method', describe: 'Show code only for this method', type: 'string' },
     'v': { alias: 'verbose', describe: 'log verbose debug messages', type: 'boolean' }
   })
   .example('$0 my.component.ts', 'generate Angular unit test for my.component.ts')
@@ -25,7 +26,7 @@ const argv = yargs.usage('Usage: $0 <tsFile> [options]')
   .argv;
 
 Util.DEBUG = argv.verbose;
-const tsFile = argv._[0];
+const tsFile = argv._[0].replace(/\.spec\.ts$/, '.ts');
 // const writeToSpec = argv.spec;
 if (!(tsFile && fs.existsSync(tsFile))) {
   console.error('Error. invalid typescript file. e.g., Usage $0 <tsFile> [options]');
@@ -105,8 +106,7 @@ async function run (tsFile) {
     //      . writeClassTest()
     // klass.accessors(properties, methods, ctor)
     ejsData.accessorTests = {};
-    const methodName = undefined;
-    // const methodName = 'handleDaysAffected';
+    const methodName = argv.m ? argv.m : undefined;
     const klassAccessors = klass.accessors.filter(el => !methodName || (el.name === methodName));
     klassAccessors.forEach(accessor => {
       Util.DEBUG &&
