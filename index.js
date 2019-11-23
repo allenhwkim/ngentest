@@ -62,10 +62,45 @@ function getTestGenerator (tsPath) {
   return testGenerator;
 }
 
+function getFuncTest(Klass, func, angularType) {
+  Util.DEBUG &&
+    console.log('\x1b[36m%s\x1b[0m', `\nPROCESSING #${func.name}`);
+
+  const type = func.constructor.name;
+  const funcMockData = getFuncMockData(Klass, func.name, {});
+  const funcMockJS = Util.getFuncMockJS(funcMockData, angularType);
+  const funcParamJS = Util.getFuncParamJS(funcMockData);
+  const assertRE = /(.*?)\s*=\s*jest\.fn\(.*/;
+  const funcAssertJS = funcMockJS
+    .filter(el => el.match(assertRE))
+    .map(el => {
+      el = el.replace(/\n/g,' ');
+      return el.replace(assertRE, (_, m1) => `expect(${m1}).toHaveBeenCalled()`);
+    });
+  const jsToRun = 
+    type === 'SetterDeclaration' ? `${angularType}.${func.name} = ${funcParamJS}`: 
+    type === 'GetterDeclaration' ? `const ${func.name} = ${angularType}.${func.name}` : 
+    `${angularType}.${func.name}(${funcParamJS})`;
+  const itBlockName = type === 'MethodDeclaration' ? 
+    `should run #${func.name}()` : `should run ${type} #${func.name}`;
+  return `
+    it('${itBlockName}', async () => {
+      ${funcMockJS.join(';\n')}${funcMockJS.length ? ';' : ''}
+      ${jsToRun};
+      ${funcAssertJS.join(';\n')}${funcAssertJS.length ? ';' : ''}
+    });
+    `;
+}
+
 async function run (tsFile) {
   try {
     const testGenerator = getTestGenerator(tsFile);
     const { klass, typescript, ejsData } = await testGenerator.getData();
+    const angularType = Util.getAngularType(typescript).toLowerCase();
+    ejsData.ctorParamJs;
+    ejsData.providerMocks;
+    ejsData.accessorTests = {};
+    ejsData.functionTests = {};
 
     const result = ts.transpileModule(typescript, {
       compilerOptions: {
@@ -89,80 +124,22 @@ async function run (tsFile) {
     Util.DEBUG &&
       console.warn('\x1b[36m%s\x1b[0m', `PROCESSING ${klass.ctor && klass.ctor.name} constructor`);
     const ctorMockData = getFuncMockData(Klass, 'constructor', {});
+
     const ctorParamJs = Util.getFuncParamJS(ctorMockData);
     ejsData.ctorParamJs = ctorParamJs;
     ejsData.providerMocks = testGenerator.getProviderMocks(klass, ctorMockData.params);
     for (var key in ejsData.providerMocks) {
       ejsData.providerMocks[key] = Util.indent(ejsData.providerMocks[key]).replace(/\{\s+\}/gm, '{}');
     }
-    ejsData.functionTests = {};
 
-    Util.DEBUG && console.log(`  === RESULT 'ctorMockData' ===`, ctorMockData);
-    Util.DEBUG && console.log('...................... ejsData   ..........\n', ejsData);
-    Util.DEBUG && console.log('...................... ctorMockData        ..........\n', ctorMockData);
-    // const ctorParams = Object.entries(ctorMockData.params).map( ([key, val]) => ejsData.providers[key].useValue || val );
-    // console.log('CHECKI#NG IF CONSTRUCTOR WORKS', new Klass(...ctorParams), 'SUCCESS!!\n');
-
-    const angularType = Util.getAngularType(typescript).toLowerCase();
-    // TODO:
-    // . move method code into class-writer to get functionTests
-    // . create a function to get one functionTest code
-    //    . getFunctionTest(funcName)
-    // . create a function to write one functionTest code in case you overwrite a file
-    //    . writeFunctionTest(funcName)
-    // . separte class-level test and function-level test so that
-    //   . it does not write class-level test when file exists
-    //      . writeClassTest()
-    // klass.accessors(properties, methods, ctor)
-    ejsData.accessorTests = {};
-    const methodName = argv.m ? argv.m : undefined;
-    const klassAccessors = klass.accessors.filter(el => !methodName || (el.name === methodName));
-    klassAccessors.forEach(accessor => {
-      Util.DEBUG &&
-        console.log('\x1b[36m%s\x1b[0m', `\nPROCESSING ${klass.ctor && klass.ctor.name}#${accessor.name}`);
-
-      const type = accessor.constructor.name;
-      const funcMockData = getFuncMockData(Klass, accessor.name, {});
-      const funcMockJS = Util.getFuncMockJS(funcMockData, angularType);
-      const assertRE = /(.*?)\s*=\s*jest\.fn\(.*\)/;
-      const funcAssertJS = funcMockJS
-        .filter(el => el.match(assertRE))
-        .map(el => el.replace(assertRE, (_, m1) => `expect(${m1}).toHaveBeenCalled()`));
-      const funcParamJS = Util.getFuncParamJS(funcMockData);
-      const jsToRun = 
-        type === 'SetterDeclaration' ? `${angularType}.${accessor.name} = ${funcParamJS}`: 
-        type === 'GetterDeclaration' ? `const ${accessor.name} = ${angularType}.${accessor.name}` : '';
-      ejsData.accessorTests[accessor.name] = Util.indent(`
-        it('should run ${type} #${accessor.name}', async () => {
-          ${funcMockJS.join(';\n')}${funcMockJS.length ? ';' : ''}
-          ${jsToRun};
-          ${funcAssertJS.join(';\n')}${funcAssertJS.length ? ';' : ''}
-        });
-      `, '  ');
+    klass.accessors.forEach(accessor => {
+      ejsData.accessorTests[accessor.name] =
+        Util.indent(getFuncTest(Klass, accessor, angularType), '  ');
     });
 
-    const klassMethods = klass.methods.filter(el => !methodName || (el.name === methodName));
-    klassMethods.forEach(method => {
-      Util.DEBUG &&
-        console.log('\x1b[36m%s\x1b[0m', `\nPROCESSING ${klass.ctor && klass.ctor.name}#${method.name}`);
-      // const thisValues = Object.assign({}, ctorMockData.props);
-      const funcMockData = getFuncMockData(Klass, method.name, {});
-      const funcMockJS = Util.getFuncMockJS(funcMockData, angularType);
-      const funcParamJS = Util.getFuncParamJS(funcMockData);
-      const assertRE = /(.*?)\s*=\s*jest\.fn\(.*/;
-      const funcAssertJS = funcMockJS
-        .filter(el => el.match(assertRE))
-        .map(el => {
-          el = el.replace(/\n/g,' ');
-          return el.replace(assertRE, (_, m1) => `expect(${m1}).toHaveBeenCalled()`);
-        });
-      ejsData.functionTests[method.name] = Util.indent(`
-        it('should run #${method.name}()', async () => {
-          ${funcMockJS.join(';\n')}${funcMockJS.length ? ';' : ''}
-          ${angularType}.${method.name}(${funcParamJS});
-          ${funcAssertJS.join(';\n')}${funcAssertJS.length ? ';' : ''}
-        });
-      `, '  ');
+    klass.methods.forEach(method => {
+      ejsData.functionTests[method.name] =
+        Util.indent(getFuncTest(Klass, method, angularType), '  ');
     });
 
     const generated = testGenerator.getGenerated(ejsData);
