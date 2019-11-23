@@ -69,12 +69,21 @@ async function run (tsFile) {
 
     const result = ts.transpileModule(typescript, {
       compilerOptions: {
-        module: ts.ModuleKind.CommonJS, experimentalDecorators: true, target: ts.ScriptTarget.ES2015
+        module: ts.ModuleKind.CommonJS,
+        experimentalDecorators: true,
+        removeComments: true,
+        target: ts.ScriptTarget.ES2015
       }
     });
 
     // replace invalid require statements
-    const replacedOutputText = result.outputText.replace(/require\("\.[^\)]+\)/gm, '{}');
+    const replacedOutputText = result.outputText
+      .replace(/require\("html-custom-element"\)/gm, '{}')  //TODO configurable
+      .replace(/^\S+\.define\(.*\);/gm, '')  // TODO configurable
+      .replace(/require\("\.(.*)"\)/gm, '{}') // replace require statement to a variable, {}
+      .replace(/super\(.*\);/gm, '') // remove inheritance code
+      .replace(/super\./gm, 'this.') // change inheritance call to this call
+      .replace(/\s+extends\s\S+ {/gm, ' extends Object {') // rchange inheritance to an Object
     const modjule = requireFromString(replacedOutputText);
     const Klass = modjule[ejsData.className];
     Util.DEBUG &&

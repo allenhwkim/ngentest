@@ -45,6 +45,8 @@ describe('AdjustmentFormComponent', () => {
       providers: [
         FormBuilder,
         { provide: 'LOCALE_ID', useValue: 'en' }      ]
+    }).overrideComponent(AdjustmentFormComponent, {
+      // set: { providers: [{ provide: MyComponentService, useClass: MyComponentService }] }
     }).compileComponents();
     fixture = TestBed.createComponent(AdjustmentFormComponent);
     component = fixture.debugElement.componentInstance;

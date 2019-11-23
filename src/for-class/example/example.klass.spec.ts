@@ -2,159 +2,133 @@ import { async } from '@angular/core/testing';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
 import {Component} from '@angular/core';
-import {ExampleKlass} from './example.klass';
+import {AgentInfo} from './example.klass';
 
-describe('ExampleKlass', () => {
+describe('AgentInfo', () => {
   let obj;
 
   beforeEach(() => {
     // TODO: Think about is there anything can do with constructor mocks(?), things done within constructor
-    obj = new ExampleKlass();
+    obj = new AgentInfo();
   });
 
   it('should run #connectedCallback()', async () => {
     obj.closest = jest.fn();
-    obj.agentHeaderEl = obj.agentHeaderEl || {};
-    obj.agentHeaderEl.i18n = {
-      agentCart: '[object Object]'
-    };
     obj.renderWith = jest.fn();
-    obj.setShoppingCart = jest.fn();
+    obj.renderForCare = jest.fn();
+    obj.attachListeners = jest.fn();
     obj.connectedCallback();
     expect(obj.closest).toHaveBeenCalled();
     expect(obj.renderWith).toHaveBeenCalled();
-    expect(obj.setShoppingCart).toHaveBeenCalled();
+    expect(obj.renderForCare).toHaveBeenCalled();
+    expect(obj.attachListeners).toHaveBeenCalled();
   });
 
-  it('should run #toggleCart()', async () => {
-    obj.dispatchEvent = jest.fn();
-    obj.toggleCart({
-      type: '[object Object]'
-    });
-    expect(obj.dispatchEvent).toHaveBeenCalled();
-  });
-
-  it('should run #cartClicked()', async () => {
-    obj.querySelector = jest.fn();
-    obj.classList = obj.classList || {};
-    obj.classList.add = jest.fn();
-    obj.cartClicked({});
-    expect(obj.querySelector).toHaveBeenCalled();
-    expect(obj.classList.add).toHaveBeenCalled();
-  });
-
-  it('should run #setShoppingCart()', async () => {
-    obj.removeItems = jest.fn();
-    obj.querySelector = jest.fn();
-    obj.appendItems = jest.fn();
+  it('should run #closeAgentDealerChange()', async () => {
     obj.classList = obj.classList || {};
     obj.classList.remove = jest.fn();
-    obj.setShoppingCart({
-      success: '[object Object]',
-      ppc: {
-        length: '[object Object]',
-        concat : jest.fn()
-      },
-      hup: {
-        length: '[object Object]'
-      },
-      nac: {
-        length: '[object Object]'
-      }
-    });
-    expect(obj.removeItems).toHaveBeenCalled();
-    expect(obj.querySelector).toHaveBeenCalled();
-    expect(obj.appendItems).toHaveBeenCalled();
+    obj.closeAgentDealerChange({});
     expect(obj.classList.remove).toHaveBeenCalled();
   });
 
-  it('should run #appendItems()', async () => {
+  it('should run #applyDealerCode()', async () => {
+    obj.setDealerCode = jest.fn();
+    obj.i18n = obj.i18n || {};
+    obj.i18n.noCode = 'noCode';
+    obj.i18n = obj.i18n || {};
+    obj.i18n.acting = 'acting';
     obj.querySelector = jest.fn();
-    obj.getQuotationTemplate = jest.fn();
-    obj.i18n = obj.i18n || {};
-    obj.i18n.myQuotes = 'myQuotes';
-    obj.i18n = obj.i18n || {};
-    obj.i18n.myShoppingList = 'myShoppingList';
-    obj.getOrderTemplate = jest.fn();
-    obj.cancelOrder = obj.cancelOrder || {};
-    obj.cancelOrder.bind = jest.fn();
-    obj.itemClicked = obj.itemClicked || {};
-    obj.itemClicked.bind = jest.fn();
-    obj.appendItems({
-      forEach : function() {
-        return ["ngentest"];
+    obj.saveDealerCode = jest.fn();
+    obj.applyDealerCode({
+      dealerCode: '[object Object]',
+      consumer: {
+        accountNumber: '[object Object]'
+      }
+    }, {
+      userPreference: {
+        filter : jest.fn()
       }
     });
+    expect(obj.setDealerCode).toHaveBeenCalled();
     expect(obj.querySelector).toHaveBeenCalled();
-    expect(obj.getQuotationTemplate).toHaveBeenCalled();
-    expect(obj.getOrderTemplate).toHaveBeenCalled();
-    expect(obj.cancelOrder.bind).toHaveBeenCalled();
-    expect(obj.itemClicked.bind).toHaveBeenCalled();
+    expect(obj.saveDealerCode).toHaveBeenCalled();
   });
 
-  it('should run #getQuotationTemplate()', async () => {
-    obj.i18n = obj.i18n || {};
-    obj.i18n.delete = 'delete';
-    obj.i18n = obj.i18n || {};
-    obj.i18n.quote = 'quote';
-    obj.i18n = obj.i18n || {};
-    obj.i18n.expired = 'expired';
-    obj.i18n = obj.i18n || {};
-    obj.i18n.expires = 'expires';
-    obj.getQuotationTemplate({
-      quoteExpired: '[object Object]',
-      orderId: '[object Object]'
-    }, {});
-
+  it('should run #renderForCare()', async () => {
+    obj.applyDealerCode = jest.fn();
+    obj.querySelectorAll = jest.fn();
+    obj.renderForCare();
+    expect(obj.applyDealerCode).toHaveBeenCalled();
+    expect(obj.querySelectorAll).toHaveBeenCalled();
   });
 
-  it('should run #getOrderTemplate()', async () => {
-    obj.i18n = obj.i18n || {};
-    obj.i18n.delete = 'delete';
-    obj.getOrderTemplate({}, {});
-
+  it('should run #setDealerCode()', async () => {
+    obj.querySelector = jest.fn();
+    obj.setDealerCode({});
+    expect(obj.querySelector).toHaveBeenCalled();
   });
 
-  it('should run #removeItems()', async () => {
-
-    obj.removeItems();
-
-  });
-
-  it('should run #cancelOrder()', async () => {
-
-    obj.cancelOrder({
-      stopPropagation : jest.fn(),
-      currentTarget: {
-        parentElement: {
-          parentElement: '[object Object]'
-        }
-      }
-    });
-
-  });
-
-  it('should run #itemClicked()', async () => {
-    obj.cartData = obj.cartData || {};
-    obj.cartData.find = jest.fn();
-    obj.dispatchEvent = jest.fn();
+  it('should run #toggleChangeDealer()', async () => {
     obj.classList = obj.classList || {};
-    obj.classList.remove = jest.fn();
-    obj.itemClicked({
-      currentTarget: {
-        getAttribute : jest.fn()
-      }
-    });
-    expect(obj.cartData.find).toHaveBeenCalled();
-    expect(obj.dispatchEvent).toHaveBeenCalled();
-    expect(obj.classList.remove).toHaveBeenCalled();
+    obj.classList.toggle = jest.fn();
+    obj.toggleChangeDealer({});
+    expect(obj.classList.toggle).toHaveBeenCalled();
   });
 
-  it('should run #closeShoppingCart()', async () => {
-    obj.classList = obj.classList || {};
-    obj.classList.remove = jest.fn();
-    obj.closeShoppingCart({});
-    expect(obj.classList.remove).toHaveBeenCalled();
+  it('should run #attachListeners()', async () => {
+    obj.querySelector = jest.fn();
+    obj.attachListeners();
+    expect(obj.querySelector).toHaveBeenCalled();
+  });
+
+  it('should run #toggleChangeDealerForm()', async () => {
+    obj.querySelector = jest.fn();
+    obj.toggleChangeDealerForm();
+    expect(obj.querySelector).toHaveBeenCalled();
+  });
+
+  it('should run #validateDealerCode()', async () => {
+
+    obj.validateDealerCode({});
+
+  });
+
+  it('should run #updateSession()', async () => {
+
+    obj.updateSession({});
+
+  });
+
+  it('should run #saveDealerCode()', async () => {
+
+    obj.saveDealerCode({});
+
+  });
+
+  it('should run #updateDealer()', async () => {
+    obj.querySelector = jest.fn();
+    obj.agentInfo = obj.agentInfo || {};
+    obj.agentInfo.consumer = {
+      accountNumber: '[object Object]'
+    };
+    obj.agentInfo = obj.agentInfo || {};
+    obj.agentInfo.lanId = 'lanId';
+    obj.validateDealerCode = jest.fn();
+    obj.updateDealer({});
+    expect(obj.querySelector).toHaveBeenCalled();
+    expect(obj.validateDealerCode).toHaveBeenCalled();
+  });
+
+  it('should run #impersonate()', async () => {
+    obj.querySelector = jest.fn();
+    obj.agentInfo = obj.agentInfo || {};
+    obj.agentInfo.consumer = {
+      accountNumber: '[object Object]'
+    };
+    obj.validateDealerCode = jest.fn();
+    obj.impersonate({});
+    expect(obj.querySelector).toHaveBeenCalled();
+    expect(obj.validateDealerCode).toHaveBeenCalled();
   });
 
 });

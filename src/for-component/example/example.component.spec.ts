@@ -104,6 +104,8 @@ describe('ExampleComponent', () => {
         { provide: 'PLATFORM_ID', useValue: 'browser' },
         { provide: Router, useClass: MockRouter },
         { provide: CommonUtilsService, useClass: MockCommonUtilsService }      ]
+    }).overrideComponent(ExampleComponent, {
+      // set: { providers: [{ provide: MyComponentService, useClass: MyComponentService }] }
     }).compileComponents();
     fixture = TestBed.createComponent(ExampleComponent);
     component = fixture.debugElement.componentInstance;
