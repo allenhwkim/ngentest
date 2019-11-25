@@ -196,10 +196,31 @@ function getProviderMocks (klass, ctorParams) {
   return mocks;
 }
 
-function getGenerated (ejsData) {
-  const generated = ejs.render(this.template, ejsData).replace(/\n\s+$/gm, '\n');
-  return generated;
+function getGenerated (ejsData, options) {
+  const funcName = options.method;
+  if (funcName) {
+    return ejsData.functionTests[funcName] || ejsData.accessorTests[funcName];
+  } else {
+    const generated = ejs.render(this.template, ejsData).replace(/\n\s+$/gm, '\n');
+    return generated;
+  }
 }
+
+function writeToSpecFile (specPath, generated) {
+  fs.writeFileSync(specPath, generated);
+  console.log('Generated unit test to', specPath);
+}
+
+function backupExistingFile (specPath, generated) {
+  if (fs.existsSync(specPath)) {
+    const backupTime = (new Date()).toISOString().replace(/[^\d]/g, '').slice(0, -5);
+    const backupContents = fs.readFileSync(specPath, 'utf8');
+    if (backupContents !== generated) {
+      fs.writeFileSync(`${specPath}.${backupTime}`, backupContents, 'utf8'); // write backup
+      console.log('Backup the exisiting file to', `${specPath}.${backupTime}`);
+    }
+  }
+};
 
 function writeGenerated (generated, options) {
   const toFile = options.spec;
@@ -207,27 +228,11 @@ function writeGenerated (generated, options) {
   const specPath = path.resolve(this.tsPath.replace(/\.ts$/, '.spec.ts'));
   generated = generated.replace(/\r\n/g, '\n');
 
-  const writeToFile = function () {
-    fs.writeFileSync(specPath, generated);
-    console.log('Generated unit test to', specPath);
-  };
-
-  const backupExistingFile = function () {
-    if (fs.existsSync(specPath)) {
-      const backupTime = (new Date()).toISOString().replace(/[^\d]/g, '').slice(0, -5);
-      const backupContents = fs.readFileSync(specPath, 'utf8');
-      if (backupContents !== generated) {
-        fs.writeFileSync(`${specPath}.${backupTime}`, backupContents, 'utf8'); // write backup
-        console.log('Backup the exisiting file to', `${specPath}.${backupTime}`);
-      }
-    }
-  };
-
   const specFileExists = fs.existsSync(specPath);
 
   if (toFile && specFileExists && force) {
-    backupExistingFile();
-    writeToFile();
+    backupExistingFile(specPath, generated);
+    writeToSpecFile(specPath, generated);
   } else if (toFile && specFileExists && !force) {
     const readline = require('readline');
     const rl = readline.createInterface(process.stdin, process.stdout);
@@ -235,16 +240,16 @@ function writeGenerated (generated, options) {
       `WARNING!!, Spec file, ${specPath} already exists. Overwrite it?`);
     rl.question('Continue? ', answer => {
       if (answer.match(/y/i)) {
-        backupExistingFile();
-        writeToFile();
+        backupExistingFile(specPath, generated);
+        writeToSpecFile(specPath, generated);
       } else {
         process.stdout.write(generated);
       }
       rl.close();
     });
   } else if (toFile && !specFileExists) {
-    backupExistingFile();
-    writeToFile();
+    backupExistingFile(specPath, generated);
+    writeToSpecFile(specPath, generated);
   } else if (!toFile) {
     process.stdout.write(generated);
   }
