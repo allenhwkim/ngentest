@@ -105,7 +105,9 @@ describe('BillingHeaderComponent', () => {
   it('should run #ngOnInit()', async () => {
     component.route = component.route || {};
     component.route.snapshot = {
-      params: '[object Object]'
+      params: {
+        'ctn': '[object Object]'
+      }
     };
     component.accountSummary = component.accountSummary || {};
     component.accountSummary.accountStatus = 'accountStatus';

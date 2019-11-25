@@ -119,7 +119,7 @@ class Util {
   static getExprMembers (node, result = []) {
     const { type, property, object, callee } = node;
     const member = /* eslint-disable */
-      type === 'MemberExpression' ? property.name :
+      type === 'MemberExpression' ? property.name || property.raw :
       type === 'CallExpression' ? `(${Util.getFuncArgNames(node)})` :
       type === 'ThisExpression' ? 'this' :
       type === 'Identifier' ? node.name : undefined;
