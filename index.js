@@ -17,7 +17,11 @@ const ClassTestGen = require('./src/for-class/class-test-gen.js');
 const argv = yargs.usage('Usage: $0 <tsFile> [options]')
   .options({
     's': { alias: 'spec', describe: 'write the spec file along with source file', type: 'boolean' },
-    'f': { alias: 'force', describe: 'Do not ask question when overwrite spec file', type: 'boolean' },
+    'f': {
+      alias: 'force', 
+      describe: 'It prints out a new test file, and it does not ask a question when overwrite spec file',
+      type: 'boolean'
+    },
     'm': { alias: 'method', describe: 'Show code only for this method', type: 'string' },
     'v': { alias: 'verbose', describe: 'log verbose debug messages', type: 'boolean' }
   })
@@ -143,7 +147,7 @@ async function run (tsFile) {
     });
 
     const generated = testGenerator.getGenerated(ejsData, argv);
-    testGenerator.writeGenerated(generated, argv);
+    generated && testGenerator.writeGenerated(generated, argv);
   } catch (e) {
     console.error(tsFile);
     console.error(e);

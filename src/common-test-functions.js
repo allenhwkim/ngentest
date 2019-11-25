@@ -196,14 +196,51 @@ function getProviderMocks (klass, ctorParams) {
   return mocks;
 }
 
-function getGenerated (ejsData, options) {
-  const funcName = options.method;
-  if (funcName) {
-    return ejsData.functionTests[funcName] || ejsData.accessorTests[funcName];
-  } else {
-    const generated = ejs.render(this.template, ejsData).replace(/\n\s+$/gm, '\n');
-    return generated;
+function getExistingTests(ejsData, existingTestCodes) {
+  const existingTests = {};
+  const allTests = Object.assign({}, ejsData.accessorTests || {}, ejsData.functionTests || {});
+  for (var funcName in allTests) {
+    // e.g. compoent.myFuncName(any, goes, here);
+    const re = new RegExp(`\\S+\.${funcName}\\(?[\\s\\S]*\\)?;`, 'm');
+    existingTests[funcName] = !!existingTestCodes.match(re);
   }
+
+  return existingTests;
+}
+
+function getGenerated (ejsData, options) {
+  let generated;
+  const funcName = options.method;
+  const specPath = path.resolve(this.tsPath.replace(/\.ts$/, '.spec.ts')); 
+  const existingTestCodes = fs.existsSync(specPath) && fs.readFileSync(specPath, 'utf8');
+  if (funcName) {
+    // if user asks to generate only one function
+    generated = ejsData.functionTests[funcName] || ejsData.accessorTests[funcName];
+  } else if (existingTestCodes && specPath && !options.force) {
+    // if there is existing tests, then add only new function tests at the end
+    const existingTests = getExistingTests(ejsData, existingTestCodes);
+    const newTests = [];
+    const allTests = Object.assign({}, ejsData.accessorTests || {}, ejsData.functionTests || {});
+    // get only new tests
+    for (var method in existingTests) {
+      (existingTests[method] !== true) && newTests.push('  // new test by ngentest' + allTests[method]); 
+    }
+    if (newTests.length) {
+      // add new tests at the end
+      const re = /(\n\s+}\);?\n\n)(}\);?\s*)$/;
+      const testEndingMatch = existingTestCodes.match(re); // file ending parts
+      if (testEndingMatch) {
+        generated = existingTestCodes.replace(re, (m0, m1, m2) => {
+          const newCodes = newTests.join('\n').replace(/[ ]+$/, '');
+          return `${m1}${newCodes}${m2}`;
+        });
+      }
+    }
+  } else {
+    // if no existing tests
+    generated = ejs.render(this.template, ejsData).replace(/\n\s+$/gm, '\n');
+  }
+  return generated;
 }
 
 function writeToSpecFile (specPath, generated) {

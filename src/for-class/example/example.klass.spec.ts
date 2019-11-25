@@ -12,6 +12,17 @@ describe('AgentInfo', () => {
     obj = new AgentInfo();
   });
 
+  it('should run GetterDeclaration #username', async () => {
+    obj.agentInfo = obj.agentInfo || {};
+    obj.agentInfo.lanId = 'lanId';
+    obj.agentInfo = obj.agentInfo || {};
+    obj.agentInfo.cfaFirstName = 'cfaFirstName';
+    obj.agentInfo = obj.agentInfo || {};
+    obj.agentInfo.cfaLastName = 'cfaLastName';
+    const username = obj.username;
+
+  });
+
   it('should run #connectedCallback()', async () => {
     obj.closest = jest.fn();
     obj.renderWith = jest.fn();

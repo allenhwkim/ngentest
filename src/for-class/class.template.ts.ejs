@@ -17,6 +17,10 @@ describe('<%= className %>', () => {
     obj = new <%= className %>(<%= ctorParamJs %>);
   });
 
+  <% for(var key in accessorTests) { %>
+  <%- accessorTests[key] -%>
+  <% } %>
+
   <% for(var key in functionTests) { -%>
   <%- functionTests[key] -%>
   <% } -%>
