@@ -201,7 +201,9 @@ function getGenerated (ejsData) {
   return generated;
 }
 
-function writeGenerated (generated, toFile, force) {
+function writeGenerated (generated, options) {
+  const toFile = options.spec;
+  const force = options.force;
   const specPath = path.resolve(this.tsPath.replace(/\.ts$/, '.spec.ts'));
   generated = generated.replace(/\r\n/g, '\n');
 

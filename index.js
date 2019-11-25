@@ -142,8 +142,8 @@ async function run (tsFile) {
         Util.indent(getFuncTest(Klass, method, angularType), '  ');
     });
 
-    const generated = testGenerator.getGenerated(ejsData);
-    testGenerator.writeGenerated(generated, argv.spec, argv.force);
+    const generated = testGenerator.getGenerated(ejsData, argv);
+    testGenerator.writeGenerated(generated, argv);
   } catch (e) {
     console.error(tsFile);
     console.error(e);
