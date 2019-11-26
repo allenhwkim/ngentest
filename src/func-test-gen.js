@@ -73,6 +73,7 @@ class FuncTestGen {
       nodeIn.type === 'UnaryExpression' ? nodeIn.argument :
       nodeIn.type === 'VariableDeclaration' ? nodeIn :
       nodeIn.type === 'WhileStatement' ? nodeIn :
+      nodeIn.type === 'YieldExpression' ? nodeIn :
       null; /* eslint-enable */
 
     if (!node) {
@@ -144,6 +145,8 @@ class FuncTestGen {
     } else if (node.type === 'WhileExpression') { // this.xxxx, foo.xxxx
       this.setPropsOrParams(node.test, mockData);
       this.setPropsOrParams(node.body, mockData);
+    } else if (node.type === 'YieldExpression') { // this.xxxx, foo.xxxx
+      this.setPropsOrParams(node.argument, mockData);
     } else if (node.type === 'CallExpression') {
       // procesa call expression
       // if this call expression is a typical pattern,
@@ -182,6 +185,8 @@ class FuncTestGen {
         this.setMockData(node.right, mockData);
         this.setMockData(node.left, mockData);
       }
+    } else if (node.type === 'UnaryExpression') {
+      this.setMockData(node.argument, mockData);
     } else {
       console.warn({ node });
       console.warn('\x1b[33m%s\x1b[0m', `WARNING WARNING WARNING unprocessed expression ${node.type} ${code}`);

@@ -154,7 +154,8 @@ class Util {
       } else if (arg.type === 'Identifier' && arg.name) {
         return arg.name;
       } else if (arg.type === 'BinaryExpression') return 'BIN_EXPR';
-      else if (arg.type === 'ArrowFunctionExpression') return 'FUNC_EXPR';
+      else if (arg.type === 'ArrowFunctionExpression') return 'ARROW_FUNC_EXPR';
+      else if (arg.type === 'FunctionExpression') return 'FUNC_EXPR';
       else if (arg.type === 'CallExpression') return 'CALL_EXPR';
       else if (arg.type === 'LogicalExpression') return 'LOGI_EXPR';
       else if (arg.type === 'MemberExpression') return 'MBR_EXPR';
