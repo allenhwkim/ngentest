@@ -164,6 +164,7 @@ class Util {
       else if (arg.type === 'TemplateLiteral') return 'TMPL_LTRL';
       else if (arg.type === 'ThisExpression') return 'THIS_EXPR';
       else if (arg.type === 'UnaryExpression') return 'UNRY_EXPR';
+      else if (arg.type === 'ConditionalExpression') return 'COND_EXPR';
       else if (arg.type === 'SpreadElement') return '...' + arg.name;
       else {
         console.error('\x1b[31m%s\x1b[0m', `Invalid function argument expression`, arg);

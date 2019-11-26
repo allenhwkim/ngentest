@@ -3,6 +3,7 @@ const Util = require('./util.js');
 
 class FuncTestGen {
 
+  // TODO: getter/setter differntiate the same name function getter/setter
   constructor (Klass, funcName) {
     this.Klass = Klass;
     this.funcName = funcName;
@@ -16,6 +17,7 @@ class FuncTestGen {
 
   getInitialParameters () {
     const params = {};
+    // TODO: getter/setter differntiate the same name function getter/setter
     const methodDefinition = this.klassDecl.body.body.find(node => node.key.name === this.funcName);
     if (methodDefinition) {
       methodDefinition.value.params.forEach(el => (params[el.name] = {}));
@@ -51,6 +53,7 @@ class FuncTestGen {
       nodeIn.type === 'BlockStatement' ? nodeIn :
       nodeIn.type === 'BreakStatement' ? nodeIn :
       nodeIn.type === 'CallExpression' ? nodeIn :
+      nodeIn.type === 'CatchClause' ? nodeIn :
       nodeIn.type === 'ConditionalExpression' ? nodeIn :
       nodeIn.type === 'DeclaratoinxapressionStatement' ? nodeIn.declarations :
       nodeIn.type === 'ExpressionStatement' ? nodeIn.expression :
@@ -70,6 +73,7 @@ class FuncTestGen {
       nodeIn.type === 'TemplateLiteral' ? nodeIn :
       nodeIn.type === 'ThrowStatement' ? nodeIn :
       nodeIn.type === 'ThisExpression' ? nodeIn :
+      nodeIn.type === 'TryStatement' ? nodeIn :
       nodeIn.type === 'UnaryExpression' ? nodeIn.argument :
       nodeIn.type === 'VariableDeclaration' ? nodeIn :
       nodeIn.type === 'WhileStatement' ? nodeIn :
@@ -130,7 +134,6 @@ class FuncTestGen {
       this.setMockData(node.right, mockData);
     } else if (node.type === 'BlockStatement') {
       node.body.forEach(expr => {
-        Util.DEBUG && console.log('    *** EXPRESSION BlockStatement ***', this.getCode(expr));
         this.setMockData(expr, mockData);
       });
     } else if (node.type === 'BinaryExpression') {
@@ -140,13 +143,20 @@ class FuncTestGen {
       node.properties.forEach(property => {
         this.setMockData(property.value, mockData);
       });
+    } else if (node.type === 'TryStatement') {
+      this.setMockData(node.block, mockData);
+    } else if (node.type === 'CatchClause') {
+      this.setMockData(node.block, mockData);
+      this.setMockData(node.handler, mockData);
+    } else if (node.type === 'WhileExpression') { // this.xxxx, foo.xxxx
+      this.setMockData(node.test, mockData);
+      this.setMockData(node.body, mockData);
+    } else if (node.type === 'YieldExpression') { // this.xxxx, foo.xxxx
+      this.setMockData(node.argument, mockData);
+    } else if (node.type === 'UnaryExpression') {
+      this.setMockData(node.argument, mockData);
     } else if (node.type === 'MemberExpression') { // this.xxxx, foo.xxxx
       this.setPropsOrParams(node, mockData);
-    } else if (node.type === 'WhileExpression') { // this.xxxx, foo.xxxx
-      this.setPropsOrParams(node.test, mockData);
-      this.setPropsOrParams(node.body, mockData);
-    } else if (node.type === 'YieldExpression') { // this.xxxx, foo.xxxx
-      this.setPropsOrParams(node.argument, mockData);
     } else if (node.type === 'CallExpression') {
       // procesa call expression
       // if this call expression is a typical pattern,
@@ -185,8 +195,6 @@ class FuncTestGen {
         this.setMockData(node.right, mockData);
         this.setMockData(node.left, mockData);
       }
-    } else if (node.type === 'UnaryExpression') {
-      this.setMockData(node.argument, mockData);
     } else {
       console.warn({ node });
       console.warn('\x1b[33m%s\x1b[0m', `WARNING WARNING WARNING unprocessed expression ${node.type} ${code}`);

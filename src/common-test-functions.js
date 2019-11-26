@@ -227,7 +227,7 @@ function getGenerated (ejsData, options) {
     }
     if (newTests.length) {
       // add new tests at the end
-      const re = /(\n\s+}\);?\n\n)(}\);?\s*)$/;
+      const re = /(\s+}\);?\s+)(}\);?\s*)$/;
       const testEndingMatch = existingTestCodes.match(re); // file ending parts
       if (testEndingMatch) {
         generated = existingTestCodes.replace(re, (m0, m1, m2) => {

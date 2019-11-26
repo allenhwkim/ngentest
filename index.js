@@ -37,6 +37,7 @@ if (!(tsFile && fs.existsSync(tsFile))) {
   process.exit(1);
 }
 
+// TODO: getter/setter differntiate the same name function getter/setter
 function getFuncMockData (Klass, funcName, props) {
   const funcTestGen = new FuncTestGen(Klass, funcName);
   const funcMockData = {
@@ -71,6 +72,7 @@ function getFuncTest(Klass, func, angularType) {
     console.log('\x1b[36m%s\x1b[0m', `\nPROCESSING #${func.name}`);
 
   const type = func.constructor.name;
+  // TODO: getter/setter differntiate the same name function getter/setter
   const funcMockData = getFuncMockData(Klass, func.name, {});
   const funcMockJS = Util.getFuncMockJS(funcMockData, angularType);
   const funcParamJS = Util.getFuncParamJS(funcMockData);
@@ -82,11 +84,12 @@ function getFuncTest(Klass, func, angularType) {
       return el.replace(assertRE, (_, m1) => `expect(${m1}).toHaveBeenCalled()`);
     });
   const jsToRun = 
-    type === 'SetterDeclaration' ? `${angularType}.${func.name} = ${funcParamJS}`: 
+    type === 'SetterDeclaration' ? `${angularType}.${func.name} = ${funcParamJS || '{}'}`: 
     type === 'GetterDeclaration' ? `const ${func.name} = ${angularType}.${func.name}` : 
     `${angularType}.${func.name}(${funcParamJS})`;
   const itBlockName = type === 'MethodDeclaration' ? 
     `should run #${func.name}()` : `should run ${type} #${func.name}`;
+
   return `
     it('${itBlockName}', async () => {
       ${funcMockJS.join(';\n')}${funcMockJS.length ? ';' : ''}
@@ -137,9 +140,12 @@ async function run (tsFile) {
     }
 
     klass.accessors.forEach(accessor => {
-      ejsData.accessorTests[accessor.name] =
+      const type = accessor.constructor.name.substr(0, 3);
+      // TODO: getter/setter differntiate the same name function getter/setter
+      ejsData.accessorTests[type + accessor.name] =
         Util.indent(getFuncTest(Klass, accessor, angularType), '  ');
     });
+
 
     klass.methods.forEach(method => {
       ejsData.functionTests[method.name] =
