@@ -216,7 +216,7 @@ function getGenerated (ejsData, options) {
   if (funcName) {
     // if user asks to generate only one function
     generated = ejsData.functionTests[funcName] || ejsData.accessorTests[funcName];
-  } else if (existingTestCodes && specPath && !options.force) {
+  } else if (existingTestCodes && specPath && !options.force && !options.forcePrint) {
     // if there is existing tests, then add only new function tests at the end
     const existingTests = getExistingTests(ejsData, existingTestCodes);
     const newTests = [];

@@ -22,6 +22,11 @@ const argv = yargs.usage('Usage: $0 <tsFile> [options]')
       describe: 'It prints out a new test file, and it does not ask a question when overwrite spec file',
       type: 'boolean'
     },
+    'F': {
+      alias: 'forcePrint', 
+      describe: 'It prints out to console, and it does not ask a question',
+      type: 'boolean'
+    },
     'm': { alias: 'method', describe: 'Show code only for this method', type: 'string' },
     'v': { alias: 'verbose', describe: 'log verbose debug messages', type: 'boolean' }
   })
@@ -140,9 +145,9 @@ async function run (tsFile) {
     }
 
     klass.accessors.forEach(accessor => {
-      const type = accessor.constructor.name.substr(0, 3);
+      const type = accessor.constructor.name === 'SetterDeclaration' ? '=' : '';
       // TODO: getter/setter differntiate the same name function getter/setter
-      ejsData.accessorTests[type + accessor.name] =
+      ejsData.accessorTests[accessor.name + type] =
         Util.indent(getFuncTest(Klass, accessor, angularType), '  ');
     });
 
