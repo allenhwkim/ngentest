@@ -33,7 +33,7 @@ class DirectiveTestComponent {
 <% }) %>
 }
 
-describe('<%= className %>', () => {
+describe('<%- className %>', () => {
   let fixture: ComponentFixture<DirectiveTestComponent>;
   let component: DirectiveTestComponent;
   let directiveEl;
@@ -41,7 +41,7 @@ describe('<%= className %>', () => {
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
-      declarations: [<%= className %>, DirectiveTestComponent],
+      declarations: [<%- className %>, DirectiveTestComponent],
       providers: [<% for(var key in providers) { %>
         <%- providers[key]+ ',' %><% } %>
       ],
@@ -49,8 +49,8 @@ describe('<%= className %>', () => {
     }).compileComponents();
     fixture = TestBed.createComponent(DirectiveTestComponent);
     component = fixture.componentInstance;
-    directiveEl = fixture.debugElement.query(By.directive(<%= className %>));
-    directive = directiveEl.injector.get(<%= className %>);
+    directiveEl = fixture.debugElement.query(By.directive(<%- className %>));
+    directive = directiveEl.injector.get(<%- className %>);
   });
 
   it("should run a directive", async () => {

@@ -138,7 +138,7 @@ async function run (tsFile) {
     const ctorMockData = getFuncMockData(Klass, 'constructor', {});
 
     const ctorParamJs = Util.getFuncParamJS(ctorMockData);
-    ejsData.ctorParamJs = ctorParamJs;
+    ejsData.ctorParamJs = Util.indent(ctorParamJs, ' '.repeat(6)).trim();
     ejsData.providerMocks = testGenerator.getProviderMocks(klass, ctorMockData.params);
     for (var key in ejsData.providerMocks) {
       ejsData.providerMocks[key] = Util.indent(ejsData.providerMocks[key]).replace(/\{\s+\}/gm, '{}');

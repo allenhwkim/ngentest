@@ -5,7 +5,7 @@ import { Observable, of as observableOf, throwError } from 'rxjs';
 import {<%- imports[key].map(el => `${el}`).join(', ') -%>} from '<%- key -%>';
 <% } -%>
 
-describe('<%= className %>', () => {
+describe('<%- className %>', () => {
   let pipe;
 
   <% for(var klassName in providerMocks) { %>
@@ -13,7 +13,7 @@ describe('<%= className %>', () => {
   <% } -%>
 
   beforeEach(() => {
-    pipe = new <%= className %>(<%= ctorParamJs %>);
+    pipe = new <%- className %>(<%- ctorParamJs %>);
   });
 
   <% for(var key in functionTests) { -%>

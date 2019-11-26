@@ -145,8 +145,10 @@ class Util {
    */
   static getFuncArgNames (node) {
     const argNames = node.arguments.map(arg => {
-      if (arg.params && arg.params[0]) {
+      if (arg.params && arg.params[0] && arg.params[0].name) {
         return arg.params[0].name;
+      } else if (arg.params && arg.params[0] && arg.params[0].type === 'ArrayPattern') {
+        return `ARR_PTRN`;
       } else if (arg.type === 'ArrayExpression') {
         return `[]`;
       } else if (typeof arg.value !== 'undefined') {
@@ -218,8 +220,8 @@ class Util {
    */
   static getExprReturn (node, classCode) {
 
-
     const code = classCode.substring(node.start, node.end);
+
     const getVars = function (node) {
       const members = Util.getExprMembers(node).reverse().join('.').replace(/\.\(/g, '(').split('.');
       let vars = [];
@@ -243,7 +245,10 @@ class Util {
 
     // const members = Util.getExprMembers(node).reverse();
     const vars = getVars(node); // parenthesis taken care of array.
-    const baseCode = vars.join('.');
+    const baseCode = vars.join('.')
+      .replace(/\.([0-9]+)\./, (_, $1) => `[${$1}].`) // replace .0. to [0]
+      .replace(/\.([0-9]+)\./, (_, $1) => `[${$1}].`) // repeat
+      .replace(/\.([0-9]+)$/, (_, $1) => `[${$1}]`);  // what if ends with .0
     const last = vars[vars.length - 1];
 
     try {
@@ -288,7 +293,7 @@ class Util {
 
     const funcRetName = node.params[0].name;
     const codeReplaced = code.replace(/\n+/g, '').replace(/\s+/g, ' ');
-    const funcRetExprs = codeReplaced.match(new RegExp(`${funcRetName}(\\.[^\\s\\;\\)]+)+`, 'ig'));
+    const funcRetExprs = codeReplaced.match(new RegExp(`${funcRetName}(\\.[^\\s\\;\\)},]+)+`, 'ig'));
 
     const funcParam = {};
     (funcRetExprs || []).forEach(funcExpr => { // e.g., ['event.urlAfterRedirects.substr(1)', ..]

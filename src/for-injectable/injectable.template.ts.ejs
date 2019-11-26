@@ -6,16 +6,16 @@ import { Observable, of as observableOf, throwError } from 'rxjs';
 import {<%- imports[key].map(el => `${el}`).join(', ') -%>} from '<%- key -%>';
 <% } -%>
 
-describe('<%= className %>', () => {
-  let service;
+<% for(var klassName in providerMocks) { %>
+<%- providerMocks[klassName] -%>
+<% } -%>
 
-  <% for(var klassName in providerMocks) { %>
-  <%- providerMocks[klassName] -%>
-  <% } -%>
+describe('<%- className %>', () => {
+  let service;
 
   beforeEach(() => {
     // TODO: Think about is there anything can do with constructor mocks(?), things done within constructor
-    service = new <%= className %>(<%= ctorParamJs %>);
+    service = new <%- className %>(<%- ctorParamJs %>);
   });
 
   <% for(var key in functionTests) { -%>

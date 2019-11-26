@@ -59,6 +59,7 @@ class FuncTestGen {
       nodeIn.type === 'ExpressionStatement' ? nodeIn.expression :
       nodeIn.type === 'ForStatement' ? nodeIn.body : // NOTE: init/test/update/body
       nodeIn.type === 'ForInStatement' ? nodeIn :
+      nodeIn.type === 'ForOfStatement' ? nodeIn :
       nodeIn.type === 'FunctionExpression' ? nodeIn.body :
       nodeIn.type === 'Identifier' ? nodeIn :
       nodeIn.type === 'IfStatement' ? nodeIn : // node.test, consequent, alternate
@@ -101,6 +102,10 @@ class FuncTestGen {
       node.elements.forEach(element => element && this.setMockData(element, mockData));
     } else if (node.type === 'ArrayPattern') {
       node.elements.forEach(element => element && this.setMockData(element, mockData));
+    } else if (node.type === 'ForOfStatement') {
+      this.setMockData(node.left, mockData);
+      this.setMockData(node.right, mockData);
+      this.setMockData(node.body, mockData);
     } else if (node.type === 'TemplateLiteral') {
       node.expressions.forEach(expr => expr && this.setMockData(expr, mockData));
     } else if (node.type === 'VariableDeclaration') {
@@ -172,6 +177,7 @@ class FuncTestGen {
 
       // What if call argument is a function?
       const funcExpArg = Util.getFuncExprArg(node);
+      Util.DEBUG && console.log('      *** CallExpression ***', {funcExpArg});
       if (funcExpArg) { // process function expression
         this.setMockData(funcExpArg, mockData);
       }
@@ -206,7 +212,6 @@ class FuncTestGen {
    */
   setPropsOrParams (codeOrNode, mockData, returns) { // MemberExpression, CallExpression
     const { props, params, map, globals } = mockData;
-    // console.log('.......... codeOrNode...', codeOrNode);
     let nodeToUse, obj, one, two, code;
     if (typeof codeOrNode === 'string') {
       nodeToUse = Util.getNode(codeOrNode);
