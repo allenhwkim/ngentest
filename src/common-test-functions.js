@@ -235,6 +235,8 @@ function getGenerated (ejsData, options) {
           return `${m1}${newCodes}${m2}`;
         });
       }
+    } else {
+      generated = ejs.render(this.template, ejsData).replace(/\n\s+$/gm, '\n');
     }
   } else {
     // if no existing tests
