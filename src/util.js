@@ -396,7 +396,7 @@ class Util {
           Object.entries(value2).forEach(([key3, value3]) => { // location
             if (typeof value3 === 'function') {
               js.push(`${key1}.${key2}.${key3} = jest.fn()`);
-            } else {
+            } else if (value3) {
               const objValue3 = Util.objToJS(value3).replace(/\{\s+\}/gm, '{}');
               js.push(`${key1}.${key2}.${key3} = ${objValue3}`);
             }
