@@ -82,8 +82,8 @@ class FuncTestGen {
       null; /* eslint-enable */
 
     if (!node) {
-      console.error(nodeIn, this.getCode(nodeIn));
-      throw new Error('ERROR: Invalid node type ' + nodeIn.type);
+      console.error(`ERROR: Invalid JS node type ${nodeIn.type} '${this.getCode(nodeIn)}'`);
+      throw new Error(`ERROR: Invalid JS node type ${nodeIn.type} '${this.getCode(nodeIn)}'`);
     }
     const code = this.getCode(node);
 

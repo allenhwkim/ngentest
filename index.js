@@ -144,6 +144,7 @@ async function run (tsFile) {
       ejsData.providerMocks[key] = Util.indent(ejsData.providerMocks[key]).replace(/\{\s+\}/gm, '{}');
     }
 
+    const errors = [];
     klass.accessors.forEach(accessor => {
       const type = accessor.constructor.name === 'SetterDeclaration' ? '=' : '';
       // TODO: getter/setter differntiate the same name function getter/setter
@@ -153,14 +154,26 @@ async function run (tsFile) {
 
 
     klass.methods.forEach(method => {
-      ejsData.functionTests[method.name] =
-        Util.indent(getFuncTest(Klass, method, angularType), '  ');
+      try {
+        ejsData.functionTests[method.name] =
+          Util.indent(getFuncTest(Klass, method, angularType), '  ');
+      } catch (e) {
+        const msg = '    // '+ e.stack;
+        const itBlock = `it('should run #${method.name}()', async () => {\n` +
+          `${msg.replace(/\n/g, '\n    // ')}\n` +
+          `  });\n`
+        ejsData.functionTests[method.name] = itBlock;
+        errors.push(e);
+      }
     });
 
     const generated = testGenerator.getGenerated(ejsData, argv);
     generated && testGenerator.writeGenerated(generated, argv);
+
+    if (errors.length) {
+      throw new Error(errors[0]);
+    }
   } catch (e) {
-    console.error(tsFile);
     console.error(e);
     process.exit(1);
   }
