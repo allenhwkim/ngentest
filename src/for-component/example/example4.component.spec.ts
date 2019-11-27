@@ -94,9 +94,7 @@ describe('InteractionsComponent', () => {
     component.getInteractions = jest.fn();
     component.interactions = component.interactions || {};
     component.interactions = component.interactions || {};
-    component.interactions.map = jest.fn().mockReturnValue({
-      filter : jest.fn()
-    });
+    component.interactions.map = jest.fn().mockReturnValue([{}]);
     component.ngOnInit();
     expect(component.getInteractions).toHaveBeenCalled();
     expect(component.interactions.map).toHaveBeenCalled();

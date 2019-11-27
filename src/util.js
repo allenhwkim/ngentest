@@ -70,7 +70,8 @@ class Util {
           exprs.push(`${key}: ${obj[key]}`);
         }
       }
-      return '{\n' +
+
+      return !exprs.length ?  '{}' : '{\n' +
         exprs.map(el => { return `${indent}${el}`; }).join(',\n') +
         '\n' +
         indent.substr(2) + '}';
@@ -347,6 +348,7 @@ class Util {
       } else {
         const valueFiltered = Object.entries(value).filter(([k, v]) => k !== 'undefined');
         valueFiltered.forEach(([key2, value2]) => {
+
           js.push(`${thisName}.${key1} = ${thisName}.${key1} || {}`);
           if (value2.type === 'Observable') {
             const obsRetVal = Util.objToJS(value2.value).replace(/\{\s+\}/gm, '{}');
@@ -356,7 +358,13 @@ class Util {
           } else if (typeof value2 === 'function' && JSON.stringify(value2()) === '{}') {
             const funcRetVal = value2();
             const funcRet1stKey = Object.keys(funcRetVal).filter(el => el !== 'undefined')[0];
-            if (typeof funcRetVal === 'object' && funcRet1stKey) {
+            if (typeof funcRetVal === 'object' && ['toPromise'].includes(funcRet1stKey)) {
+              const retStr = Util.objToJS(funcRetVal[funcRet1stKey]());
+              js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(obserVableOf(${retStr}))`);
+            } else if (typeof funcRetVal === 'object' && ['filter'].includes(funcRet1stKey)) {
+              const retStr = Util.objToJS(funcRetVal[funcRet1stKey]());
+              js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue([${retStr}])`);
+            } else if (typeof funcRetVal === 'object' && funcRet1stKey) {
               js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(${Util.objToJS(funcRetVal)})`);
             } else {
               js.push(`${thisName}.${key1}.${key2} = jest.fn()`);

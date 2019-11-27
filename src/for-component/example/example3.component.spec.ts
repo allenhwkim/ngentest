@@ -127,9 +127,7 @@ describe('BillingHeaderComponent', () => {
     component.billingService = component.billingService || {};
     component.billingService.getBilling = jest.fn().mockReturnValue({
       pipe : function() {
-        return observableOf({
-
-        });
+        return observableOf({});
       }
     });
     component.ngOnInit();

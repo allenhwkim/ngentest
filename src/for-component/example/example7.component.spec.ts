@@ -69,9 +69,7 @@ describe('ChangePlanComponent', () => {
     component.changePlanData = component.changePlanData || {};
     component.changePlanData.getPrimaryPhoneNumber = jest.fn();
     component.changePlanData = component.changePlanData || {};
-    component.changePlanData.getPPCSubscribers = jest.fn().mockReturnValue({
-      toPromise : jest.fn()
-    });
+    component.changePlanData.getPPCSubscribers = jest.fn().mockReturnValue(obserVableOf({}));
     component.changePlanData = component.changePlanData || {};
     component.changePlanData.checkifMultiorSingle = jest.fn();
     component.changePlanData = component.changePlanData || {};
@@ -111,9 +109,7 @@ describe('ChangePlanComponent', () => {
 
   it('should run #getEligibility()', async () => {
     component.changePlanData = component.changePlanData || {};
-    component.changePlanData.getPPCEligibility = jest.fn().mockReturnValue({
-      toPromise : jest.fn()
-    });
+    component.changePlanData.getPPCEligibility = jest.fn().mockReturnValue(obserVableOf({}));
     component.changePlanData = component.changePlanData || {};
     component.changePlanData.formatEligibilityErrorCode = jest.fn();
     component.checkIfBOTEligible = jest.fn();
@@ -130,15 +126,11 @@ describe('ChangePlanComponent', () => {
     component.statePostData = component.statePostData || {};
     component.statePostData.availableCreditAmount = 'availableCreditAmount';
     component.changePlanData = component.changePlanData || {};
-    component.changePlanData.getCases = jest.fn().mockReturnValue({
-      toPromise : jest.fn()
-    });
+    component.changePlanData.getCases = jest.fn().mockReturnValue(obserVableOf({}));
     component.changePlanData = component.changePlanData || {};
     component.changePlanData.getPendingCases = jest.fn();
     component.changePlanData = component.changePlanData || {};
-    component.changePlanData.closeCase = jest.fn().mockReturnValue({
-      toPromise : jest.fn()
-    });
+    component.changePlanData.closeCase = jest.fn().mockReturnValue(obserVableOf({}));
     component.dialog = component.dialog || {};
     component.dialog.open = jest.fn();
     component.saveStateAndChangePlan = jest.fn();
@@ -154,9 +146,7 @@ describe('ChangePlanComponent', () => {
 
   it('should run #saveStateAndChangePlan()', async () => {
     component.changePlanData = component.changePlanData || {};
-    component.changePlanData.savePPCState = jest.fn().mockReturnValue({
-      toPromise : jest.fn()
-    });
+    component.changePlanData.savePPCState = jest.fn().mockReturnValue(obserVableOf({}));
     component.navigation = component.navigation || {};
     component.navigation.changeRoute = jest.fn();
     component.saveStateAndChangePlan();
