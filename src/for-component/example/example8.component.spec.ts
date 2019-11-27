@@ -91,7 +91,7 @@ describe('CreditManagementComponent', () => {
     component.data.0 = '0';
     component.data = component.data || {};
     component.data.1 = '1';
-    component.ngOnInit();
+    await component.ngOnInit();
     expect(component.creditManagementService.getAccountSummaryAndBillingDetails).toHaveBeenCalled();
   });
 
@@ -114,7 +114,7 @@ describe('CreditManagementComponent', () => {
     component.creditManagementService = component.creditManagementService || {};
     component.creditManagementService.getRecentAdjustments = jest.fn().mockReturnValue(obserVableOf({}));
     component.setAdjustmentTypesAndBills = jest.fn();
-    component.servicePlanChanged({});
+    await component.servicePlanChanged({});
     expect(component.resetAllFields).toHaveBeenCalled();
     expect(component.creditManagementService.getWireLessPostpaidDetails).toHaveBeenCalled();
     expect(component.creditManagementService.getRecentAdjustments).toHaveBeenCalled();
@@ -126,7 +126,7 @@ describe('CreditManagementComponent', () => {
     component.creditManagementService.getAdjustmentTypes = jest.fn().mockReturnValue(obserVableOf({}));
     component.creditManagementService = component.creditManagementService || {};
     component.creditManagementService.loadUserBill = jest.fn().mockReturnValue(obserVableOf({}));
-    component.setAdjustmentTypesAndBills();
+    await component.setAdjustmentTypesAndBills();
     expect(component.creditManagementService.getAdjustmentTypes).toHaveBeenCalled();
     expect(component.creditManagementService.loadUserBill).toHaveBeenCalled();
   });
@@ -144,7 +144,7 @@ describe('CreditManagementComponent', () => {
     component.setCharges = jest.fn();
     component.creditManagementService = component.creditManagementService || {};
     component.creditManagementService.getAdjustmentCmsDetails = jest.fn().mockReturnValue(obserVableOf({}));
-    component.billingCycleChanged({});
+    await component.billingCycleChanged({});
     expect(component.resetValues).toHaveBeenCalled();
     expect(component.setCharges).toHaveBeenCalled();
     expect(component.creditManagementService.getAdjustmentCmsDetails).toHaveBeenCalled();
@@ -154,21 +154,21 @@ describe('CreditManagementComponent', () => {
     component.creditManagementService = component.creditManagementService || {};
     component.creditManagementService.getAdjustmentCharges = jest.fn().mockReturnValue(observableOf({}));
     component.openSystemError = jest.fn();
-    component.setCharges();
+    await component.setCharges();
     expect(component.creditManagementService.getAdjustmentCharges).toHaveBeenCalled();
     expect(component.openSystemError).toHaveBeenCalled();
   });
 
   it('should run #handleChargeSelected()', async () => {
 
-    component.handleChargeSelected({});
+    await component.handleChargeSelected({});
 
   });
 
   it('should run #handleIssueChanged()', async () => {
     component.existingIssueSelected = component.existingIssueSelected || {};
     component.existingIssueSelected.autoAdjustment = 'autoAdjustment';
-    component.handleIssueChanged({
+    await component.handleIssueChanged({
       issueSelected: '[object Object]',
       newInputEntered: '[object Object]',
       isOpenOrClosed: '[object Object]'
@@ -187,7 +187,7 @@ describe('CreditManagementComponent', () => {
     component.creditManagementDataService.setDataAndCreateInteraction = jest.fn().mockReturnValue(obserVableOf({}));
     component.openInteractionOrSubmitModal = jest.fn();
     component.submitCreditManagement = jest.fn();
-    component.formSubmitted({});
+    await component.formSubmitted({});
     expect(component.creditManagementDataService.setDataAndCreateInteraction).toHaveBeenCalled();
     expect(component.openInteractionOrSubmitModal).toHaveBeenCalled();
     expect(component.submitCreditManagement).toHaveBeenCalled();
@@ -206,7 +206,7 @@ describe('CreditManagementComponent', () => {
     component.creditManagementDataService.submitCreditManagement = jest.fn().mockReturnValue(observableOf({}));
     component.openInteractionOrSubmitModal = jest.fn();
     component.openSystemError = jest.fn();
-    component.submitCreditManagement({});
+    await component.submitCreditManagement({});
     expect(component.creditManagementDataService.setServiceAdjustmentAndBillData).toHaveBeenCalled();
     expect(component.creditManagementDataService.setChargeData).toHaveBeenCalled();
     expect(component.creditManagementDataService.setIssueData).toHaveBeenCalled();

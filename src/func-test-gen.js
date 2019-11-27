@@ -9,6 +9,9 @@ class FuncTestGen {
     this.funcName = funcName;
     this.classCode = '' + Klass.prototype.constructor;
     this.klassDecl = jsParser.parse(this.classCode).body[0];
+    const methodDefinition = this.klassDecl.body.body.find(node => node.key.name === this.funcName);
+    this.funcCode = this.classCode.substring(methodDefinition.start, methodDefinition.end);
+    this.isAsync = this.funcCode.includes('return __awaiter(this, void 0, void 0, function* ()');
   }
 
   getCode (node) {

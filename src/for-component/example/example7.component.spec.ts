@@ -92,7 +92,7 @@ describe('ChangePlanComponent', () => {
     component.statePostData = component.statePostData || {};
     component.statePostData.eligibilityChecked = 'eligibilityChecked';
     component.saveStateAndChangePlan = jest.fn();
-    component.changePricePlan();
+    await component.changePricePlan();
     expect(component.changePlanData.getPrimaryPhoneNumber).toHaveBeenCalled();
     expect(component.changePlanData.getPPCSubscribers).toHaveBeenCalled();
     expect(component.changePlanData.checkifMultiorSingle).toHaveBeenCalled();
@@ -115,7 +115,7 @@ describe('ChangePlanComponent', () => {
     component.checkIfBOTEligible = jest.fn();
     component.dialog = component.dialog || {};
     component.dialog.open = jest.fn();
-    component.getEligibility({}, {});
+    await component.getEligibility({}, {});
     expect(component.changePlanData.getPPCEligibility).toHaveBeenCalled();
     expect(component.changePlanData.formatEligibilityErrorCode).toHaveBeenCalled();
     expect(component.checkIfBOTEligible).toHaveBeenCalled();
@@ -134,7 +134,7 @@ describe('ChangePlanComponent', () => {
     component.dialog = component.dialog || {};
     component.dialog.open = jest.fn();
     component.saveStateAndChangePlan = jest.fn();
-    component.checkIfBOTEligible({
+    await component.checkIfBOTEligible({
       availableCreditAmount: '[object Object]'
     });
     expect(component.changePlanData.getCases).toHaveBeenCalled();
@@ -149,7 +149,7 @@ describe('ChangePlanComponent', () => {
     component.changePlanData.savePPCState = jest.fn().mockReturnValue(obserVableOf({}));
     component.navigation = component.navigation || {};
     component.navigation.changeRoute = jest.fn();
-    component.saveStateAndChangePlan();
+    await component.saveStateAndChangePlan();
     expect(component.changePlanData.savePPCState).toHaveBeenCalled();
     expect(component.navigation.changeRoute).toHaveBeenCalled();
   });
@@ -169,7 +169,7 @@ describe('ChangePlanComponent', () => {
     component.changePlanData.getOtherIndividualSubs = jest.fn();
     component.dialog = component.dialog || {};
     component.dialog.open = jest.fn();
-    component.getIndividualSubPostData({}, {});
+    await component.getIndividualSubPostData({}, {});
     expect(component.changePlanData.hasActiveMain).toHaveBeenCalled();
     expect(component.changePlanData.hasOtherIndividualSubs).toHaveBeenCalled();
     expect(component.changePlanData.getMainSub).toHaveBeenCalled();

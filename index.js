@@ -47,6 +47,7 @@ if (!(tsFile && fs.existsSync(tsFile))) {
 function getFuncMockData (Klass, funcName, props) {
   const funcTestGen = new FuncTestGen(Klass, funcName);
   const funcMockData = {
+    isAsync: funcTestGen.isAsync,
     props,
     params: funcTestGen.getInitialParameters(),
     map: {},
@@ -95,11 +96,12 @@ function getFuncTest(Klass, func, angularType) {
     `${angularType}.${func.name}(${funcParamJS})`;
   const itBlockName = type === 'MethodDeclaration' ? 
     `should run #${func.name}()` : `should run ${type} #${func.name}`;
+  const asyncStr = funcMockData.isAsync ? 'await ' : '';
 
   return `
     it('${itBlockName}', async () => {
       ${funcMockJS.join(';\n')}${funcMockJS.length ? ';' : ''}
-      ${jsToRun};
+      ${asyncStr}${jsToRun};
       ${funcAssertJS.join(';\n')}${funcAssertJS.length ? ';' : ''}
     });
     `;

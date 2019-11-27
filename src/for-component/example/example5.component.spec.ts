@@ -194,7 +194,7 @@ describe('DashboardComponent', () => {
     component.dealerCodeService.checkIfDealerCodeUpdated = jest.fn();
     component.changePlan = component.changePlan || {};
     component.changePlan.changePricePlan = jest.fn();
-    component.startPPCFlow({});
+    await component.startPPCFlow({});
     expect(component.ramPermissionService.isPermitted).toHaveBeenCalled();
     expect(component.dialogService.open).toHaveBeenCalled();
     expect(component.dealerCodeService.checkIfDealerCodeUpdated).toHaveBeenCalled();
@@ -220,7 +220,7 @@ describe('DashboardComponent', () => {
     component.processHup.checkEligibility = jest.fn();
     component.processHup = component.processHup || {};
     component.processHup.upgradeHardware = jest.fn();
-    component.handleBuyflow({
+    await component.handleBuyflow({
       detail: {
         ctn: '[object Object]'
       }
