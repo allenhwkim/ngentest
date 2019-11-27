@@ -4,6 +4,7 @@ const path = require('path'); // eslint-disable-line
 const yargs = require('yargs');
 const ts = require('typescript');
 const requireFromString = require('require-from-string');
+const glob = require('glob');
 
 const Util = require('./src/util.js');
 const FuncTestGen = require('./src/func-test-gen.js');
@@ -170,13 +171,20 @@ async function run (tsFile) {
     const generated = testGenerator.getGenerated(ejsData, argv);
     generated && testGenerator.writeGenerated(generated, argv);
 
-    if (errors.length) {
-      throw new Error(errors[0]);
-    }
+    errors.forEach( e => console.error(e) );
   } catch (e) {
     console.error(e);
     process.exit(1);
   }
 }
 
-run(tsFile);
+const isDir = fs.lstatSync(tsFile).isDirectory();
+if (isDir) {
+  const files = glob.sync('**/!(*.spec).ts', {cwd: tsFile})
+  files.forEach(file => {
+    console.log(' -------------- processing', tsFile, file);
+    run(path.join(tsFile, file));
+  });
+} else {
+  run(tsFile);
+}
