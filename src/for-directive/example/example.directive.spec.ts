@@ -75,11 +75,7 @@ describe('MyDirective', () => {
     directive.nguiInview.emit = jest.fn();
     directive.nguiOutview = directive.nguiOutview || {};
     directive.nguiOutview.emit = jest.fn();
-    directive.handleIntersect({
-      forEach : function() {
-        return ["ngentest"];
-      }
-    }, {});
+    directive.handleIntersect(['entries'], {});
     expect(directive.nguiInview.emit).toHaveBeenCalled();
     expect(directive.nguiOutview.emit).toHaveBeenCalled();
   });

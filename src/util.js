@@ -2,6 +2,9 @@ const jsParser = require('acorn').Parser;
 const path = require('path');
 const indentJs = require('indent.js');
 
+const strFuncRE = /slice|trim|substr|replace|split|toLowerCase|toUpperCase|match/;
+const arrFuncRE = /forEach|map|reduce|slice/;
+
 class Util {
   static get DEBUG () { return !!Util.__debug; }
   static set DEBUG (bool) { Util.__debug = bool; }
@@ -33,7 +36,6 @@ class Util {
   static objToJS (obj, level = 1) {
     const exprs = [];
     const indent = ' '.repeat(level * 2);
-    const strFuncRe = /slice|trim|substr|replace|split|toLowerCase|toUpperCase|match/;
     const firstKey = typeof obj === 'object' && Object.keys(obj).filter(k => k !== 'undefined')[0];
     if (typeof obj === 'function') {
       const objRet = obj();
@@ -45,8 +47,10 @@ class Util {
         const funcRet = Util.objToJS(objRet, level + 1);
         return `function() {\n${indent}  return ${funcRet};\n${indent}}`;
       }
-    } else if (firstKey && firstKey.match(strFuncRe)) { // string in form of an object
+    } else if (firstKey && firstKey.match(strFuncRE)) { // string in form of an object
       return `'ngentest'`;
+    } else if (firstKey && firstKey.match(arrFuncRE)) { // string in form of an object
+      return `['ngentest']`;
     } else if (obj.type === 'Observable') {
       return `observableOf(${Util.objToJS(obj.value)})`;
     } else if (Array.isArray(obj)) {
@@ -59,7 +63,7 @@ class Util {
           Object.keys(obj[key]).filter(k => k !== 'undefined')[0];
         if (typeof obj[key] === 'object' && !obj1stKey) { // is empty obj, e.g. {}
           exprs.push(`${key}: '${obj[key]}'`);
-        } else if (obj1stKey && obj1stKey.match(strFuncRe)) { // string in form of an object
+        } else if (obj1stKey && obj1stKey.match(strFuncRE)) { // string in form of an object
           exprs.push(`${key} : '${key}'`);
         } else if (obj[key].type === 'Observable') { // normal Observable
           const observableVal = Util.objToJS(obj[key].value);
@@ -274,9 +278,9 @@ class Util {
 
       ret = { code: baseKode, type: 'Observable', value };
 
-    } else if (last.match(/(map|forEach|reduce|slice)\(.*\)$/) && funcExprArg) {
+    // } else if (last.match(/(map|forEach|reduce|slice)\(.*\)$/) && funcExprArg) {
 
-      ret = { code: baseCode, type: 'array', value: ['ngentest'] };
+    //   ret = { code: baseCode, type: 'array', value: ['ngentest'] };
 
     } else {
 
@@ -345,6 +349,7 @@ class Util {
 
   static getFuncMockJS (mockData, thisName = 'component') {
     const js = [];
+
     Object.entries(mockData.props).forEach(([key1, value]) => {
 
       if (typeof value === 'function') {
@@ -359,6 +364,8 @@ class Util {
             js.push(`${thisName}.${key1}.${key2} = observableOf(${obsRetVal})`);
           } else if (typeof value2 === 'function' && key2.match(/^(post|put)$/)) {
             js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(observableOf('${key2}'));`);
+          } else if (key2.match(arrFuncRE)) {
+            js.push(`${thisName}.${key1} = ['${key1}']`);
           } else if (typeof value2 === 'function' && JSON.stringify(value2()) === '{}') {
             const funcRetVal = value2();
             const funcRet1stKey = Object.keys(funcRetVal).filter(el => el !== 'undefined')[0];
@@ -374,8 +381,6 @@ class Util {
               js.push(`${thisName}.${key1}.${key2} = jest.fn()`);
             }
             // const funcRetValEmpty = Object.as`funcRetVal
-          } else if (['forEach', 'map', 'reduce', 'slice'].includes(key2)) {
-            js.push(`${thisName}.${key1} = ['${key1}']`);
           } else if (['length'].includes(key2)) {
             // do nothing
           } else if (typeof value2 === 'function') {
@@ -386,12 +391,9 @@ class Util {
             js.push(`${thisName}.${key1}.${key2} = ['gentest']`);
           } else {
             const objVal21stKey = Object.keys(value2)[0];
-            if (['map', 'forEach', 'reduce', 'slice'].includes(objVal21stKey)) {
+            if (objVal21stKey && objVal21stKey.match(arrFuncRE)) {
               js.push(`${thisName}.${key1}.${key2} = ['${key2}']`);
-            } else if ([
-              'substr', 'replace', 'split',
-              'toLowerCase', 'toUpperCase', 'match'
-            ].includes(objVal21stKey)) {
+            } else if (objVal21stKey && objVal21stKey.match(strFuncRE)) {
               js.push(`${thisName}.${key1}.${key2} = '${key2}'`);
             } else {
               const objValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
@@ -441,7 +443,10 @@ class Util {
         js.push(`observableOf(${obsRetVal})`);
       } else {
         const objValue2 = Util.objToJS(value2);
-        const jsValue = objValue2 === `'ngentest'` ? `'${key2}'` : `${objValue2}`
+        const jsValue = 
+          objValue2 === `'ngentest'` ? `'${key2}'` :
+          objValue2 === `['ngentest']` ? `['${key2}']` :
+           `${objValue2}`
         js.push(`${jsValue}`);
       }
     });
