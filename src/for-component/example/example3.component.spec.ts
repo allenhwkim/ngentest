@@ -114,9 +114,7 @@ describe('BillingHeaderComponent', () => {
     component.setNotificationMessage = jest.fn();
     component.billingDetails = component.billingDetails || {};
     component.billingDetails.methodOfPayment = {
-      mopType: {
-        toUpperCase : jest.fn()
-      }
+      mopType : 'mopType'
     };
     component.setDebitCardDetails = jest.fn();
     component.setCreditCardDetails = jest.fn();

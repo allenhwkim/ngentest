@@ -33,6 +33,8 @@ class Util {
   static objToJS (obj, level = 1) {
     const exprs = [];
     const indent = ' '.repeat(level * 2);
+    const strFuncRe = /slice|trim|substr|replace|split|toLowerCase|toUpperCase|match/;
+    const firstKey = typeof obj === 'object' && Object.keys(obj).filter(k => k !== 'undefined')[0];
     if (typeof obj === 'function') {
       const objRet = obj();
       const objRet1stKey = typeof objRet === 'object' &&
@@ -43,6 +45,8 @@ class Util {
         const funcRet = Util.objToJS(objRet, level + 1);
         return `function() {\n${indent}  return ${funcRet};\n${indent}}`;
       }
+    } else if (firstKey && firstKey.match(strFuncRe)) { // string in form of an object
+      return `'ngentest'`;
     } else if (obj.type === 'Observable') {
       return `observableOf(${Util.objToJS(obj.value)})`;
     } else if (Array.isArray(obj)) {
@@ -55,7 +59,7 @@ class Util {
           Object.keys(obj[key]).filter(k => k !== 'undefined')[0];
         if (typeof obj[key] === 'object' && !obj1stKey) { // is empty obj, e.g. {}
           exprs.push(`${key}: '${obj[key]}'`);
-        } else if (obj1stKey && obj1stKey.match(/trim|substr|replace|split/)) { // string in form of an object
+        } else if (obj1stKey && obj1stKey.match(strFuncRe)) { // string in form of an object
           exprs.push(`${key} : '${key}'`);
         } else if (obj[key].type === 'Observable') { // normal Observable
           const observableVal = Util.objToJS(obj[key].value);
@@ -435,16 +439,17 @@ class Util {
       } else if (value2.type === 'Observable') {
         const obsRetVal = Util.objToJS(value2.value);
         js.push(`observableOf(${obsRetVal})`);
-      } else if (value21stKey &&
-        value21stKey.match(/^(slice|trim|substr|replace|split|toLowerCase|toUpperCase|match)$/)
-      ) {
-        js.push(`'${key2}'`);
+      // } else if (value21stKey &&
+      //   value21stKey.match(/^(slice|trim|substr|replace|split|toLowerCase|toUpperCase|match)$/)
+      // ) {
+      //   js.push(`'${key2}'`);
       } else if (typeof value2 === 'function') {
         const fnValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
         js.push(`function() { return ${fnValue2}; }`);
       } else {
         const objValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
-        js.push(`${objValue2}`);
+        const jsValue = objValue2 === `'ngentest'` ? `'${key2}'` : `${objValue2}`
+        js.push(`${jsValue}`);
       }
     });
 

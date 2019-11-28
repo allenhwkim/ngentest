@@ -106,9 +106,7 @@ describe('DashboardComponent', () => {
     component.commonData.agentInfo = {
       'consumer': '[object Object]',
       authorizationLevel: '[object Object]',
-      authorozationLevel: {
-        toUpperCase : jest.fn()
-      }
+      authorozationLevel : 'authorozationLevel'
     };
     const isAccountHolder = component.isAccountHolder;
 

@@ -1,6 +1,11 @@
 const jsParser = require('acorn').Parser;
 const Util = require('./src/util.js');
-let code, node;
+let code, node, obj;
+
+obj = { replace : function() {} };
+console.log('Util.objToJS(obj)', '{ replace : function() {} }');
+console.log({ obj,  result: Util.objToJS(obj) });
+console.log('-'.repeat(80));
 
 code = 'foo.bar[0].x.y.z()';
 node = Util.getNode('foo.bar[0].x.y.z()')

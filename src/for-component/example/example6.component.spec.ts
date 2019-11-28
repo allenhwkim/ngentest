@@ -198,9 +198,7 @@ describe('BillingPageComponent', () => {
     component.billSelection = component.billSelection || {};
     component.billSelection.issue_date = 'issue_date';
     component.translate = component.translate || {};
-    component.translate.instant = jest.fn().mockReturnValue({
-      replace : jest.fn()
-    });
+    component.translate.instant = jest.fn().mockReturnValue('ngentest');
     component.setTranslations();
     expect(component.billingService.getBillType).toHaveBeenCalled();
     expect(component.dateHandler.getCurrentCycleEndDate).toHaveBeenCalled();
