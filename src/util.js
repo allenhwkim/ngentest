@@ -355,7 +355,7 @@ class Util {
             const funcRet1stKey = Object.keys(funcRetVal).filter(el => el !== 'undefined')[0];
             if (typeof funcRetVal === 'object' && ['toPromise'].includes(funcRet1stKey)) {
               const retStr = Util.objToJS(funcRetVal[funcRet1stKey]());
-              js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(obserVableOf(${retStr}))`);
+              js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(observableOf(${retStr}))`);
             } else if (typeof funcRetVal === 'object' && ['filter'].includes(funcRet1stKey)) {
               const retStr = Util.objToJS(funcRetVal[funcRet1stKey]());
               js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue([${retStr}])`);

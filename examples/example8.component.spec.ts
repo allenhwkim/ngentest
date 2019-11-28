@@ -86,7 +86,7 @@ describe('CreditManagementComponent', () => {
 
   it('should run #ngOnInit()', async () => {
     component.creditManagementService = component.creditManagementService || {};
-    component.creditManagementService.getAccountSummaryAndBillingDetails = jest.fn().mockReturnValue(obserVableOf({}));
+    component.creditManagementService.getAccountSummaryAndBillingDetails = jest.fn().mockReturnValue(observableOf({}));
     component.data = component.data || {};
     component.data.0 = '0';
     component.data.1 = '1';
@@ -109,8 +109,8 @@ describe('CreditManagementComponent', () => {
   it('should run #servicePlanChanged()', async () => {
     component.resetAllFields = jest.fn();
     component.creditManagementService = component.creditManagementService || {};
-    component.creditManagementService.getWireLessPostpaidDetails = jest.fn().mockReturnValue(obserVableOf({}));
-    component.creditManagementService.getRecentAdjustments = jest.fn().mockReturnValue(obserVableOf({}));
+    component.creditManagementService.getWireLessPostpaidDetails = jest.fn().mockReturnValue(observableOf({}));
+    component.creditManagementService.getRecentAdjustments = jest.fn().mockReturnValue(observableOf({}));
     component.setAdjustmentTypesAndBills = jest.fn();
     await component.servicePlanChanged({});
     expect(component.resetAllFields).toHaveBeenCalled();
@@ -121,8 +121,8 @@ describe('CreditManagementComponent', () => {
 
   it('should run #setAdjustmentTypesAndBills()', async () => {
     component.creditManagementService = component.creditManagementService || {};
-    component.creditManagementService.getAdjustmentTypes = jest.fn().mockReturnValue(obserVableOf({}));
-    component.creditManagementService.loadUserBill = jest.fn().mockReturnValue(obserVableOf({}));
+    component.creditManagementService.getAdjustmentTypes = jest.fn().mockReturnValue(observableOf({}));
+    component.creditManagementService.loadUserBill = jest.fn().mockReturnValue(observableOf({}));
     await component.setAdjustmentTypesAndBills();
     expect(component.creditManagementService.getAdjustmentTypes).toHaveBeenCalled();
     expect(component.creditManagementService.loadUserBill).toHaveBeenCalled();
@@ -140,7 +140,7 @@ describe('CreditManagementComponent', () => {
     component.resetValues = jest.fn();
     component.setCharges = jest.fn();
     component.creditManagementService = component.creditManagementService || {};
-    component.creditManagementService.getAdjustmentCmsDetails = jest.fn().mockReturnValue(obserVableOf({}));
+    component.creditManagementService.getAdjustmentCmsDetails = jest.fn().mockReturnValue(observableOf({}));
     await component.billingCycleChanged({});
     expect(component.resetValues).toHaveBeenCalled();
     expect(component.setCharges).toHaveBeenCalled();
@@ -181,7 +181,7 @@ describe('CreditManagementComponent', () => {
 
   it('should run #formSubmitted()', async () => {
     component.creditManagementDataService = component.creditManagementDataService || {};
-    component.creditManagementDataService.setDataAndCreateInteraction = jest.fn().mockReturnValue(obserVableOf({}));
+    component.creditManagementDataService.setDataAndCreateInteraction = jest.fn().mockReturnValue(observableOf({}));
     component.openInteractionOrSubmitModal = jest.fn();
     component.submitCreditManagement = jest.fn();
     await component.formSubmitted({});
