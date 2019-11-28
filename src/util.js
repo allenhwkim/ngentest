@@ -268,9 +268,7 @@ class Util {
 
     let ret;
     const funcExprArg = Util.getFuncExprArg(node);
-    if (last.match(/(substr|replace|split)\(.*\)$/)) {
-      ret = { code: baseCode, type: 'string', value: 'gentest' };
-    } else if (last.match(/(subscribe)\(.*\)$/) && funcExprArg) {
+    if (last.match(/(subscribe)\(.*\)$/) && funcExprArg) {
       const funcCode = classCode.substring(funcExprArg.body.start, funcExprArg.body.end);
       const funcParam = Util.getFuncParamObj(funcExprArg, funcCode);
       const value = { type: 'Observable', value: funcParam || {} };
