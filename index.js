@@ -82,7 +82,8 @@ function getFuncTest(Klass, func, angularType) {
   // TODO: getter/setter differntiate the same name function getter/setter
   const funcMockData = getFuncMockData(Klass, func.name, {});
   const funcMockJS = Util.getFuncMockJS(funcMockData, angularType);
-  const funcParamJS = Util.getFuncParamJS(funcMockData);
+  const funcParamJS = Util.getFuncParamJS(funcMockData.params);
+
   const assertRE = /(.*?)\s*=\s*jest\.fn\(.*/;
   const funcAssertJS = funcMockJS
     .filter(el => el.match(assertRE))
@@ -140,7 +141,7 @@ async function run (tsFile) {
       console.warn('\x1b[36m%s\x1b[0m', `PROCESSING ${klass.ctor && klass.ctor.name} constructor`);
     const ctorMockData = getFuncMockData(Klass, 'constructor', {});
 
-    const ctorParamJs = Util.getFuncParamJS(ctorMockData);
+    const ctorParamJs = Util.getFuncParamJS(ctorMockData.params);
     ejsData.ctorParamJs = Util.indent(ctorParamJs, ' '.repeat(6)).trim();
     ejsData.providerMocks = testGenerator.getProviderMocks(klass, ctorMockData.params);
     for (var key in ejsData.providerMocks) {

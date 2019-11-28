@@ -403,6 +403,7 @@ class Util {
       }
 
     });
+
     Object.entries(mockData.globals).forEach(([key1, value]) => { // window, document
       Object.entries(value).forEach(([key2, value2]) => { // location
         if (typeof value2 === 'function') {
@@ -423,15 +424,16 @@ class Util {
     return js;
   }
 
-  static getFuncParamJS (mockData) {
+  static getFuncParamJS (params) {
     const js = [];
-    Object.entries(mockData.params).forEach(([key2, value2]) => {
+    Object.entries(params).forEach(([key2, value2]) => {
       const value21stKey = typeof value2 === 'object' &&
         Object.keys(value2).filter(k => k !== 'undefined')[0];
+
       if (key2 === 'undefined') {
         // ignore this
       } else if (value2.type === 'Observable') {
-        const obsRetVal = Util.objToJS(value2.value).replace(/\{\s+\}/gm, '{}');
+        const obsRetVal = Util.objToJS(value2.value);
         js.push(`observableOf(${obsRetVal})`);
       } else if (value21stKey &&
         value21stKey.match(/^(slice|trim|substr|replace|split|toLowerCase|toUpperCase|match)$/)
@@ -445,6 +447,7 @@ class Util {
         js.push(`${objValue2}`);
       }
     });
+
     return js.join(', ');
   }
 

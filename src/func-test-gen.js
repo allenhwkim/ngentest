@@ -58,7 +58,7 @@ class FuncTestGen {
       nodeIn.type === 'CallExpression' ? nodeIn :
       nodeIn.type === 'CatchClause' ? nodeIn :
       nodeIn.type === 'ConditionalExpression' ? nodeIn :
-      nodeIn.type === 'DeclaratoinxapressionStatement' ? nodeIn.declarations :
+      // nodeIn.type === 'DeclarationExpressionStatement' ? nodeIn.declarations :
       nodeIn.type === 'ExpressionStatement' ? nodeIn.expression :
       nodeIn.type === 'ForStatement' ? nodeIn.body : // NOTE: init/test/update/body
       nodeIn.type === 'ForInStatement' ? nodeIn :
