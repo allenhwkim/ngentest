@@ -439,12 +439,8 @@ class Util {
       } else if (value2.type === 'Observable') {
         const obsRetVal = Util.objToJS(value2.value);
         js.push(`observableOf(${obsRetVal})`);
-//       } else if (typeof value2 === 'function') {
-// console.log('xxxxxxxxxxxxxxxxxx function', Util.objToJS(params) );
-//         const fnValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
-//         js.push(`function() { return ${fnValue2}; }`);
       } else {
-        const objValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
+        const objValue2 = Util.objToJS(value2);
         const jsValue = objValue2 === `'ngentest'` ? `'${key2}'` : `${objValue2}`
         js.push(`${jsValue}`);
       }
