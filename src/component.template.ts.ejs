@@ -1,0 +1,72 @@
+// tslint:disable
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { Pipe, PipeTransform, Injectable, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, Directive, Input, Output } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { By } from '@angular/platform-browser';
+import { Observable, of as observableOf, throwError } from 'rxjs';
+
+<% for(var importLib in imports) { -%>
+import { <%- imports[importLib].map(el => `${el}`).join(', ') -%> } from '<%- importLib -%>';
+<% } -%>
+<%-                        -%>
+<% for(var klassName in providerMocks) { %>
+<%- providerMocks[klassName] -%>
+<% } -%>
+
+
+@Directive({ selector: '[oneviewPermitted]' }) // TODO, template must be user-configurable
+class OneviewPermittedDirective {
+  @Input() oneviewPermitted;
+}
+
+@Pipe({name: 'translate'}) // TODO, template must be user-configurable
+class TranslatePipe implements PipeTransform {
+  transform(value) { return value; }
+}
+
+@Pipe({name: 'phoneNumber'}) // TODO, template must be user-configurable
+class PhoneNumberPipe implements PipeTransform {
+  transform(value) { return value; }
+}
+ 
+@Pipe({name: 'safeHtml'}) // TODO, template must be user-configurable
+class SafeHtmlPipe implements PipeTransform {
+  transform(value) { return value; }
+}
+
+describe('<%- className %>', () => {
+  let fixture;
+  let component;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [ FormsModule, ReactiveFormsModule ],
+      declarations: [
+        <%- className %>, TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
+        OneviewPermittedDirective
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
+      providers: [
+        <%- Object.entries(providers).map( ([_, value]) => value ).join(',\n        ') -%>
+      ]
+    }).overrideComponent(<%- className %>, {
+      // set: { providers: [{ provide: MyComponentService, useClass: MyComponentService }] }
+    }).compileComponents();
+    fixture = TestBed.createComponent(<%- className %>);
+    component = fixture.debugElement.componentInstance;
+  });
+
+  it('should run #constructor()', async () => {
+    expect(component).toBeTruthy();
+  });
+
+  <% for(var key in accessorTests) { %>
+  <%- accessorTests[key] -%>
+  <% } %>
+  
+  <% for(var key in functionTests) { %>
+  <%- functionTests[key] -%>
+  <% } %>
+  
+});
