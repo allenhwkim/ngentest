@@ -166,7 +166,7 @@ class FuncTestGen {
     } else if (node.type === 'MemberExpression') { // this.xxxx, foo.xxxx
       this.setPropsOrParams(node, mockData);
     } else if (node.type === 'CallExpression') {
-      // procesa call expression
+      // process call expression
       // if this call expression is a typical pattern,
       // e.g. xxx.forEach() for string, xxx.replace() for string
       // then, change the expression, then process it. 

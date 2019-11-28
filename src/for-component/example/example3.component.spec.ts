@@ -123,11 +123,7 @@ describe('BillingHeaderComponent', () => {
     component.paymentService = component.paymentService || {};
     component.paymentService.getCreditCardConfig = jest.fn().mockReturnValue(observableOf({}));
     component.billingService = component.billingService || {};
-    component.billingService.getBilling = jest.fn().mockReturnValue({
-      pipe : function() {
-        return observableOf({});
-      }
-    });
+    component.billingService.getBilling = jest.fn().mockReturnValue(observableOf(observableOf({})));
     component.ngOnInit();
     expect(component.setNotificationMessage).toHaveBeenCalled();
     expect(component.setDebitCardDetails).toHaveBeenCalled();

@@ -2,8 +2,9 @@ const jsParser = require('acorn').Parser;
 const path = require('path');
 const indentJs = require('indent.js');
 
-const strFuncRE = /slice|trim|substr|replace|split|toLowerCase|toUpperCase|match/;
-const arrFuncRE = /forEach|map|reduce|slice/;
+const strFuncRE = /^(slice|trim|substr|replace|split|toLowerCase|toUpperCase|match)$/;
+const arrFuncRE = /^(forEach|map|reduce|slice|filter)$/;
+const obsFuncRE = /^(subscribe|pipe|post|put)$/;
 
 class Util {
   static get DEBUG () { return !!Util.__debug; }
@@ -47,12 +48,16 @@ class Util {
         const funcRet = Util.objToJS(objRet, level + 1);
         return `function() {\n${indent}  return ${funcRet};\n${indent}}`;
       }
-    } else if (firstKey && firstKey.match(strFuncRE)) { // string in form of an object
+    } else if (firstKey && firstKey.match(strFuncRE)) { // sring function
       return `'ngentest'`;
-    } else if (firstKey && firstKey.match(arrFuncRE)) { // string in form of an object
+    } else if (firstKey && firstKey.match(arrFuncRE)) { // array function
       return `['ngentest']`;
-    } else if (obj.type === 'Observable') {
-      return `observableOf(${Util.objToJS(obj.value)})`;
+    } else if (firstKey && firstKey.match(obsFuncRE)) { // observable function
+      // return `['ngentest']`;
+      const val = typeof obj[firstKey] === 'function' ? obj[firstKey]() : obj[firstKey];
+      return `observableOf(${Util.objToJS(val)})`;
+    // } else if (obj.type === 'Observable') {
+    //   return `observableOf(${Util.objToJS(obj.value)})`;
     } else if (Array.isArray(obj)) {
       return JSON.stringify(obj);
     } else {
@@ -267,18 +272,25 @@ class Util {
     }
 
     let ret;
-    const funcExprArg = Util.getFuncExprArg(node);
-    if (last.match(/(subscribe)\(.*\)$/) && funcExprArg) {
+    const funcExprArg = Util.getFuncExprArg(node); // if the first argument is a function
+    if (funcExprArg) {
       const funcCode = classCode.substring(funcExprArg.body.start, funcExprArg.body.end);
-      const funcParam = Util.getFuncParamObj(funcExprArg, funcCode);
-      const value = { type: 'Observable', value: funcParam || {} };
-      const baseKode = vars.slice(0, -1).join('.');
+      const value = Util.getFuncParamObj(funcExprArg, funcCode);
+      ret = { code: baseCode, type: 'unknown', value };
+    // } else {
 
-      ret = { code: baseKode, type: 'Observable', value };
+    // }
+    // if (last.match(/(subscribe)\(.*\)$/) && funcExprArg) {
+    //   const funcCode = classCode.substring(funcExprArg.body.start, funcExprArg.body.end);
+    //   const funcParam = Util.getFuncParamObj(funcExprArg, funcCode);
+    //   const value = { type: 'Observable', value: funcParam || {} };
+    //   const baseKode = vars.slice(0, -1).join('.');
 
-    // } else if (last.match(/(map|forEach|reduce|slice)\(.*\)$/) && funcExprArg) {
+    //   ret = { code: baseKode, type: 'Observable', value };
 
-    //   ret = { code: baseCode, type: 'array', value: ['ngentest'] };
+    // // } else if (last.match(/(map|forEach|reduce|slice)\(.*\)$/) && funcExprArg) {
+
+    // //   ret = { code: baseCode, type: 'array', value: ['ngentest'] };
 
     } else {
 

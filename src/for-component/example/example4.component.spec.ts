@@ -120,7 +120,11 @@ describe('InteractionsComponent', () => {
     component.translate.instant = jest.fn();
     component.getInteractions({
       error: '[object Object]',
-      filter : jest.fn()
+      filter : function() {
+        return {
+          itemType: '[object Object]'
+        };
+      }
     });
     expect(component.translate.instant).toHaveBeenCalled();
   });

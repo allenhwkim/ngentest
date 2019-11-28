@@ -21,9 +21,7 @@ import { BillingDateHandlerService } from './billing-date-handler.service';
 @Injectable()
 class MockBillingDataService {
   catchError = function() {
-    return {
-      pipe : jest.fn()
-    };
+    return observableOf({});
   };
 }
 
@@ -138,11 +136,7 @@ describe('BillingPageComponent', () => {
     component.navigationService = component.navigationService || {};
     component.navigationService.isRoutedFromPayment = 'isRoutedFromPayment';
     component.router = component.router || {};
-    component.router.events = {
-      pipe : function() {
-        return observableOf({});
-      }
-    };
+    component.router.events = observableOf(observableOf({}));
     component.ptpService = component.ptpService || {};
     component.ptpService.getAllPtpInfo = jest.fn().mockReturnValue(observableOf({
       ptpDetails: {
@@ -216,13 +210,9 @@ describe('BillingPageComponent', () => {
 
   it('should run #fetchResource()', async () => {
     component.billingService = component.billingService || {};
-    component.billingService.getEncryptedString = jest.fn().mockReturnValue({
-      pipe : jest.fn()
-    });
+    component.billingService.getEncryptedString = jest.fn().mockReturnValue(observableOf({}));
     component.billingService = component.billingService || {};
-    component.billingService.fetchUserBill = jest.fn().mockReturnValue({
-      pipe : jest.fn()
-    });
+    component.billingService.fetchUserBill = jest.fn().mockReturnValue(observableOf({}));
     component.billingService = component.billingService || {};
     component.billingService.downloadFile = jest.fn();
     component.dialog = component.dialog || {};

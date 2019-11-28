@@ -132,7 +132,7 @@ describe('AdjustmentFormComponent', () => {
     };
     component.adjustmentForm = component.adjustmentForm || {};
     component.adjustmentForm.get = jest.fn().mockReturnValue({
-      valueChanges : observableOf({})
+      valueChanges: observableOf({})
     });
     component.adjustmentFieldInValidation = jest.fn();
     component.handleSiteField = jest.fn();
@@ -146,7 +146,7 @@ describe('AdjustmentFormComponent', () => {
     component.adjustmentForm = component.adjustmentForm || {};
     component.adjustmentForm.get = jest.fn().mockReturnValue({
       setValue : jest.fn(),
-      valueChanges : observableOf({})
+      valueChanges: observableOf({})
     });
     component.wirelessPostpaidDetails = component.wirelessPostpaidDetails || {};
     component.wirelessPostpaidDetails.content = {

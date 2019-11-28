@@ -56,9 +56,7 @@ describe('AgentInfo', () => {
         accountNumber: '[object Object]'
       }
     }, {
-      userPreference: {
-        filter : jest.fn()
-      }
+      userPreference: ['ngentest']
     });
     expect(obj.setDealerCode).toHaveBeenCalled();
     expect(obj.querySelector).toHaveBeenCalled();
