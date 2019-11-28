@@ -172,7 +172,6 @@ class FuncTestGen {
       // then, change the expression, then process it. 
       // For example, from this.x.substr() to thix.x as string
       const funcReturn = Util.getExprReturn(node, this.classCode) || {};
-      // {code: 'this.router.events', type: 'Observable', value: Observable.of(event)}
       this.setPropsOrParams(funcReturn.code, mockData, funcReturn.value);
       
       // procesa call arguments

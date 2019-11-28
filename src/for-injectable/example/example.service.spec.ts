@@ -28,7 +28,7 @@ describe('DynamicComponentService', () => {
     service.insertComponent({
       location: {
         nativeElement: {
-          setAttribute : jest.fn()
+          setAttribute: jest.fn()
         }
       },
       instance: {

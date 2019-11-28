@@ -66,14 +66,11 @@ class Util {
         if (typeof obj[key] === 'object' && !obj1stKey) { // is empty obj, e.g. {}
           exprs.push(`${key}: '${obj[key]}'`);
         } else if (obj1stKey && obj1stKey.match(strFuncRE)) { // string in form of an object
-          exprs.push(`${key} : '${key}'`);
-        } else if (obj[key].type === 'Observable') { // normal Observable
-          const observableVal = Util.objToJS(obj[key].value);
-          exprs.push(`${key} : observableOf(${observableVal})`);
+          exprs.push(`${key}: '${key}'`);
         } else if (typeof obj[key] === 'object') {
           exprs.push(`${key}: ${Util.objToJS(obj[key], level + 1)}`);
         } else if (typeof obj[key] === 'function') {
-          exprs.push(`${key} : ${Util.objToJS(obj[key], level + 1)}`);
+          exprs.push(`${key}: ${Util.objToJS(obj[key], level + 1)}`);
         } else if (typeof obj[key] === 'string') {
           exprs.push(`${key}: "${obj[key]}"`);
         } else {
@@ -349,10 +346,7 @@ class Util {
         valueFiltered.forEach(([key2, value2]) => {
 
           js.push(`${thisName}.${key1} = ${thisName}.${key1} || {}`);
-          if (value2.type === 'Observable') {
-            const obsRetVal = Util.objToJS(value2.value).replace(/\{\s+\}/gm, '{}');
-            js.push(`${thisName}.${key1}.${key2} = observableOf(${obsRetVal})`);
-          } else if (typeof value2 === 'function' && key2.match(/^(post|put)$/)) {
+          if (typeof value2 === 'function' && key2.match(/^(post|put)$/)) {
             js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(observableOf('${key2}'));`);
           } else if (key2.match(arrFuncRE)) {
             js.push(`${thisName}.${key1} = ['${key1}']`);
@@ -426,12 +420,7 @@ class Util {
       const value21stKey = typeof value2 === 'object' &&
         Object.keys(value2).filter(k => k !== 'undefined')[0];
 
-      if (key2 === 'undefined') {
-        // ignore this
-      } else if (value2.type === 'Observable') {
-        const obsRetVal = Util.objToJS(value2.value);
-        js.push(`observableOf(${obsRetVal})`);
-      } else {
+      if (key2 !== 'undefined') {
         const objValue2 = Util.objToJS(value2);
         const jsValue = 
           objValue2 === `'ngentest'` ? `'${key2}'` :

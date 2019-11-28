@@ -19,7 +19,7 @@ class MockAuthGuardService {
   foo = function() {
     return {
       bar: {
-        baz : function() {
+        baz: function() {
           return {
             isLoggedIn: '[object Object]'
           };
@@ -35,7 +35,7 @@ class MockCookieService {
   foo = function() {
     return {
       bar: {
-        baz : jest.fn()
+        baz: jest.fn()
       }
     };
   };
@@ -52,7 +52,7 @@ class MockAppLoadService {
 class MockRouter {
   route = function() {
     return {
-      foo : function() {
+      foo: function() {
         return {
           bar: '[object Object]'
         };
@@ -122,11 +122,11 @@ describe('ExampleComponent', () => {
     };
     component.router = component.router || {};
     component.router.events = observableOf({
-      urlAfterRedirects : 'urlAfterRedirects'
+      urlAfterRedirects: 'urlAfterRedirects'
     });
     component.menuEl = component.menuEl || {};
     component.menuEl.nativeElement = {
-      highlightMenu : jest.fn()
+      highlightMenu: jest.fn()
     };
     component.ngOnInit();
 
@@ -158,7 +158,7 @@ describe('ExampleComponent', () => {
     component.router = component.router || {};
     component.router.navigate = jest.fn();
     component.changeRoute({
-      detail : 'detail'
+      detail: 'detail'
     });
     expect(component.router.navigate).toHaveBeenCalled();
   });

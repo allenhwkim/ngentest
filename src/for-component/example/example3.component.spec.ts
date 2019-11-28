@@ -114,7 +114,7 @@ describe('BillingHeaderComponent', () => {
     component.setNotificationMessage = jest.fn();
     component.billingDetails = component.billingDetails || {};
     component.billingDetails.methodOfPayment = {
-      mopType : 'mopType'
+      mopType: 'mopType'
     };
     component.setDebitCardDetails = jest.fn();
     component.setCreditCardDetails = jest.fn();
@@ -184,10 +184,10 @@ describe('BillingHeaderComponent', () => {
   it('should run #openSchedulePTP()', async () => {
     component.el = component.el || {};
     component.el.nativeElement = {
-      dispatchEvent : jest.fn()
+      dispatchEvent: jest.fn()
     };
     component.openSchedulePTP({
-      stopPropagation : jest.fn()
+      stopPropagation: jest.fn()
     });
 
   });
@@ -195,10 +195,10 @@ describe('BillingHeaderComponent', () => {
   it('should run #openSchedulePTPHistory()', async () => {
     component.el = component.el || {};
     component.el.nativeElement = {
-      dispatchEvent : jest.fn()
+      dispatchEvent: jest.fn()
     };
     component.openSchedulePTPHistory({
-      stopPropagation : jest.fn()
+      stopPropagation: jest.fn()
     });
 
   });
@@ -222,8 +222,8 @@ describe('BillingHeaderComponent', () => {
   it('should run #getStartEndDates()', async () => {
 
     component.getStartEndDates({
-      startDate : 'startDate',
-      endDate : 'endDate'
+      startDate: 'startDate',
+      endDate: 'endDate'
     });
 
   });

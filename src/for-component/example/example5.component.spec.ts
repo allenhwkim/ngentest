@@ -106,7 +106,7 @@ describe('DashboardComponent', () => {
     component.commonData.agentInfo = {
       'consumer': '[object Object]',
       authorizationLevel: '[object Object]',
-      authorozationLevel : 'authorozationLevel'
+      authorozationLevel: 'authorozationLevel'
     };
     const isAccountHolder = component.isAccountHolder;
 
@@ -233,7 +233,7 @@ describe('DashboardComponent', () => {
   it('should run #goToIgniteTV()', async () => {
     component.el = component.el || {};
     component.el.nativeElement = {
-      dispatchEvent : jest.fn()
+      dispatchEvent: jest.fn()
     };
     component.goToIgniteTV({});
 

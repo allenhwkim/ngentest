@@ -145,7 +145,7 @@ describe('AdjustmentFormComponent', () => {
   it('should run #handleDaysAffected()', async () => {
     component.adjustmentForm = component.adjustmentForm || {};
     component.adjustmentForm.get = jest.fn().mockReturnValue({
-      setValue : jest.fn(),
+      setValue: jest.fn(),
       valueChanges: observableOf({})
     });
     component.wirelessPostpaidDetails = component.wirelessPostpaidDetails || {};
@@ -178,8 +178,8 @@ describe('AdjustmentFormComponent', () => {
   it('should run #handleSiteField()', async () => {
     component.adjustmentForm = component.adjustmentForm || {};
     component.adjustmentForm.get = jest.fn().mockReturnValue({
-      disable : jest.fn(),
-      enable : jest.fn()
+      disable: jest.fn(),
+      enable: jest.fn()
     });
     component.handleSiteField({});
     expect(component.adjustmentForm.get).toHaveBeenCalled();
