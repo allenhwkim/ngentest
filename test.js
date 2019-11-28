@@ -5,17 +5,17 @@ const assert = require('assert');
 const fs = require('fs');
 
 const srcFiles = [
-  `${path.join('src', 'for-class', 'example', 'example.klass.ts')}`,
-  `${path.join('src', 'for-component', 'example', 'example.component.ts')}`,
-  `${path.join('src', 'for-component', 'example', 'example2.component.ts')}`,
-  `${path.join('src', 'for-component', 'example', 'example3.component.ts')}`,
-  `${path.join('src', 'for-component', 'example', 'example4.component.ts')}`,
-  `${path.join('src', 'for-component', 'example', 'example5.component.ts')}`,
-  `${path.join('src', 'for-component', 'example', 'example6.component.ts')}`,
-  `${path.join('src', 'for-component', 'example', 'example7.component.ts')}`,
-  `${path.join('src', 'for-directive', 'example', 'example.directive.ts')}`,
-  `${path.join('src', 'for-injectable', 'example', 'example.service.ts')}`,
-  `${path.join('src', 'for-pipe', 'example', 'example.pipe.ts')}`
+  `${path.join('examples', 'example.klass.ts')}`,
+  `${path.join('examples', 'example.component.ts')}`,
+  `${path.join('examples', 'example2.component.ts')}`,
+  `${path.join('examples', 'example3.component.ts')}`,
+  `${path.join('examples', 'example4.component.ts')}`,
+  `${path.join('examples', 'example5.component.ts')}`,
+  `${path.join('examples', 'example6.component.ts')}`,
+  `${path.join('examples', 'example7.component.ts')}`,
+  `${path.join('examples', 'example.directive.ts')}`,
+  `${path.join('examples', 'example.service.ts')}`,
+  `${path.join('examples', 'example.pipe.ts')}`
 ];
 
 srcFiles.forEach(filePath => {

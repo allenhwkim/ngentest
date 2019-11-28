@@ -1,14 +1,14 @@
 #!/bin/bash
 set -e
-./index.js src/for-class/example/example.klass.ts -sf
-./index.js src/for-component/example/example.component.ts -sf
-./index.js src/for-component/example/example2.component.ts -sf
-./index.js src/for-component/example/example3.component.ts -sf
-./index.js src/for-component/example/example4.component.ts -sf
-./index.js src/for-component/example/example5.component.ts -sf
-./index.js src/for-component/example/example6.component.ts -sf
-./index.js src/for-component/example/example7.component.ts -sf
-./index.js src/for-component/example/example8.component.ts -sf
-./index.js src/for-directive/example/example.directive.ts -sf
-./index.js src/for-injectable/example/example.service.ts -sf
-./index.js src/for-pipe/example/example.pipe.ts -sf
+./index.js examples/example.klass.ts -sf
+./index.js examples/example.component.ts -sf
+./index.js examples/example2.component.ts -sf
+./index.js examples/example3.component.ts -sf
+./index.js examples/example4.component.ts -sf
+./index.js examples/example5.component.ts -sf
+./index.js examples/example6.component.ts -sf
+./index.js examples/example7.component.ts -sf
+./index.js examples/example8.component.ts -sf
+./index.js examples/example.directive.ts -sf
+./index.js examples/example.service.ts -sf
+./index.js examples/example.pipe.ts -sf

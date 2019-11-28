@@ -9,11 +9,11 @@ const glob = require('glob');
 const Util = require('./src/util.js');
 const FuncTestGen = require('./src/func-test-gen.js');
 
-const ComponentTestGen = require('./src/for-component/component-test-gen.js');
-const DirectiveTestGen = require('./src/for-directive/directive-test-gen.js');
-const InjectableTestGen = require('./src/for-injectable/injectable-test-gen.js');
-const PipeTestGen = require('./src/for-pipe/pipe-test-gen.js');
-const ClassTestGen = require('./src/for-class/class-test-gen.js');
+const ComponentTestGen = require('./src/component-test-gen.js');
+const DirectiveTestGen = require('./src/directive-test-gen.js');
+const InjectableTestGen = require('./src/injectable-test-gen.js');
+const PipeTestGen = require('./src/pipe-test-gen.js');
+const ClassTestGen = require('./src/class-test-gen.js');
 
 const argv = yargs.usage('Usage: $0 <tsFile> [options]')
   .options({
