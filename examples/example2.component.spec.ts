@@ -68,7 +68,6 @@ describe('AdjustmentFormComponent', () => {
       amount: '[object Object]',
       site: '[object Object]'
     };
-    component.adjustmentsDetailsCms = component.adjustmentsDetailsCms || {};
     component.adjustmentsDetailsCms.location = {
       threshold: '[object Object]',
       sites: '[object Object]'
@@ -161,7 +160,6 @@ describe('AdjustmentFormComponent', () => {
   it('should run #getValidationAndSetSpecificErrorsForAmount()', async () => {
     component.adjustmentsDetailsCms = component.adjustmentsDetailsCms || {};
     component.adjustmentsDetailsCms.nextBillMaxAmount = 'nextBillMaxAmount';
-    component.adjustmentsDetailsCms = component.adjustmentsDetailsCms || {};
     component.adjustmentsDetailsCms.adjustmentMaxAmount = 'adjustmentMaxAmount';
     component.selectedBill = component.selectedBill || {};
     component.selectedBill.content_id = 'content_id';

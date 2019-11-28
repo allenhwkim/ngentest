@@ -89,7 +89,6 @@ describe('CreditManagementComponent', () => {
     component.creditManagementService.getAccountSummaryAndBillingDetails = jest.fn().mockReturnValue(obserVableOf({}));
     component.data = component.data || {};
     component.data.0 = '0';
-    component.data = component.data || {};
     component.data.1 = '1';
     await component.ngOnInit();
     expect(component.creditManagementService.getAccountSummaryAndBillingDetails).toHaveBeenCalled();
@@ -111,7 +110,6 @@ describe('CreditManagementComponent', () => {
     component.resetAllFields = jest.fn();
     component.creditManagementService = component.creditManagementService || {};
     component.creditManagementService.getWireLessPostpaidDetails = jest.fn().mockReturnValue(obserVableOf({}));
-    component.creditManagementService = component.creditManagementService || {};
     component.creditManagementService.getRecentAdjustments = jest.fn().mockReturnValue(obserVableOf({}));
     component.setAdjustmentTypesAndBills = jest.fn();
     await component.servicePlanChanged({});
@@ -124,7 +122,6 @@ describe('CreditManagementComponent', () => {
   it('should run #setAdjustmentTypesAndBills()', async () => {
     component.creditManagementService = component.creditManagementService || {};
     component.creditManagementService.getAdjustmentTypes = jest.fn().mockReturnValue(obserVableOf({}));
-    component.creditManagementService = component.creditManagementService || {};
     component.creditManagementService.loadUserBill = jest.fn().mockReturnValue(obserVableOf({}));
     await component.setAdjustmentTypesAndBills();
     expect(component.creditManagementService.getAdjustmentTypes).toHaveBeenCalled();
@@ -196,13 +193,9 @@ describe('CreditManagementComponent', () => {
   it('should run #submitCreditManagement()', async () => {
     component.creditManagementDataService = component.creditManagementDataService || {};
     component.creditManagementDataService.setServiceAdjustmentAndBillData = jest.fn();
-    component.creditManagementDataService = component.creditManagementDataService || {};
     component.creditManagementDataService.setChargeData = jest.fn();
-    component.creditManagementDataService = component.creditManagementDataService || {};
     component.creditManagementDataService.setIssueData = jest.fn();
-    component.creditManagementDataService = component.creditManagementDataService || {};
     component.creditManagementDataService.setFormData = jest.fn();
-    component.creditManagementDataService = component.creditManagementDataService || {};
     component.creditManagementDataService.submitCreditManagement = jest.fn().mockReturnValue(observableOf({}));
     component.openInteractionOrSubmitModal = jest.fn();
     component.openSystemError = jest.fn();
@@ -219,7 +212,6 @@ describe('CreditManagementComponent', () => {
   it('should run #openInteractionOrSubmitModal()', async () => {
     component.dialog = component.dialog || {};
     component.dialog.open = jest.fn();
-    component.dialog = component.dialog || {};
     component.dialog.close = jest.fn();
     component.selectedAdjustment = component.selectedAdjustment || {};
     component.selectedAdjustment.name = 'name';

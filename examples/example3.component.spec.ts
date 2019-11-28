@@ -152,15 +152,11 @@ describe('BillingHeaderComponent', () => {
     };
     component.creditCard = component.creditCard || {};
     component.creditCard.ccType = 'ccType';
-    component.creditCard = component.creditCard || {};
     component.creditCard.ccExpiry = 'ccExpiry';
     component.billingHeader = component.billingHeader || {};
     component.billingHeader.getLocalDate = jest.fn();
-    component.billingHeader = component.billingHeader || {};
     component.billingHeader.formatDate = jest.fn();
-    component.billingHeader = component.billingHeader || {};
     component.billingHeader.isCreditCardExpired = jest.fn();
-    component.billingHeader = component.billingHeader || {};
     component.billingHeader.isCreditCardExpiring = jest.fn();
     component.setCreditCardDetails();
     expect(component.billingHeader.getLocalDate).toHaveBeenCalled();
@@ -231,7 +227,6 @@ describe('BillingHeaderComponent', () => {
   it('should run #getCreditUsed()', async () => {
     component.billingDetails = component.billingDetails || {};
     component.billingDetails.creditLimit = 'creditLimit';
-    component.billingDetails = component.billingDetails || {};
     component.billingDetails.availableCreditAmount = 'availableCreditAmount';
     component.getCreditUsed();
 

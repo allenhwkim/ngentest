@@ -15,9 +15,7 @@ describe('AgentInfo', () => {
   it('should run GetterDeclaration #username', async () => {
     obj.agentInfo = obj.agentInfo || {};
     obj.agentInfo.lanId = 'lanId';
-    obj.agentInfo = obj.agentInfo || {};
     obj.agentInfo.cfaFirstName = 'cfaFirstName';
-    obj.agentInfo = obj.agentInfo || {};
     obj.agentInfo.cfaLastName = 'cfaLastName';
     const username = obj.username;
 
@@ -46,7 +44,6 @@ describe('AgentInfo', () => {
     obj.setDealerCode = jest.fn();
     obj.i18n = obj.i18n || {};
     obj.i18n.noCode = 'noCode';
-    obj.i18n = obj.i18n || {};
     obj.i18n.acting = 'acting';
     obj.querySelector = jest.fn();
     obj.saveDealerCode = jest.fn();
@@ -120,7 +117,6 @@ describe('AgentInfo', () => {
     obj.agentInfo.consumer = {
       accountNumber: '[object Object]'
     };
-    obj.agentInfo = obj.agentInfo || {};
     obj.agentInfo.lanId = 'lanId';
     obj.validateDealerCode = jest.fn();
     obj.updateDealer({});

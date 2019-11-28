@@ -81,7 +81,8 @@ function getFuncTest(Klass, func, angularType) {
   const type = func.constructor.name;
   // TODO: getter/setter differntiate the same name function getter/setter
   const funcMockData = getFuncMockData(Klass, func.name, {});
-  const funcMockJS = Util.getFuncMockJS(funcMockData, angularType);
+  const allFuncMockJS = Util.getFuncMockJS(funcMockData, angularType);
+  const funcMockJS = [...new Set(allFuncMockJS)];
   const funcParamJS = Util.getFuncParamJS(funcMockData.params);
 
   const assertRE = /(.*?)\s*=\s*jest\.fn\(.*/;

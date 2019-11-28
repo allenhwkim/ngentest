@@ -93,7 +93,6 @@ describe('InteractionsComponent', () => {
     };
     component.getInteractions = jest.fn();
     component.interactions = component.interactions || {};
-    component.interactions = component.interactions || {};
     component.interactions = ['interactions'];
     component.ngOnInit();
     expect(component.getInteractions).toHaveBeenCalled();

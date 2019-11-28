@@ -117,15 +117,10 @@ describe('DashboardComponent', () => {
     component.accountSummary.lob = 'lob';
     component.dashboardData = component.dashboardData || {};
     component.dashboardData.getBillingDetails = jest.fn().mockReturnValue(observableOf({}));
-    component.dashboardData = component.dashboardData || {};
     component.dashboardData.getPostDatedPPC = jest.fn().mockReturnValue(observableOf({}));
-    component.dashboardData = component.dashboardData || {};
     component.dashboardData.getInteractions = jest.fn().mockReturnValue(observableOf({}));
-    component.dashboardData = component.dashboardData || {};
     component.dashboardData.getSubscriptionsSummary = jest.fn().mockReturnValue(observableOf({}));
-    component.dashboardData = component.dashboardData || {};
     component.dashboardData.getAdditionalServiceLinks = jest.fn();
-    component.dashboardData = component.dashboardData || {};
     component.dashboardData.handleTreatmentsDataError = jest.fn();
     component.appData = component.appData || {};
     component.appData.getIDVSummary$ = observableOf({});
@@ -137,7 +132,6 @@ describe('DashboardComponent', () => {
     component.actionService.getActiveTreatments = jest.fn().mockReturnValue(observableOf({
       ecid: '[object Object]'
     }));
-    component.actionService = component.actionService || {};
     component.actionService.getDispositionStatus = jest.fn().mockReturnValue(observableOf({}));
     component.ngOnInit();
     expect(component.dashboardData.getBillingDetails).toHaveBeenCalled();
@@ -204,7 +198,6 @@ describe('DashboardComponent', () => {
     component.commonData.agentInfo = {
       dealerCode: '[object Object]'
     };
-    component.commonData = component.commonData || {};
     component.commonData.accountSummary = {
       accountNumber: '[object Object]'
     };
@@ -214,9 +207,7 @@ describe('DashboardComponent', () => {
     component.dialogService.open = jest.fn();
     component.processHup = component.processHup || {};
     component.processHup.handleDealerCodeChange = jest.fn();
-    component.processHup = component.processHup || {};
     component.processHup.checkEligibility = jest.fn();
-    component.processHup = component.processHup || {};
     component.processHup.upgradeHardware = jest.fn();
     await component.handleBuyflow({
       detail: {
