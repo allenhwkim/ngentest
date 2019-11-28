@@ -53,11 +53,8 @@ class Util {
     } else if (firstKey && firstKey.match(arrFuncRE)) { // array function
       return `['ngentest']`;
     } else if (firstKey && firstKey.match(obsFuncRE)) { // observable function
-      // return `['ngentest']`;
       const val = typeof obj[firstKey] === 'function' ? obj[firstKey]() : obj[firstKey];
       return `observableOf(${Util.objToJS(val)})`;
-    // } else if (obj.type === 'Observable') {
-    //   return `observableOf(${Util.objToJS(obj.value)})`;
     } else if (Array.isArray(obj)) {
       return JSON.stringify(obj);
     } else {
@@ -276,26 +273,9 @@ class Util {
     if (funcExprArg) {
       const funcCode = classCode.substring(funcExprArg.body.start, funcExprArg.body.end);
       const value = Util.getFuncParamObj(funcExprArg, funcCode);
-      ret = { code: baseCode, type: 'unknown', value };
-    // } else {
-
-    // }
-    // if (last.match(/(subscribe)\(.*\)$/) && funcExprArg) {
-    //   const funcCode = classCode.substring(funcExprArg.body.start, funcExprArg.body.end);
-    //   const funcParam = Util.getFuncParamObj(funcExprArg, funcCode);
-    //   const value = { type: 'Observable', value: funcParam || {} };
-    //   const baseKode = vars.slice(0, -1).join('.');
-
-    //   ret = { code: baseKode, type: 'Observable', value };
-
-    // // } else if (last.match(/(map|forEach|reduce|slice)\(.*\)$/) && funcExprArg) {
-
-    // //   ret = { code: baseCode, type: 'array', value: ['ngentest'] };
-
+      ret = { code: baseCode, value };
     } else {
-
-      ret = { code: code, type: 'unknown', value: {} };
-
+      ret = { code: code, value: {} };
     }
 
     return ret;
