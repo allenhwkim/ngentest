@@ -439,13 +439,10 @@ class Util {
       } else if (value2.type === 'Observable') {
         const obsRetVal = Util.objToJS(value2.value);
         js.push(`observableOf(${obsRetVal})`);
-      // } else if (value21stKey &&
-      //   value21stKey.match(/^(slice|trim|substr|replace|split|toLowerCase|toUpperCase|match)$/)
-      // ) {
-      //   js.push(`'${key2}'`);
-      } else if (typeof value2 === 'function') {
-        const fnValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
-        js.push(`function() { return ${fnValue2}; }`);
+//       } else if (typeof value2 === 'function') {
+// console.log('xxxxxxxxxxxxxxxxxx function', Util.objToJS(params) );
+//         const fnValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
+//         js.push(`function() { return ${fnValue2}; }`);
       } else {
         const objValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
         const jsValue = objValue2 === `'ngentest'` ? `'${key2}'` : `${objValue2}`
