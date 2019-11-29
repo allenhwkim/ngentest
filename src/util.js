@@ -348,7 +348,7 @@ class Util {
 
           js.push(`${thisName}.${key1} = ${thisName}.${key1} || {}`);
           if (typeof value2 === 'function' && key2.match(/^(post|put)$/)) {
-            js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(observableOf('${key2}'));`);
+            js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(observableOf('${key2}'))`);
           } else if (key2.match(arrFuncRE)) {
             js.push(`${thisName}.${key1} = ['${key1}']`);
           } else if (typeof value2 === 'function' && JSON.stringify(value2()) === '{}') {
