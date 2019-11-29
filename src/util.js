@@ -289,7 +289,8 @@ class Util {
 
     const funcRetName = node.params[0].name;
     const codeReplaced = code.replace(/\n+/g, '').replace(/\s+/g, ' ');
-    const funcRetExprs = codeReplaced.match(new RegExp(`${funcRetName}(\\.[^\\s\\;\\)},]+)+`, 'ig'));
+    const paramNameMatchRE = new RegExp(`${funcRetName}(\\.[^\\s\\;\\)\\]},]+)+`, 'ig')
+    const funcRetExprs = codeReplaced.match(paramNameMatchRE );
 
     const funcParam = {};
     (funcRetExprs || []).forEach(funcExpr => { // e.g., ['event.urlAfterRedirects.substr(1)', ..]

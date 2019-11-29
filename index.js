@@ -186,8 +186,10 @@ const isDir = fs.lstatSync(tsFile).isDirectory();
 if (isDir) {
   const files = glob.sync('**/!(*.spec).ts', {cwd: tsFile})
   files.forEach(file => {
-    console.log(' -------------- processing', tsFile, file);
-    run(path.join(tsFile, file));
+    if (file.match(/(component|directive|pipe|service).ts/)) { // TODO custom pattern
+      console.log(' -------------- processing', tsFile, file);
+      run(path.join(tsFile, file));
+    }
   });
 } else {
   run(tsFile);

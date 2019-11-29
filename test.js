@@ -13,9 +13,12 @@ const srcFiles = [
   `${path.join('examples', 'example5.component.ts')}`,
   `${path.join('examples', 'example6.component.ts')}`,
   `${path.join('examples', 'example7.component.ts')}`,
+  `${path.join('examples', 'example8.component.ts')}`,
+  `${path.join('examples', 'example9.component.ts')}`,
   `${path.join('examples', 'example.directive.ts')}`,
   `${path.join('examples', 'example.service.ts')}`,
   `${path.join('examples', 'example.pipe.ts')}`
+  `${path.join('examples', 'example2.pipe.ts')}`
 ];
 
 srcFiles.forEach(filePath => {
