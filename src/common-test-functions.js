@@ -142,7 +142,9 @@ function getProviders (klass) {
         }`;
     } else if (injectClassName) {
       providers[param.name] = `{ provide: ${injectClassName}, useValue: ${injectClassName} }`;
-    } else if (param.type.match(/^(ElementRef|Router|HttpClient|TranslateService)$/)) {
+    // } else if (param.type.match(/^(ElementRef|Router|HttpClient|TranslateService)$/)) {
+    //   providers[param.name] = `{ provide: ${param.type}, useClass: Mock${param.type} }`;
+    } else if (this.config.providerMocks[param.type]) {
       providers[param.name] = `{ provide: ${param.type}, useClass: Mock${param.type} }`;
     } else if (iimport && iimport.mport.libraryName.match(/^(\.|src\/)/)) { // user-defined classes
       providers[param.name] = `{ provide: ${param.type}, useClass: Mock${param.type} }`;
