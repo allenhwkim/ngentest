@@ -12,6 +12,14 @@ module.exports = {
     { from: 'require\\("html-custom-element"\\)', to: '{}'}, // some 3rd party require statements causes error, using import or windows directly
     { from: '^\\S+\\.define\\(.*\\);', to: ''} // some commands causes error
   ],
+  // provide mocks for these classes
+  providerMocks: {
+    ElementRef: ['nativeElement = {};'],
+    Router: ['navigate = jest.fn();'],
+    Document: ['querySelector = jest.fn();'],
+    HttpClient: ['post = jest.fn();'],
+    TranslateService: ['translate = jest.fn();']
+  },
   // with multi file gen, include only these files
   includeMatch: [/(component|directive|pipe|service).ts/],
   // with multi file gen, exclude these files

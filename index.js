@@ -10,12 +10,13 @@ const appRoot = require('app-root-path');
 const config = require('./ngentest.config');
 const Util = require('./src/util.js');
 const FuncTestGen = require('./src/func-test-gen.js');
+const TypescriptParser = require('./src/typescript-parser.js');
 
-const ComponentTestGen = require('./src/component-test-gen.js');
-const DirectiveTestGen = require('./src/directive-test-gen.js');
-const InjectableTestGen = require('./src/injectable-test-gen.js');
-const PipeTestGen = require('./src/pipe-test-gen.js');
-const ClassTestGen = require('./src/class-test-gen.js');
+const ComponentTestGen = require('./src/component/component-test-gen.js');
+const DirectiveTestGen = require('./src/directive/directive-test-gen.js');
+const InjectableTestGen = require('./src/injectable/injectable-test-gen.js');
+const PipeTestGen = require('./src/pipe/pipe-test-gen.js');
+const ClassTestGen = require('./src/class/class-test-gen.js');
 
 const argv = yargs.usage('Usage: $0 <tsFile> [options]')
   .options({
@@ -72,15 +73,15 @@ function getFuncMockData (Klass, funcName, props) {
   return funcMockData;
 }
 
-function getTestGenerator (tsPath) {
+function getTestGenerator (tsPath, config) {
   const typescript = fs.readFileSync(path.resolve(tsPath), 'utf8');
   const angularType = Util.getAngularType(typescript).toLowerCase();
   const testGenerator = /* eslint-disable */
-    angularType === 'component' ? new ComponentTestGen(tsPath) :
-    angularType === 'directive' ? new DirectiveTestGen(tsPath) :
-    angularType === 'service' ? new InjectableTestGen(tsPath) :
-    angularType === 'pipe' ? new PipeTestGen(tsPath) :
-    new ClassTestGen(tsPath); /* eslint-enable */
+    angularType === 'component' ? new ComponentTestGen(tsPath, config) :
+    angularType === 'directive' ? new DirectiveTestGen(tsPath, config) :
+    angularType === 'service' ? new InjectableTestGen(tsPath, config) :
+    angularType === 'pipe' ? new PipeTestGen(tsPath, config) :
+    new ClassTestGen(tsPath, config); /* eslint-enable */
   return testGenerator;
 }
 
@@ -121,12 +122,15 @@ function getFuncTest(Klass, func, angularType) {
 
 async function run (tsFile) {
   try {
-    const testGenerator = getTestGenerator(tsFile);
+    const testGenerator = getTestGenerator(tsFile, config);
     const { klass, typescript, ejsData } = await testGenerator.getData();
     const angularType = Util.getAngularType(typescript).toLowerCase();
+    const tsParser = new TypescriptParser(typescript);
+
     ejsData.config = config;
     ejsData.ctorParamJs;
     ejsData.providerMocks;
+    ejsData.klassProviders = tsParser.getDecoratorProviders();
     ejsData.accessorTests = {};
     ejsData.functionTests = {};
 

@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { GetUsageDeatilsResponse } from 'src/app/wireless/models/get-usage-details';
 import { WirelessDashboardResponse } from 'src/app/wireless/models/wireless-dashboard';
 import { TranslateService } from '@ngx-translate/core';
+import { SuspendCtnService } from '../suspend-ctn.service';
 
 @Component({
   selector: 'app-total-data-details',
   templateUrl: './total-data-details.component.html',
   styleUrls: ['./total-data-details.component.scss']
+  providers: [SuspendCtnService]
 })
 export class TotalDataDetailsComponent implements OnInit {
 

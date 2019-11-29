@@ -1,13 +1,13 @@
 const path = require('path');
 const fs = require('fs');
 
-const Base = require('./common-test-functions.js');
+const Base = require('../common-test-functions.js');
 
 class InjectableTestGen {
-  constructor (tsPath) {
-    // this.template;
+  constructor (tsPath, config) {
     if (tsPath && fs.existsSync(tsPath)) {
       this.tsPath = tsPath;
+      this.config = config;
     } else {
       throw new Error(`Error. invalid typescript file. e.g., Usage $0 ${tsPath} [options]`);
     }

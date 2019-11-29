@@ -61,9 +61,10 @@ describe('InteractionsComponent', () => {
             data: observableOf({})
           }
         },
-        { provide: TranslateService, useClass: MockTranslateService }      ]
+        { provide: TranslateService, useClass: MockTranslateService }
+      ]
     }).overrideComponent(InteractionsComponent, {
-      // set: { providers: [{ provide: MyComponentService, useClass: MyComponentService }] }
+
     }).compileComponents();
     fixture = TestBed.createComponent(InteractionsComponent);
     component = fixture.debugElement.componentInstance;

@@ -1,34 +1,59 @@
 const path = require('path');
 const fs = require('fs');
 
-const Base = require('./common-test-functions.js');
+const Base = require('../common-test-functions.js');
 
-class ComponentTestGen {
-  constructor (tsPath) {
+class DirectiveTestGen {
+  constructor (tsPath, config) {
     if (tsPath && fs.existsSync(tsPath)) {
       this.tsPath = tsPath;
+      this.config = config;
     } else {
       throw new Error(`Error. invalid typescript file. e.g., Usage $0 ${tsPath} [options]`);
     }
 
-    // this.template;
     this.tsPath = tsPath;
     this.typescript = fs.readFileSync(path.resolve(tsPath), 'utf8');
 
-    // input code related (properties(for JS) / attributes(for HTML))
     this._getInputs = Base.getInputs.bind(this);
-    // output code related (properties(for JS) / attributes(for HTML))
     this._getOutputs = Base.getOutputs.bind(this);
-
-    // import statement related. keys are lib names, values are classses
+    // this._getItBlocks = Base.getItBlocks.bind(this);
     this._getImports = Base.getImports.bind(this);
-    // module provide statement related codes. keys are constructor variable names
     this._getProviders = Base.getProviders.bind(this);
     this.getProviderMocks = Base.getProviderMocks.bind(this);
     this.getGenerated = Base.getGenerated.bind(this);
     this.writeGenerated = Base.writeGenerated.bind(this);
     this.getKlass = Base.getKlass.bind(this);
     this.getKlassImports = Base.getKlassImports.bind(this);
+  }
+
+  getSelector (typescript) {
+    const re = /@Directive\s*\(\s*{[^}]+selector:\s*['"](.*)['"]/
+    const str = typescript.match(re)[1];
+    if (str.match(/^\[/)) {
+      return { type: 'attribute', name: str.match(/[^\[\]]+/)[0] };
+    } else if (str.match(/^\./)) {
+      return { type: 'class', name: str.match(/[^\.]+/)[0] };
+    } else if (str.match(/^[a-z]/i)) {
+      return { type: 'element', name: str.match(/[a-z-]+/)[0] };
+    }
+  }
+
+  getEjsData () {
+    const result = {};
+    this.template = fs.readFileSync(path.join(__dirname, 'directive.template.ts.ejs'), 'utf8');
+
+    result.className = this.klass.name;
+    result.inputs = this._getInputs(this.klass);
+    result.outputs = this._getOutputs(this.klass);
+    result.providers = this._getProviders(this.klass);
+    // result.windowMocks = this._getWindowMocks(this.klass);
+    // result.functionTests = this._getItBlocks(this.klass);
+    result.imports = this._getImports(this.klass);
+    // result.parsedImports = this.imports;
+    result.selector = this.getSelector(this.typescript);
+
+    return result;
   }
 
   async getData () {
@@ -42,21 +67,6 @@ class ComponentTestGen {
     };
   }
 
-  getEjsData () {
-    const result = {};
-    this.template = fs.readFileSync(path.join(__dirname, 'component.template.ts.ejs'), 'utf8');
-
-    result.className = this.klass.name;
-    result.inputs = this._getInputs(this.klass);
-    result.outputs = this._getOutputs(this.klass);
-    result.providers = this._getProviders(this.klass);
-    // result.windowMocks = this._getWindowMocks(this.klass);
-    result.imports = this._getImports(this.klass);
-    // result.parsedImports = this.imports;
-
-    return result;
-  }
-
 }
 
-module.exports = ComponentTestGen;
+module.exports = DirectiveTestGen;

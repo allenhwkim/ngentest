@@ -90,9 +90,10 @@ describe('DashboardComponent', () => {
         DialogService,
         { provide: NavigationService, useClass: MockNavigationService },
         { provide: ActionsService, useClass: MockActionsService },
-        { provide: DealerCodeService, useClass: MockDealerCodeService }      ]
+        { provide: DealerCodeService, useClass: MockDealerCodeService }
+      ]
     }).overrideComponent(DashboardComponent, {
-      // set: { providers: [{ provide: MyComponentService, useClass: MyComponentService }] }
+
     }).compileComponents();
     fixture = TestBed.createComponent(DashboardComponent);
     component = fixture.debugElement.componentInstance;

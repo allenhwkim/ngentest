@@ -49,9 +49,12 @@ describe('TotalDataDetailsComponent', () => {
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [
-        { provide: TranslateService, useClass: MockTranslateService }      ]
+        { provide: TranslateService, useClass: MockTranslateService }
+      ]
     }).overrideComponent(TotalDataDetailsComponent, {
-      // set: { providers: [{ provide: MyComponentService, useClass: MyComponentService }] }
+
+      set: { providers: [{ provide: SuspendCtnService, useClass: MockSuspendCtnService }] }
+
     }).compileComponents();
     fixture = TestBed.createComponent(TotalDataDetailsComponent);
     component = fixture.debugElement.componentInstance;

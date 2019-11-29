@@ -73,9 +73,10 @@ describe('CreditManagementComponent', () => {
         { provide: TranslateService, useClass: MockTranslateService },
         { provide: CreditManagementDataService, useClass: MockCreditManagementDataService },
         { provide: NavigationService, useClass: MockNavigationService },
-        { provide: Router, useClass: MockRouter }      ]
+        { provide: Router, useClass: MockRouter }
+      ]
     }).overrideComponent(CreditManagementComponent, {
-      // set: { providers: [{ provide: MyComponentService, useClass: MyComponentService }] }
+
     }).compileComponents();
     fixture = TestBed.createComponent(CreditManagementComponent);
     component = fixture.debugElement.componentInstance;

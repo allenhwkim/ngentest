@@ -174,14 +174,8 @@ function getProviderMocks (klass, ctorParams) {
   constructorParams.forEach(param => {
     const iimport = this.imports[param.type];
     const ctorVars = getCtorVarsJS(param.name);
-    const typeVars = /* eslint-disable */
-      param.type === 'ElementRef' ? ['nativeElement = {};'] :
-      param.type === 'Router' ? ['navigate = jest.fn();'] :
-      param.type === 'Document' ? ['querySelector = jest.fn();'] :
-      param.type === 'HttpClient' ? ['post = jest.fn();'] :
-      param.type === 'TranslateService' ? ['translate = jest.fn();'] :
-      iimport && iimport.mport.libraryName.match(/^(\.|src\/)/) ? []  : undefined;
-      /* eslint-enable */
+    const typeVars = 
+      iimport && iimport.mport.libraryName.match(/^(\.|src\/)/) ? [] : this.config.providerMocks[param.type];
 
     if (typeVars) {
       const mockVars = ctorVars.concat(typeVars).join('\n');

@@ -81,9 +81,10 @@ describe('BillingHeaderComponent', () => {
         { provide: BillingHeaderService, useClass: MockBillingHeaderService },
         { provide: PaymentService, useClass: MockPaymentService },
         { provide: BillingDataService, useClass: MockBillingDataService },
-        { provide: 'LOCALE_ID', useValue: 'en' }      ]
+        { provide: 'LOCALE_ID', useValue: 'en' }
+      ]
     }).overrideComponent(BillingHeaderComponent, {
-      // set: { providers: [{ provide: MyComponentService, useClass: MyComponentService }] }
+
     }).compileComponents();
     fixture = TestBed.createComponent(BillingHeaderComponent);
     component = fixture.debugElement.componentInstance;

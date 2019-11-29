@@ -103,9 +103,10 @@ describe('BillingPageComponent', () => {
         },
         { provide: NavigationService, useClass: MockNavigationService },
         { provide: TranslateService, useClass: MockTranslateService },
-        { provide: BillingDateHandlerService, useClass: MockBillingDateHandlerService }      ]
+        { provide: BillingDateHandlerService, useClass: MockBillingDateHandlerService }
+      ]
     }).overrideComponent(BillingPageComponent, {
-      // set: { providers: [{ provide: MyComponentService, useClass: MyComponentService }] }
+
     }).compileComponents();
     fixture = TestBed.createComponent(BillingPageComponent);
     component = fixture.debugElement.componentInstance;

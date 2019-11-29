@@ -54,9 +54,10 @@ describe('ChangePlanComponent', () => {
       providers: [
         DialogService,
         { provide: ChangePlanDataService, useClass: MockChangePlanDataService },
-        { provide: NavigationService, useClass: MockNavigationService }      ]
+        { provide: NavigationService, useClass: MockNavigationService }
+      ]
     }).overrideComponent(ChangePlanComponent, {
-      // set: { providers: [{ provide: MyComponentService, useClass: MyComponentService }] }
+
     }).compileComponents();
     fixture = TestBed.createComponent(ChangePlanComponent);
     component = fixture.debugElement.componentInstance;
