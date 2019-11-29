@@ -14,26 +14,19 @@ import { <%- imports[importLib].map(el => `${el}`).join(', ') -%> } from '<%- im
 <%- providerMocks[klassName] -%>
 <% } -%>
 
-
-@Directive({ selector: '[oneviewPermitted]' }) // TODO, template must be user-configurable
-class OneviewPermittedDirective {
-  @Input() oneviewPermitted;
+<% config.directives.forEach(directive => { %>
+@Directive({ selector: '[<%- directive -%>]' })
+class <%- directive.charAt(0).toUpperCase() + directive.slice(1) -%>Directive {
+  @Input() <%- directive -%>;
 }
+<% }) -%>
 
-@Pipe({name: 'translate'}) // TODO, template must be user-configurable
-class TranslatePipe implements PipeTransform {
+<% config.pipes.forEach(pipe => { %>
+@Pipe({name: '<%- pipe -%>'})
+class <%- pipe.charAt(0).toUpperCase() + pipe.slice(1) -%>Pipe implements PipeTransform {
   transform(value) { return value; }
 }
-
-@Pipe({name: 'phoneNumber'}) // TODO, template must be user-configurable
-class PhoneNumberPipe implements PipeTransform {
-  transform(value) { return value; }
-}
- 
-@Pipe({name: 'safeHtml'}) // TODO, template must be user-configurable
-class SafeHtmlPipe implements PipeTransform {
-  transform(value) { return value; }
-}
+<% }) -%>
 
 describe('<%- className %>', () => {
   let fixture;
@@ -43,8 +36,9 @@ describe('<%- className %>', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, ReactiveFormsModule ],
       declarations: [
-        <%- className %>, TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
-        OneviewPermittedDirective
+        <%- className %>,
+        <%- config.pipes.map(e => e.charAt(0).toUpperCase() + e.slice(1) + 'Pipe').join(', ') %>,
+        <%- config.directives.map(e => e.charAt(0).toUpperCase() + e.slice(1) + 'Directive').join(', ') %>
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [

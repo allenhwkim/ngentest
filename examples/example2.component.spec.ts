@@ -10,22 +10,22 @@ import { Component, LOCALE_ID } from '@angular/core';
 import { AdjustmentFormComponent } from './example2.component';
 import { FormBuilder } from '@angular/forms';
 
-@Directive({ selector: '[oneviewPermitted]' }) // TODO, template must be user-configurable
+@Directive({ selector: '[oneviewPermitted]' })
 class OneviewPermittedDirective {
   @Input() oneviewPermitted;
 }
 
-@Pipe({name: 'translate'}) // TODO, template must be user-configurable
+@Pipe({name: 'translate'})
 class TranslatePipe implements PipeTransform {
   transform(value) { return value; }
 }
 
-@Pipe({name: 'phoneNumber'}) // TODO, template must be user-configurable
+@Pipe({name: 'phoneNumber'})
 class PhoneNumberPipe implements PipeTransform {
   transform(value) { return value; }
 }
 
-@Pipe({name: 'safeHtml'}) // TODO, template must be user-configurable
+@Pipe({name: 'safeHtml'})
 class SafeHtmlPipe implements PipeTransform {
   transform(value) { return value; }
 }
@@ -38,7 +38,8 @@ describe('AdjustmentFormComponent', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, ReactiveFormsModule ],
       declarations: [
-        AdjustmentFormComponent, TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
+        AdjustmentFormComponent,
+        TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
         OneviewPermittedDirective
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],

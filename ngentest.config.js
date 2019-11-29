@@ -9,7 +9,7 @@ module.exports = {
   ],
   // when convert to JS, some codes need to be replaced to work 
   replacements: [
-    { from: 'require\\("html-custom-element"\\)', to: ''}, // some 3rd party require statements causes error, using import or windows directly
+    { from: 'require\\("html-custom-element"\\)', to: '{}'}, // some 3rd party require statements causes error, using import or windows directly
     { from: '^\\S+\\.define\\(.*\\);', to: ''} // some commands causes error
   ],
   // with multi file gen, include only these files

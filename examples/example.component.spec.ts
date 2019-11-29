@@ -65,22 +65,22 @@ class MockRouter {
 @Injectable()
 class MockCommonUtilsService {}
 
-@Directive({ selector: '[oneviewPermitted]' }) // TODO, template must be user-configurable
+@Directive({ selector: '[oneviewPermitted]' })
 class OneviewPermittedDirective {
   @Input() oneviewPermitted;
 }
 
-@Pipe({name: 'translate'}) // TODO, template must be user-configurable
+@Pipe({name: 'translate'})
 class TranslatePipe implements PipeTransform {
   transform(value) { return value; }
 }
 
-@Pipe({name: 'phoneNumber'}) // TODO, template must be user-configurable
+@Pipe({name: 'phoneNumber'})
 class PhoneNumberPipe implements PipeTransform {
   transform(value) { return value; }
 }
 
-@Pipe({name: 'safeHtml'}) // TODO, template must be user-configurable
+@Pipe({name: 'safeHtml'})
 class SafeHtmlPipe implements PipeTransform {
   transform(value) { return value; }
 }
@@ -93,7 +93,8 @@ describe('ExampleComponent', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, ReactiveFormsModule ],
       declarations: [
-        ExampleComponent, TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
+        ExampleComponent,
+        TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
         OneviewPermittedDirective
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],

@@ -124,6 +124,7 @@ async function run (tsFile) {
     const testGenerator = getTestGenerator(tsFile);
     const { klass, typescript, ejsData } = await testGenerator.getData();
     const angularType = Util.getAngularType(typescript).toLowerCase();
+    ejsData.config = config;
     ejsData.ctorParamJs;
     ejsData.providerMocks;
     ejsData.accessorTests = {};
@@ -139,13 +140,16 @@ async function run (tsFile) {
     });
 
     // replace invalid require statements
-    const replacedOutputText = result.outputText
-      .replace(/require\("html-custom-element"\)/gm, '{}')  //TODO configurable
-      .replace(/^\S+\.define\(.*\);/gm, '')  // TODO configurable
+    let replacedOutputText = result.outputText
       .replace(/require\("\.(.*)"\)/gm, '{}') // replace require statement to a variable, {}
       .replace(/super\(.*\);/gm, '') // remove inheritance code
       .replace(/super\./gm, 'this.') // change inheritance call to this call
       .replace(/\s+extends\s\S+ {/gm, ' extends Object {') // rchange inheritance to an Object
+
+    config.replacements.forEach( ({from,to}) => {
+      replacedOutputText = replacedOutputText.replace(new RegExp(from, 'gm'), to);
+    })
+
     const modjule = requireFromString(replacedOutputText);
     const Klass = modjule[ejsData.className];
     Util.DEBUG &&
@@ -196,16 +200,15 @@ const isDir = fs.lstatSync(tsFile).isDirectory();
 if (isDir) {
   const files = glob.sync('**/!(*.spec).ts', {cwd: tsFile})
   files.forEach(file => {
-    // TODO configurable custom pattern
     const includeMatch = config.includeMatch.map(re => file.match(re)).some(e => !!e);
     const excludeMatch = config.excludeMatch.map(re => file.match(re)).some(e => !!e);
     if (excludeMatch) {
-      console.log(' -------------- NOT processing (in excludeMatch)', path.join(tsFile, file));
+      console.log(' *** NOT processing (in excludeMatch)', path.join(tsFile, file));
     } else if (includeMatch) {
-      console.log(' -------------- processing', path.join(tsFile, file));
+      console.log(' *** processing', path.join(tsFile, file));
       run(path.join(tsFile, file));
     } else {
-      console.log(' -------------- NOT processing (not in includeMatch)', path.join(tsFile, file));
+      console.log(' *** NOT processing (not in includeMatch)', path.join(tsFile, file));
     }
   });
 } else {
