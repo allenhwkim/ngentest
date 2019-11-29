@@ -9,7 +9,6 @@ describe('DynamicComponentService', () => {
   let service;
 
   beforeEach(() => {
-    // TODO: Think about is there anything can do with constructor mocks(?), things done within constructor
     service = new DynamicComponentService({});
   });
 

@@ -80,6 +80,7 @@ class FuncTestGen {
       nodeIn.type === 'ThrowStatement' ? nodeIn :
       nodeIn.type === 'ThisExpression' ? nodeIn :
       nodeIn.type === 'TryStatement' ? nodeIn :
+      nodeIn.type === 'UpdateExpression' ? nodeIn :
       nodeIn.type === 'UnaryExpression' ? nodeIn.argument :
       nodeIn.type === 'VariableDeclaration' ? nodeIn :
       nodeIn.type === 'WhileStatement' ? nodeIn :
@@ -155,6 +156,8 @@ class FuncTestGen {
       });
     } else if (node.type === 'TryStatement') {
       this.setMockData(node.block, mockData);
+    } else if (node.type === 'UpdateExpression') {
+      this.setMockData(node.argument, mockData);
     } else if (node.type === 'CatchClause') {
       this.setMockData(node.block, mockData);
       this.setMockData(node.handler, mockData);

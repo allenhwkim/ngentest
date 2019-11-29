@@ -39,7 +39,6 @@ export class InteractionsComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // TODO: refactor this to a directive or component'
     if (window.innerWidth < 600 || window.innerWidth > 900) {
       return false;
     }

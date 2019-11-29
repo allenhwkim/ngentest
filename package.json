@@ -33,6 +33,7 @@
   "homepage": "https://github.com/allenhwkim/ng-gen-test#readme",
   "dependencies": {
     "acorn": "^7.1.0",
+    "app-root-path": "^3.0.0",
     "check-engines": "^1.5.0",
     "ejs": "^2.6.1",
     "indent.js": "^0.3.4",

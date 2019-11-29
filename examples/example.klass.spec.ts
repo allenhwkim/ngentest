@@ -8,7 +8,6 @@ describe('AgentInfo', () => {
   let obj;
 
   beforeEach(() => {
-    // TODO: Think about is there anything can do with constructor mocks(?), things done within constructor
     obj = new AgentInfo();
   });
 

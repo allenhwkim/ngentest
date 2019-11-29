@@ -5,7 +5,9 @@ const yargs = require('yargs');
 const ts = require('typescript');
 const requireFromString = require('require-from-string');
 const glob = require('glob');
+const appRoot = require('app-root-path');
 
+const config = require('./ngentest.config');
 const Util = require('./src/util.js');
 const FuncTestGen = require('./src/func-test-gen.js');
 
@@ -42,6 +44,14 @@ if (!(tsFile && fs.existsSync(tsFile))) {
   console.error('Error. invalid typescript file. e.g., Usage $0 <tsFile> [options]');
   process.exit(1);
 }
+
+if (fs.existsSync(path.join(appRoot.path, 'ngentest.config.js'))) {
+  const userConfig = require(path.join(appRoot.path, 'ngentest.config.js'));
+  for (var key in userConfig) {
+    config[key] = userConfig[key];
+  }
+}
+Util.DEBUG && console.log('  *** config ***', config);
 
 // TODO: getter/setter differntiate the same name function getter/setter
 function getFuncMockData (Klass, funcName, props) {
@@ -186,9 +196,16 @@ const isDir = fs.lstatSync(tsFile).isDirectory();
 if (isDir) {
   const files = glob.sync('**/!(*.spec).ts', {cwd: tsFile})
   files.forEach(file => {
-    if (file.match(/(component|directive|pipe|service).ts/)) { // TODO custom pattern
-      console.log(' -------------- processing', tsFile, file);
+    // TODO configurable custom pattern
+    const includeMatch = config.includeMatch.map(re => file.match(re)).some(e => !!e);
+    const excludeMatch = config.excludeMatch.map(re => file.match(re)).some(e => !!e);
+    if (excludeMatch) {
+      console.log(' -------------- NOT processing (in excludeMatch)', path.join(tsFile, file));
+    } else if (includeMatch) {
+      console.log(' -------------- processing', path.join(tsFile, file));
       run(path.join(tsFile, file));
+    } else {
+      console.log(' -------------- NOT processing (not in includeMatch)', path.join(tsFile, file));
     }
   });
 } else {

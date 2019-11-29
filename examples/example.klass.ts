@@ -163,7 +163,7 @@ export class AgentInfo extends HTMLCustomElement {
   validateDealerCode(data) {
     return post.bind(this)(validateUrl, data)
       .then(resp => {
-        if (!resp || !resp.success) { throw new Error('Invalid dealer code'); } // TODO update message and translate
+        if (!resp || !resp.success) { throw new Error('Invalid dealer code'); } 
         return resp.success;
       });
   }
@@ -175,7 +175,7 @@ export class AgentInfo extends HTMLCustomElement {
         if (resp === '"success"' || resp === 'success') {
           return true;
         } else {
-          throw new Error('Update failed'); // TODO update message and translate
+          throw new Error('Update failed');
         }
       });
   }
@@ -187,7 +187,7 @@ export class AgentInfo extends HTMLCustomElement {
         if (resp === '"Succeeded"' || resp === 'Succeeded') {
           return true;
         } else {
-          throw new Error('Save failed'); // TODO update message and translate
+          throw new Error('Save failed');
         }
       });
   }
@@ -217,7 +217,7 @@ export class AgentInfo extends HTMLCustomElement {
           (<HTMLInputElement> this.querySelector('.current-dealer-txt input')).value = '';
           this.toggleChangeDealer(event);
       }).catch(error => {
-        console.log(error); // TODO update UI, awaiting mock.
+        console.log(error);
       });
   }
 
