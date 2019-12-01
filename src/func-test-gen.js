@@ -52,7 +52,7 @@ class FuncTestGen {
     const node = /* eslint-disable */
       nodeIn.type === 'ArrayExpression' ? nodeIn :
       nodeIn.type === 'ArrayPattern' ? nodeIn :
-      nodeIn.type === 'ArrowFunctionExpression' ? nodeIn.body :
+      nodeIn.type === 'ArrowFunctionExpression' ? nodeIn:
       nodeIn.type === 'AssignmentExpression' ? nodeIn :
       nodeIn.type === 'BinaryExpression' ? nodeIn :
       nodeIn.type === 'BlockStatement' ? nodeIn :
@@ -65,7 +65,7 @@ class FuncTestGen {
       nodeIn.type === 'ForStatement' ? nodeIn.body : // NOTE: init/test/update/body
       nodeIn.type === 'ForInStatement' ? nodeIn :
       nodeIn.type === 'ForOfStatement' ? nodeIn :
-      nodeIn.type === 'FunctionExpression' ? nodeIn.body :
+      nodeIn.type === 'FunctionExpression' ? nodeIn :
       nodeIn.type === 'Identifier' ? nodeIn :
       nodeIn.type === 'IfStatement' ? nodeIn : // node.test, consequent, alternate
       nodeIn.type === 'Literal' ? nodeIn :
@@ -102,6 +102,10 @@ class FuncTestGen {
       'ThrowStatement'
     ].includes(node.type)) {
       // ignore these expressions/statements
+    } else if (node.type === 'ArrowFunctionExpression') { // params, body
+      this.setMockData(node.body, mockData);
+    } else if (node.type === 'FunctionExpression') { // params, body
+      this.setMockData(node.body, mockData);
     } else if (node.type === 'NewExpression') {
       node.arguments.forEach(argument => this.setMockData(argument, mockData));
     } else if (node.type === 'ArrayExpression') {
@@ -171,21 +175,18 @@ class FuncTestGen {
     } else if (node.type === 'MemberExpression') { // this.xxxx, foo.xxxx
       this.setPropsOrParams(node, mockData);
     } else if (node.type === 'CallExpression') {
-      // process call expression
-      // if this call expression is a typical pattern,
-      // e.g. xxx.forEach() for string, xxx.replace() for string
-      // then, change the expression, then process it. 
-      // For example, from this.x.substr() to thix.x as string
       const funcReturn = Util.getExprReturn(node, this.classCode) || {};
       this.setPropsOrParams(funcReturn.code, mockData, funcReturn.value);
       
       // procesa call arguments
-      node.arguments.forEach(argument => this.setMockData(argument, mockData));
+      node.arguments.forEach(argument => {
+        this.setMockData(argument, mockData);
+      });
 
       // What if call argument is a function?
       const funcExpArg = Util.getFuncExprArg(node);
       Util.DEBUG && console.log('      *** CallExpression ***', {funcExpArg});
-      if (funcExpArg) { // process function expression
+      if (funcExpArg) { // process ArrowFunctionExpression or FunctionExpression
         this.setMockData(funcExpArg, mockData);
       }
     } else if (node.type === 'AssignmentExpression') {

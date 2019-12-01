@@ -109,7 +109,13 @@ class Util {
   }
 
   static getNode (code) {
-    const parsed = jsParser.parse(code);
+    let parsed;
+    try {
+      parsed = jsParser.parse(code);
+    } catch (e) {
+      throw new Error(`ERROR Util.getNoce JS code is invalid, "${code}"`);
+    }
+    // const parsed = jsParser.parse(code);
     const firstNode = parsed.body[0];
     const node = firstNode.type === 'BlockStatement' ? firstNode.body[0] :
       firstNode.type === 'ExpressionStatement' ? firstNode.expression : null;
@@ -268,8 +274,10 @@ class Util {
     let ret;
     const funcExprArg = Util.getFuncExprArg(node); // if the first argument is a function
     if (funcExprArg) {
-      const funcCode = classCode.substring(funcExprArg.body.start, funcExprArg.body.end);
-      const value = Util.getFuncParamObj(funcExprArg, funcCode);
+      const funcCode = classCode.substring(funcExprArg.start, funcExprArg.end);
+      const paramObj = Util.getFuncParamObj(funcExprArg, funcCode); // {paranName: value, paranName, value}
+      const values = Object.values(paramObj);
+      const value = values.length > 1 ? values : values[0]; // TODO, need to handle multiple function params?
       ret = { code: baseCode, value };
     } else {
       ret = { code: code, value: {} };
@@ -287,15 +295,21 @@ class Util {
     if (!node.params.length)
       return false;
 
-    const funcRetName = node.params[0].name;
-    const codeReplaced = code.replace(/\n+/g, '').replace(/\s+/g, ' ');
-    const paramNameMatchRE = new RegExp(`${funcRetName}(\\.[^\\s\\;\\)\\]},]+)+`, 'ig')
-    const funcRetExprs = codeReplaced.match(paramNameMatchRE );
+    // const funcRetName = node.params[0].name;
+    // const codeReplaced = code.replace(/\n+/g, '').replace(/\s+/g, ' ');
+    // const paramNameMatchRE = new RegExp(`${funcRetName}(\\.[^\\s\\;\\)\\\+\-]},]+)+`, 'ig')
+    // const funcRetExprs = codeReplaced.match(paramNameMatchRE );
+
+    const funcRetExprsRaw = Util.getParamExprs(node, code);
+    const funcRetExprsFlat = funcRetExprsRaw.reduce((acc, val) => acc.concat(val), []);
+    const funcRetExprs = Array.from(new Set(funcRetExprsFlat));
 
     const funcParam = {};
     (funcRetExprs || []).forEach(funcExpr => { // e.g., ['event.urlAfterRedirects.substr(1)', ..]
-      if (funcExpr.match(/\([^)]*$/) && !funcExpr.match(/\)$/)) { // if parenthesis not closed
-        funcExpr = `${funcExpr})`.replace(/\)\)$/, ')');
+      if (funcExpr.match(/\((['"]*)[^)]*$/) && !funcExpr.match(/\)$/)) { // if parenthesis not closed
+        const matches = funcExpr.match(/\((['"]*)[^)]*$/);
+        const replStr = matches[1]  && !funcExpr.endsWith(matches[1]) ? matches[1] + ')' : ')';
+        funcExpr = `${funcExpr})`.replace(/\)$/, replStr); // close parenthesis
       }
       const exprNode = Util.getNode(funcExpr);
       const newReturn = Util.getExprReturn(exprNode, funcExpr);
@@ -303,37 +317,56 @@ class Util {
       const newValue = newReturn.value;
       const newNode = Util.getNode(newCode);
       const newObj = Util.getObjectFromExpression(newNode, newValue);
-      const source = newObj[Object.keys(newObj)[0]];
-      Util.assign(source, funcParam);
+      // const source = newObj[Object.keys(newObj)[0]];
+      Util.assign(newObj, funcParam);
     });
 
     return funcParam;
   }
 
   /**
-   * returns array of `this......` related codes from the node
-   */
-  static getThisExprs (node, allCode) {
-    const code = allCode.substring(node.start, node.end);
-    const code2 = code.replace(/\n+/g, '').replace(/\s+/g, ' ');
-    const thisExprs = code2.match(new RegExp(`this(\\.[^\\s\\;]+)+`, 'ig'));
-    return thisExprs;
-  }
-
-  /**
    * returns function parameter related codes from the node
    */
-  static getParamExprs (node, paramNames, allCode) {
-    const code = allCode.substring(node.start, node.end);
-    const code2 = code.replace(/\n+/g, '').replace(/\s+/g, ' ');
+  static getParamExprs (node, code) {
     const paramExprs = [];
+
+    const paramNames1 = node.params.map(param => {
+        if (param.type === 'Identifier') { // (foo, bar) => {... }
+          return param.name; 
+        } else if (param.type === 'ObjectPattern') { // ({foo, bar}) => {... }
+          return param.properties.map(prop => prop.key.name);
+        } else if (param.type === 'ArrayPattern') { // ([foo, bar]) => {... }
+          return param.elements.map(prop => prop.name);
+        } else {
+          throw new Error(`Unexpected param type, ${param.type}, for code: ${code}`)
+        }
+      })
+
+    const paramNames = paramNames1.reduce((acc, val) => acc.concat(val), []);
+    // const codeShortened = code.replace(/\n+/g, '').replace(/\s+/g, ' ');
+
     paramNames.forEach(paramName => {
-      const matches = code2.match(new RegExp(`${paramName}(\\.[^\\s\\;]+)+`, 'ig'));
-      paramExprs.push(matches);
+      const paramNameMatchRE = new RegExp(`[^a-z]${paramName}(\\.[^\\s\\;\\)\\\+\\-\\]\\}\\,]+)+`, 'img')
+      const matches = code.match(paramNameMatchRE);
+      if (matches) {
+        // remove the invalid first character. e.g. '\nmyParam.foo.bar'
+        paramExprs.push(matches.map(el => el.slice(1))); 
+      }
     });
 
-    return paramExprs.flat();
+    return paramExprs;
   }
+
+
+  /**
+   * returns array of `this......` related codes from the node
+   */
+  // static getThisExprs (node, allCode) {
+  //   const code = allCode.substring(node.start, node.end);
+  //   const code2 = code.replace(/\n+/g, '').replace(/\s+/g, ' ');
+  //   const thisExprs = code2.match(new RegExp(`this(\\.[^\\s\\;]+)+`, 'ig'));
+  //   return thisExprs;
+  // }
 
   static getFuncMockJS (mockData, thisName = 'component') {
     const js = [];

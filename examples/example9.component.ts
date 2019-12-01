@@ -25,7 +25,9 @@ export class TotalDataDetailsComponent implements OnInit {
 
   getBonusDataListForSharing(usageDetails) {
     const bonusDataList = {};
-    usageDetails.body.dataPurchaseList.filter(item => item.cost === 0).forEach(dataItem => {
+    usageDetails.body.dataPurchaseList.filter(item => item.cost === 0).forEach( ([foo, dataItem]) => {
+      dataItem.size++;
+      dataItem.size--;
       bonusDataList[dataItem.size / 1024] = bonusDataList[dataItem.size] || [];
       bonusDataList[dataItem.size / 1024].push({ ...dataItem, size: dataItem.size / 1024 });
     });
