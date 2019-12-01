@@ -75,7 +75,7 @@ describe('MyDirective', () => {
     directive.nguiInview.emit = jest.fn();
     directive.nguiOutview = directive.nguiOutview || {};
     directive.nguiOutview.emit = jest.fn();
-    directive.handleIntersect(['entries'], {});
+    directive.handleIntersect([{}], {});
     expect(directive.nguiInview.emit).toHaveBeenCalled();
     expect(directive.nguiOutview.emit).toHaveBeenCalled();
   });

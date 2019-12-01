@@ -52,7 +52,9 @@ describe('AgentInfo', () => {
         accountNumber: '[object Object]'
       }
     }, {
-      userPreference: ['ngentest']
+      userPreference: [{
+        name: '[object Object]'
+      }]
     });
     expect(obj.setDealerCode).toHaveBeenCalled();
     expect(obj.querySelector).toHaveBeenCalled();

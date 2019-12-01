@@ -34,6 +34,17 @@ class Util {
     return str;
   }
 
+  static getCallExhaustedReturn(obj) {
+    const firstKey = typeof obj === 'object' && Object.keys(obj).filter(k => k !== 'undefined')[0];
+    if (typeof obj === 'function') {
+      return Util.getCallExhaustedReturn(obj);
+    } else if (typeof obj[firstKey] === 'function') {
+      return Util.getCallExhaustedReturn(obj[firstKey]());
+    } else {
+      return obj;
+    }
+  }
+
   static objToJS (obj, level = 1) {
     const exprs = [];
     const indent = ' '.repeat(level * 2);
@@ -51,7 +62,8 @@ class Util {
     } else if (firstKey && firstKey.match(strFuncRE)) { // sring function
       return `'ngentest'`;
     } else if (firstKey && firstKey.match(arrFuncRE)) { // array function
-      return `['ngentest']`;
+      const retValue = Util.objToJS(Util.getCallExhaustedReturn(obj));
+      return `[${retValue}]`;
     } else if (firstKey && firstKey.match(obsFuncRE)) { // observable function
       const val = typeof obj[firstKey] === 'function' ? obj[firstKey]() : obj[firstKey];
       return `observableOf(${Util.objToJS(val)})`;

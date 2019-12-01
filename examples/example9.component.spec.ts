@@ -68,7 +68,9 @@ describe('TotalDataDetailsComponent', () => {
 
     component.getBonusDataListForSharing({
       body: {
-        dataPurchaseList: ['ngentest']
+        dataPurchaseList: [{
+          size: '[object Object]'
+        }]
       }
     });
 
