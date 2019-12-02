@@ -94,16 +94,19 @@ describe('TotalDataDetailsComponent', () => {
   });
 
   it('should run #ngOnInit()', async () => {
-    component.accountSummary = component.accountSummary || {};
-    component.accountSummary.subList = ['[
-      {
-        "shareEverything": {
-          "isSharingData": {}
-        }
-      }
-    ]'];
+    component.getPastUsage1 = jest.fn().mockReturnValue({
+      ctnDataUsed: {},
+      dates: {}
+    });
+    component.getPastUsage2 = jest.fn().mockReturnValue([
+      "ctnDataUsed2",
+      "dates2"
+    ]);
+    component.getPastUsage3 = jest.fn();
     component.ngOnInit();
-
+    expect(component.getPastUsage1).toHaveBeenCalled();
+    expect(component.getPastUsage2).toHaveBeenCalled();
+    expect(component.getPastUsage3).toHaveBeenCalled();
   });
 
 });

@@ -106,8 +106,8 @@ describe('DashboardComponent', () => {
   it('should run GetterDeclaration #isAccountHolder', async () => {
     component.commonData = component.commonData || {};
     component.commonData.agentInfo = {
-      'consumer': '[object Object]',
-      authorizationLevel: '[object Object]',
+      'consumer': {},
+      authorizationLevel: {},
       authorozationLevel: 'authorozationLevel'
     };
     const isAccountHolder = component.isAccountHolder;
@@ -132,7 +132,7 @@ describe('DashboardComponent', () => {
     component.shareEverythingData.planName = 'planName';
     component.actionService = component.actionService || {};
     component.actionService.getActiveTreatments = jest.fn().mockReturnValue(observableOf({
-      ecid: '[object Object]'
+      ecid: {}
     }));
     component.actionService.getDispositionStatus = jest.fn().mockReturnValue(observableOf({}));
     component.ngOnInit();
@@ -150,18 +150,18 @@ describe('DashboardComponent', () => {
   it('should run #updateHeight()', async () => {
     component.dashboardFirstColumn = component.dashboardFirstColumn || {};
     component.dashboardFirstColumn.nativeElement = {
-      offsetHeight: '[object Object]'
+      offsetHeight: {}
     };
     component.interactionList = component.interactionList || {};
     component.interactionList.nativeElement = {
       style: {
-        height: '[object Object]'
+        height: {}
       }
     };
     component.actionOffers = component.actionOffers || {};
     component.actionOffers.nativeElement = {
       style: {
-        height: '[object Object]'
+        height: {}
       }
     };
     component.updateHeight({});
@@ -178,7 +178,7 @@ describe('DashboardComponent', () => {
   it('should run #startPPCFlow()', async () => {
     component.commonData = component.commonData || {};
     component.commonData.agentInfo = {
-      dealerCode: '[object Object]'
+      dealerCode: {}
     };
     component.ramPermissionService = component.ramPermissionService || {};
     component.ramPermissionService.isPermitted = jest.fn();
@@ -198,10 +198,10 @@ describe('DashboardComponent', () => {
   it('should run #handleBuyflow()', async () => {
     component.commonData = component.commonData || {};
     component.commonData.agentInfo = {
-      dealerCode: '[object Object]'
+      dealerCode: {}
     };
     component.commonData.accountSummary = {
-      accountNumber: '[object Object]'
+      accountNumber: {}
     };
     component.ramPermissionService = component.ramPermissionService || {};
     component.ramPermissionService.isPermitted = jest.fn();
@@ -213,7 +213,7 @@ describe('DashboardComponent', () => {
     component.processHup.upgradeHardware = jest.fn();
     await component.handleBuyflow({
       detail: {
-        ctn: '[object Object]'
+        ctn: {}
       }
     });
     expect(component.ramPermissionService.isPermitted).toHaveBeenCalled();

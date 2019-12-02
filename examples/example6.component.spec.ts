@@ -132,7 +132,7 @@ describe('BillingPageComponent', () => {
     component.route = component.route || {};
     component.route.snapshot = {
       queryParams: {
-        'defaultTab': '[object Object]'
+        'defaultTab': {}
       }
     };
     component.navigationService = component.navigationService || {};
@@ -142,7 +142,7 @@ describe('BillingPageComponent', () => {
     component.ptpService = component.ptpService || {};
     component.ptpService.getAllPtpInfo = jest.fn().mockReturnValue(observableOf({
       ptpDetails: {
-        length: '[object Object]'
+        length: {}
       }
     }));
     component.setBillingHeaderPTPMessage = jest.fn();
@@ -161,12 +161,12 @@ describe('BillingPageComponent', () => {
     component.ptpService = component.ptpService || {};
     component.ptpService.getPTPInstallments = jest.fn().mockReturnValue(observableOf({
       installments: {
-        length: '[object Object]'
+        length: {}
       }
     }));
     component.getPTPInstallments({
       detail: {
-        ptpId: '[object Object]'
+        ptpId: {}
       }
     });
     expect(component.ptpService.getPTPInstallments).toHaveBeenCalled();
@@ -178,7 +178,7 @@ describe('BillingPageComponent', () => {
     component.ptpService = component.ptpService || {};
     component.ptpService.getPTPInstallments = jest.fn().mockReturnValue(observableOf({
       installments: {
-        length: '[object Object]'
+        length: {}
       }
     }));
     component.setBillingHeaderPTPMessage();
@@ -204,7 +204,7 @@ describe('BillingPageComponent', () => {
   it('should run #downloadBillAs()', async () => {
     component.dialog = component.dialog || {};
     component.dialog.open = jest.fn();
-    component.fetchResource = jest.fn();
+    component.fetchResource = jest.fn().mockReturnValue(observableOf({}));
     component.downloadBillAs({});
     expect(component.dialog.open).toHaveBeenCalled();
     expect(component.fetchResource).toHaveBeenCalled();
@@ -269,7 +269,7 @@ describe('BillingPageComponent', () => {
   it('should run #setIframeHeight()', async () => {
     component.iFrameBill = component.iFrameBill || {};
     component.iFrameBill.first = {
-      nativeElement: '[object Object]'
+      nativeElement: {}
     };
     component.setIframeHeight({});
 
@@ -284,8 +284,8 @@ describe('BillingPageComponent', () => {
   it('should run #ptpLinkSelected()', async () => {
     component.ptpService = component.ptpService || {};
     component.ptpService.checkPendingPTP = jest.fn().mockReturnValue(observableOf({
-      ptpPaymentInfo: '[object Object]',
-      ptpPendingIndicator: '[object Object]'
+      ptpPaymentInfo: {},
+      ptpPendingIndicator: {}
     }));
     component.billingDetails = component.billingDetails || {};
     component.billingDetails.balanceAmount = 'balanceAmount';
@@ -303,8 +303,8 @@ describe('BillingPageComponent', () => {
   it('should run #checkEligibility()', async () => {
     component.ptpService = component.ptpService || {};
     component.ptpService.checkPTPElgibility = jest.fn().mockReturnValue(observableOf({
-      inEligibleReasonCodes: '[object Object]',
-      isPTPEligible: '[object Object]'
+      inEligibleReasonCodes: {},
+      isPTPEligible: {}
     }));
     component.billingDetails = component.billingDetails || {};
     component.billingDetails.balanceAmount = 'balanceAmount';
@@ -323,8 +323,8 @@ describe('BillingPageComponent', () => {
     component.ptpService = component.ptpService || {};
     component.ptpService.getNovaLinks = jest.fn().mockReturnValue(observableOf({
       ptp: {
-        fr: '[object Object]',
-        en: '[object Object]'
+        fr: {},
+        en: {}
       }
     }));
     component.commonData = component.commonData || {};
@@ -347,7 +347,7 @@ describe('BillingPageComponent', () => {
     component.translate.instant = jest.fn();
     component.ptpService = component.ptpService || {};
     component.ptpService.schedulePTP = jest.fn().mockReturnValue(observableOf({
-      status: '[object Object]'
+      status: {}
     }));
     component.dialog = component.dialog || {};
     component.dialog.open = jest.fn();
@@ -372,7 +372,7 @@ describe('BillingPageComponent', () => {
   it('should run #handleError()', async () => {
 
     component.handleError({
-      error: '[object Object]'
+      error: {}
     });
 
   });

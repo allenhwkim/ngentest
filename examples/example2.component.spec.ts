@@ -67,12 +67,12 @@ describe('AdjustmentFormComponent', () => {
   it('should run GetterDeclaration #toolTipDescAndSites', async () => {
     component.adjustmentsDetailsCms = component.adjustmentsDetailsCms || {};
     component.adjustmentsDetailsCms.tooltip = {
-      amount: '[object Object]',
-      site: '[object Object]'
+      amount: {},
+      site: {}
     };
     component.adjustmentsDetailsCms.location = {
-      threshold: '[object Object]',
-      sites: '[object Object]'
+      threshold: {},
+      sites: {}
     };
     const toolTipDescAndSites = component.toolTipDescAndSites;
 
@@ -129,7 +129,7 @@ describe('AdjustmentFormComponent', () => {
   it('should run #handleAdjustmentValueChange()', async () => {
     component.adjustmentsDetailsCms = component.adjustmentsDetailsCms || {};
     component.adjustmentsDetailsCms.location = {
-      threshold: '[object Object]'
+      threshold: {}
     };
     component.adjustmentForm = component.adjustmentForm || {};
     component.adjustmentForm.get = jest.fn().mockReturnValue({
@@ -152,7 +152,7 @@ describe('AdjustmentFormComponent', () => {
     component.wirelessPostpaidDetails = component.wirelessPostpaidDetails || {};
     component.wirelessPostpaidDetails.content = {
       postPaidPhoneDetails: {
-        planMSF: '[object Object]'
+        planMSF: {}
       }
     };
     component.handleDaysAffected();
@@ -169,7 +169,7 @@ describe('AdjustmentFormComponent', () => {
     component.selectedCharge.adjustableAmount = 'adjustableAmount';
     component.adjustmentForm = component.adjustmentForm || {};
     component.adjustmentForm.get = jest.fn().mockReturnValue({
-      valid: '[object Object]'
+      valid: {}
     });
     component.getValidationAndSetSpecificErrorsForAmount();
     expect(component.adjustmentForm.get).toHaveBeenCalled();
@@ -188,8 +188,8 @@ describe('AdjustmentFormComponent', () => {
   it('should run #isFieldValid()', async () => {
 
     component.isFieldValid({
-      touched: '[object Object]',
-      valid: '[object Object]'
+      touched: {},
+      valid: {}
     });
 
   });

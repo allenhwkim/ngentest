@@ -21,7 +21,7 @@ class MockAuthGuardService {
       bar: {
         baz: function() {
           return {
-            isLoggedIn: '[object Object]'
+            isLoggedIn: {}
           };
         }
       }
@@ -44,7 +44,7 @@ class MockCookieService {
 @Injectable()
 class MockAppLoadService {
   i18n = {
-    customElement: '[object Object]'
+    customElement: {}
   };
 }
 
@@ -54,7 +54,7 @@ class MockRouter {
     return {
       foo: function() {
         return {
-          bar: '[object Object]'
+          bar: {}
         };
       }
     };
@@ -120,7 +120,7 @@ describe('ExampleComponent', () => {
   it('should run #ngOnInit()', async () => {
     component.adjustmentsDetailsCms = component.adjustmentsDetailsCms || {};
     component.adjustmentsDetailsCms.location = {
-      threshold: '[object Object]'
+      threshold: {}
     };
     component.router = component.router || {};
     component.router.events = observableOf({

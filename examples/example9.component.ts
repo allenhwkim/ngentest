@@ -38,12 +38,13 @@ export class TotalDataDetailsComponent implements OnInit {
 
   ngOnInit() {
     // TODO !!!!! subList returns item.shareEverything?
-    this.individualCtnList = this.accountSummary.subList.filter(item => !item.shareEverything.isSharingData);
+    // this.individualCtnList = this.accountSummary.subList.filter(item => !item.shareEverything.isSharingData);
     // this.commonData.accountSummary.subList.filter(contact => contact.shareEverything.isPrimaryCtn)[0].subNumber;
-    // // TODO this.getPastUsage must return {ctnDataUsed, dates}
-    // const { ctnDataUsed, dates } = this.getPastUsage1(this.pastUsageBills, this.pricePlansList);
+    // TODO this.getPastUsage must return {ctnDataUsed, dates}
+    const { ctnDataUsed, dates } = this.getPastUsage1(this.pastUsageBills, this.pricePlansList);
     // // TODO this.getPastUsage must return [ctnDataUsed, dates]
-    // const [ ctnDataUsed2, dates2 ] = this.getPastUsage2(this.pastUsageBills, this.pricePlansList);
+    const [ ctnDataUsed2, dates2 ] = this.getPastUsage2(this.pastUsageBills, this.pricePlansList);
+    const myVar = this.getPastUsage3(this.pastUsageBills, this.pricePlansList);
     // // TODO, this.dataService needs to be mocked FROM this.dataService
     // this.dataDetails = this.dataService.getDataDetailsForSharing(this.usageDetails);
     // this.usageSubscriptionBars = this.getUsageSubscriptionBars(this.usageDetails, this.dataDetails);

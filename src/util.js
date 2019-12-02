@@ -87,7 +87,7 @@ class Util {
         const obj1stKey = (typeof obj[key] === 'object') &&
           Object.keys(obj[key]).filter(k => k !== 'undefined')[0];
         if (typeof obj[key] === 'object' && !obj1stKey) { // is empty obj, e.g. {}
-          exprs.push(`${key}: '${obj[key]}'`);
+          exprs.push(`${key}: ${Util.objToJS(obj[key])}`);
         } else if (obj1stKey && obj1stKey.match(strFuncRE)) { // string in form of an object
           exprs.push(`${key}: '${key}'`);
         } else if (typeof obj[key] === 'object') {
@@ -122,10 +122,19 @@ class Util {
     }
     if (typeof source[firstKey] === 'function') {
       const sourceFuncRet = source[firstKey]();
-      const targetFuncRet = typeof source[firstKey] === 'function' ? target[firstKey]() : {};
-      const mergedFuncRet = Object.assign({}, sourceFuncRet, targetFuncRet);
-
-      target[firstKey] = function() { return mergedFuncRet; }
+      if (typeof sourceFuncRet === 'object') {
+        const targetFuncRet = typeof source[firstKey] === 'function' ? target[firstKey]() : {};
+        if (typeof targetFuncRet === 'string') { // ignore string values bcoz it's from var xxx = foo.bar()
+          const mergedFuncRet = Object.assign({}, sourceFuncRet, {});
+          target[firstKey] = function() { return mergedFuncRet; }
+        } else {
+          const mergedFuncRet = Object.assign({}, sourceFuncRet, targetFuncRet);
+          target[firstKey] = function() { return mergedFuncRet; }
+        }
+        
+      } else if (typeof sourceFuncRet === 'string') {
+        target[firstKey] = function() { return sourceFuncRet; }
+      }
     } else {
       Util.assign(source[firstKey], target[firstKey]);
       return;
@@ -383,6 +392,20 @@ class Util {
     return funcParam;
   }
 
+  static getObjFromVarPattern(node) { // node.type Identifier, ObjectPattern, ArrayPattern
+    if (node.type === 'Identifier') {
+      return node.name;
+    } else if (node.type === 'ObjectPattern') {
+      const obj = {};
+      node.properties.forEach( prop => obj[prop.key.name] = {} );
+      return obj;
+    } else if (node.type === 'ArrayPattern') {
+      const arr = [];
+      node.elements.forEach( el => arr.push(Util.getObjFromVarPattern(el)) );
+      return arr;
+    }
+  }
+
   static getParamNames(node) {
     const params = [];
     if (node.type === 'Identifier') {
@@ -433,7 +456,7 @@ class Util {
 
 
   /**
-   * returns array of `this......` related codes from the node
+   * returns array of `this......` related codes from thesourceFuncRetnode
    */
   // static getThisExprs (node, allCode) {
   //   const code = allCode.substring(node.start, node.end);
@@ -448,7 +471,12 @@ class Util {
     Object.entries(mockData.props).forEach(([key1, value]) => {
 
       if (typeof value === 'function') {
-        js.push(`${thisName}.${key1} = jest.fn()`);
+        const funcRetVal = value();
+        if (typeof funcRetVal === 'string' || Object.keys(funcRetVal).length === 0) { // e.g.{}, or  myVar from `const myVar = this.foo.var();`
+          js.push(`${thisName}.${key1} = jest.fn()`);
+        } else {
+          js.push(`${thisName}.${key1} = jest.fn().mockReturnValue(${Util.objToJS(funcRetVal)})`);
+        }
       } else {
         const valueFiltered = Object.entries(value).filter(([k, v]) => k !== 'undefined');
         valueFiltered.forEach(([key2, value2]) => {
@@ -482,8 +510,12 @@ class Util {
           } else if (['length'].includes(key2)) {
             // do nothing
           } else if (typeof value2 === 'function') {
-            const fnValue2 = Util.objToJS(value2()).replace(/\{\s+\}/gm, '{}');
-            js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(${fnValue2})`);
+            const funcRetVal = value2();
+            if (typeof funcRetVal === 'string' || Object.keys(funcRetVal).length === 0) { // e.g. myVar from `const myVar = this.foo.var();`
+              js.push(`${thisName}.${key1}.${key2} = jest.fn()`);
+            } else {
+              js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(${Util.objToJS(funcRetVal)})`);
+            }
           } else if (Array.isArray(value2)) {
             // const fnValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
             js.push(`${thisName}.${key1}.${key2} = ['gentest']`);

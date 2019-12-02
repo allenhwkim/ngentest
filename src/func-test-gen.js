@@ -43,7 +43,7 @@ class FuncTestGen {
    * Iterate function expressions one by one
    *  then, sets the given props, params, maps from the expressinns
    */
-  setMockData (nodeIn, mockData) { // node: ExpressionStatement
+  setMockData (nodeIn, mockData, returnValue) { // node: ExpressionStatement
     if (!nodeIn || !mockData) {
       console.error({ nodeIn, mockData });
       console.error('\x1b[31m%s\x1b[0m', 'Error: parameter nodeIn or mockData is invalid');
@@ -119,8 +119,9 @@ class FuncTestGen {
     } else if (node.type === 'TemplateLiteral') {
       node.expressions.forEach(expr => expr && this.setMockData(expr, mockData));
     } else if (node.type === 'VariableDeclaration') {
-      node.declarations.forEach(decl => {
-        decl.init && this.setMockData(decl.init, mockData);
+      node.declarations.forEach(decl => { // decl.id, decl.init
+        const declReturn = Util.getObjFromVarPattern(decl.id);
+        decl.init && this.setMockData(decl.init, mockData, declReturn);
       });
     } else if (node.type === 'ReturnStatement') {
       node.argument && this.setMockData(node.argument, mockData);
@@ -175,8 +176,9 @@ class FuncTestGen {
     } else if (node.type === 'MemberExpression') { // this.xxxx, foo.xxxx
       this.setPropsOrParams(node, mockData);
     } else if (node.type === 'CallExpression') {
-      const funcReturn = Util.getExprReturn(node, this.classCode) || {};
-      this.setPropsOrParams(funcReturn.code, mockData, funcReturn.value);
+      const funcReturn = Util.getExprReturn(node, this.classCode);
+      const exprReturnValue = returnValue || funcReturn.value;
+      this.setPropsOrParams(funcReturn.code, mockData, exprReturnValue);
       
       // procesa call arguments
       node.arguments.forEach(argument => {

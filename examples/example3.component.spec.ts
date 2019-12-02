@@ -97,9 +97,9 @@ describe('BillingHeaderComponent', () => {
   it('should run SetterDeclaration #ptpInstallments', async () => {
 
     component.ptpInstallments = {
-      count: '[object Object]',
-      upcomingInstallmentDate: '[object Object]',
-      upcomingAmount: '[object Object]'
+      count: {},
+      upcomingInstallmentDate: {},
+      upcomingAmount: {}
     };
 
   });
@@ -108,7 +108,7 @@ describe('BillingHeaderComponent', () => {
     component.route = component.route || {};
     component.route.snapshot = {
       params: {
-        'ctn': '[object Object]'
+        'ctn': {}
       }
     };
     component.accountSummary = component.accountSummary || {};
@@ -139,7 +139,7 @@ describe('BillingHeaderComponent', () => {
   it('should run #setDebitCardDetails()', async () => {
     component.billingDetails = component.billingDetails || {};
     component.billingDetails.methodOfPayment = {
-      chequingDetails: '[object Object]'
+      chequingDetails: {}
     };
     component.debitCard = component.debitCard || {};
     component.debitCard.accountNumber = 'accountNumber';
@@ -150,7 +150,7 @@ describe('BillingHeaderComponent', () => {
   it('should run #setCreditCardDetails()', async () => {
     component.billingDetails = component.billingDetails || {};
     component.billingDetails.methodOfPayment = {
-      creditCardDetails: '[object Object]'
+      creditCardDetails: {}
     };
     component.creditCard = component.creditCard || {};
     component.creditCard.ccType = 'ccType';
@@ -208,7 +208,10 @@ describe('BillingHeaderComponent', () => {
   });
 
   it('should run #setNotificationMessage()', async () => {
-    component.getStartEndDates = jest.fn();
+    component.getStartEndDates = jest.fn().mockReturnValue({
+      startDate: {},
+      endDate: {}
+    });
     component.billingDetails = component.billingDetails || {};
     component.billingDetails.billType = 'billType';
     component.shouldShowNotification = jest.fn();

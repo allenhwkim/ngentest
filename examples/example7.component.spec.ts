@@ -126,7 +126,7 @@ describe('ChangePlanComponent', () => {
     component.dialog.open = jest.fn();
     component.saveStateAndChangePlan = jest.fn();
     await component.checkIfBOTEligible({
-      availableCreditAmount: '[object Object]'
+      availableCreditAmount: {}
     });
     expect(component.changePlanData.getCases).toHaveBeenCalled();
     expect(component.changePlanData.getPendingCases).toHaveBeenCalled();
@@ -170,10 +170,10 @@ describe('ChangePlanComponent', () => {
     component.statePostData = component.statePostData || {};
     component.statePostData.x = 'x';
     component.setEligibilityAndStatePostData({
-      subNumber: '[object Object]',
-      flowType: '[object Object]',
-      filterOption: '[object Object]',
-      selectAdditionalSubscribers: '[object Object]'
+      subNumber: {},
+      flowType: {},
+      filterOption: {},
+      selectAdditionalSubscribers: {}
     });
 
   });

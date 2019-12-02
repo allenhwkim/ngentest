@@ -133,7 +133,7 @@ describe('CreditManagementComponent', () => {
   it('should run #adjustmentTypeChanged()', async () => {
     component.resetValues = jest.fn();
     component.adjustmentTypeChanged({
-      code: '[object Object]'
+      code: {}
     });
     expect(component.resetValues).toHaveBeenCalled();
   });
@@ -168,9 +168,9 @@ describe('CreditManagementComponent', () => {
     component.existingIssueSelected = component.existingIssueSelected || {};
     component.existingIssueSelected.autoAdjustment = 'autoAdjustment';
     await component.handleIssueChanged({
-      issueSelected: '[object Object]',
-      newInputEntered: '[object Object]',
-      isOpenOrClosed: '[object Object]'
+      issueSelected: {},
+      newInputEntered: {},
+      isOpenOrClosed: {}
     });
 
   });
@@ -222,7 +222,7 @@ describe('CreditManagementComponent', () => {
     component.navigation = component.navigation || {};
     component.navigation.previousUrl = 'previousUrl';
     component.openInteractionOrSubmitModal({}, {
-      adjustmentAmount: '[object Object]'
+      adjustmentAmount: {}
     });
     expect(component.dialog.open).toHaveBeenCalled();
     expect(component.dialog.close).toHaveBeenCalled();

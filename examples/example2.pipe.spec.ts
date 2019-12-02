@@ -14,7 +14,7 @@ describe('TruncatePipe', () => {
   it('should run #transform()', async () => {
 
     pipe.transform({
-      length: '[object Object]',
+      length: {},
       substring: jest.fn()
     });
 

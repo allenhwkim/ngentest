@@ -24,7 +24,7 @@ describe('DynamicComponentService', () => {
     service = new DynamicComponentService({}, {}, {
         snapshot: {
           params: {
-            'cipherText': '[object Object]'
+            'cipherText': {}
           }
         }
       }, {
@@ -36,7 +36,7 @@ describe('DynamicComponentService', () => {
     service.factoryResolver = service.factoryResolver || {};
     service.factoryResolver.resolveComponentFactory = jest.fn();
     service.createComponent({}, {}, {
-      parentInjector: '[object Object]'
+      parentInjector: {}
     });
     expect(service.factoryResolver.resolveComponentFactory).toHaveBeenCalled();
   });
@@ -51,9 +51,9 @@ describe('DynamicComponentService', () => {
         }
       },
       instance: {
-        id: '[object Object]'
+        id: {}
       },
-      hostView: '[object Object]'
+      hostView: {}
     });
     expect(service.rootViewContainer.insert).toHaveBeenCalled();
   });

@@ -90,7 +90,7 @@ describe('InteractionsComponent', () => {
     component.route = component.route || {};
     component.route.snapshot = {
       data: {
-        'interactions': '[object Object]'
+        'interactions': {}
       }
     };
     component.getInteractions = jest.fn();
@@ -110,7 +110,7 @@ describe('InteractionsComponent', () => {
 
     component.applyFilter({
       target: {
-        value: '[object Object]'
+        value: {}
       }
     });
 
@@ -120,7 +120,7 @@ describe('InteractionsComponent', () => {
     component.translate = component.translate || {};
     component.translate.instant = jest.fn();
     component.getInteractions({
-      error: '[object Object]',
+      error: {},
       filter: function() {
         return [
           {
