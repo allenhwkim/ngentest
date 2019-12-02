@@ -65,7 +65,7 @@ class Util {
       return `'ngentest'`;
     } else if (firstKey && firstKey.match(arrFuncRE)) { // array function
       const paramArray = Util.getCallExhaustedReturn(obj);
-      const paramValues = paramArray.map(el => {
+      const paramValues =  [].concat(paramArray).map(el => {
         return Util.objToJS( Util.getCallExhaustedReturn(el));
       });
 
@@ -137,7 +137,7 @@ class Util {
     try {
       parsed = jsParser.parse(code);
     } catch (e) {
-      throw new Error(`ERROR Util.getNoce JS code is invalid, "${code}"`);
+      throw new Error(`ERROR Util.getNode JS code is invalid, "${code}"`);
     }
     // const parsed = jsParser.parse(code);
     const firstNode = parsed.body[0];
@@ -359,8 +359,16 @@ class Util {
     (funcRetExprs || []).forEach(funcExpr => { // e.g., ['event.urlAfterRedirects.substr(1)', ..]
       if (funcExpr.match(/\((['"]*)[^)]*$/) && !funcExpr.match(/\)$/)) { // if parenthesis not closed
         const matches = funcExpr.match(/\((['"]*)[^)]*$/);
-        const replStr = matches[1]  && !funcExpr.endsWith(matches[1]) ? matches[1] + ')' : ')';
-        funcExpr = `${funcExpr})`.replace(/\)$/, replStr); // close parenthesis
+        let replStr; // ('
+        if (matches[1] && funcExpr.endsWith( '(' + matches[1] )) { // e.g. ...('
+          funcExpr = `${funcExpr}${matches[1]})`;
+        } else if (matches[1] && funcExpr.endsWith( matches[1] )) { // e.g. ...('----'
+          funcExpr = `${funcExpr})`;
+        } else if (matches[1] && !funcExpr.endsWith( matches[1] + ')' )) { // e.g. ('----
+          funcExpr = `${funcExpr}${matches[1]})`;
+        } else {
+          funcExpr = `${funcExpr})`;
+        }
       }
       const exprNode = Util.getNode(funcExpr);
       const newReturn = Util.getExprReturn(exprNode, funcExpr);

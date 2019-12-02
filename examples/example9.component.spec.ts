@@ -76,6 +76,17 @@ describe('TotalDataDetailsComponent', () => {
 
   });
 
+  it('should run #getPastUsage()', async () => {
+
+    component.getPastUsage([{
+      shared_bundles: {
+        shared_bundle: [{}]
+      },
+      issue_date: '[object Object]'
+    }], {});
+
+  });
+
   it('should run #funcParamAsArray()', async () => {
 
     component.funcParamAsArray([{

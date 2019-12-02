@@ -33,6 +33,26 @@ export class TotalDataDetailsComponent implements OnInit {
     return bonusDataList;
   }
 
+  getPastUsage(bills: RogersRestBillResponse[], pricePlansList: PricePlansListCurrentResponse[]) {
+    const ctnDataUsed = {};
+    const dates = [];
+    bills.forEach(bill => {
+      const dataSharedBundle = bill.shared_bundles.shared_bundle.filter(bundle => bundle.category === 'Data')[0];
+      dataSharedBundle.used_amount_details.forEach((usedAmountDetails, index) => {
+        const phoneNumber = usedAmountDetails.subscriber_phone_number.split('-').join('');
+        ctnDataUsed[phoneNumber] = ctnDataUsed[phoneNumber] || {};
+        ctnDataUsed[phoneNumber]['name'] = ctnDataUsed[phoneNumber]['name'] || usedAmountDetails.subscriber_first_name;
+        ctnDataUsed[phoneNumber][bill.issue_date] = usedAmountDetails.used_amount;
+        ctnDataUsed[phoneNumber]['totalUsage'] = ctnDataUsed[phoneNumber]['totalUsage'] || 0;
+        ctnDataUsed[phoneNumber]['totalUsage'] += +usedAmountDetails.used_amount;
+      });
+
+      // Total usage per date
+      const totalUsageThisDate = dataSharedBundle.used_amount_details.reduce((acc, val) => acc + +val.used_amount, 0);
+      dates.push({ issueDate: bill.issue_date, totalUsageThisDate });
+    });
+  }
+
   funcParamAsArray(myParam) {
     myParam.map( ([param1, param2]) => {
       param1.foo.bar.baz = 1;
