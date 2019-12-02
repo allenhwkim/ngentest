@@ -457,7 +457,14 @@ class Util {
           if (typeof value2 === 'function' && key2.match(/^(post|put)$/)) {
             js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(observableOf('${key2}'))`);
           } else if (key2.match(arrFuncRE)) {
-            js.push(`${thisName}.${key1} = ['${key1}']`);
+console.log('..............', key2, typeof value2[key2], value2[key2])
+            if (typeof value2[key2] === 'function') {
+              const arrElValue = value2[key2]();
+              const arrElValueJS = Util.objToJS(arrElValue);
+              js.push(`${thisName}.${key1} = ['${arrElValueJS}']`);
+            } else {
+              js.push(`${thisName}.${key1} = ['${key1}']`);
+            }
           } else if (typeof value2 === 'function' && JSON.stringify(value2()) === '{}') {
             const funcRetVal = value2();
             const funcRet1stKey = Object.keys(funcRetVal).filter(el => el !== 'undefined')[0];
@@ -484,7 +491,13 @@ class Util {
           } else {
             const objVal21stKey = Object.keys(value2)[0];
             if (objVal21stKey && objVal21stKey.match(arrFuncRE)) {
-              js.push(`${thisName}.${key1}.${key2} = ['${key2}']`);
+              if (typeof value2[objVal21stKey] === 'function') {
+                const arrElValue = value2[objVal21stKey]();
+                const arrElValueJS = Util.objToJS(arrElValue);
+                js.push(`${thisName}.${key1}.${key2} = ['${arrElValueJS}']`);
+              } else {
+                js.push(`${thisName}.${key1}.${key2} = ['${key2}']`);
+              }
             } else if (objVal21stKey && objVal21stKey.match(strFuncRE)) {
               js.push(`${thisName}.${key1}.${key2} = '${key2}'`);
             } else {

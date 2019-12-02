@@ -4,12 +4,32 @@ import { Observable, of as observableOf, throwError } from 'rxjs';
 
 import {Component} from '@angular/core';
 import {DynamicComponentService} from './example.service';
+import {HttpClient} from '@angular/common/http';
+import {ActivatedRoute} from '@angular/router';
+import {EncryptionService} from '@rogers/oneview-components';
 
+@Injectable()
+class MockHttpClient {
+  post = jest.fn();
+}
+
+@Injectable()
+class MockEncryptionService {
+  decrypt = jest.fn();
+}
 describe('DynamicComponentService', () => {
   let service;
 
   beforeEach(() => {
-    service = new DynamicComponentService({});
+    service = new DynamicComponentService({}, {}, {
+        snapshot: {
+          params: {
+            'cipherText': '[object Object]'
+          }
+        }
+      }, {
+        decrypt: jest.fn()
+      });
   });
 
   it('should run #createComponent()', async () => {

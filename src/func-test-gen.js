@@ -204,6 +204,7 @@ class FuncTestGen {
         map[`this.${left2}`] = right1;
       } else if (left1 === 'this' && right1 === 'this' && map[`this.${right2}`]) {
         // set param value instead of 'this'(prop) value e.g., this.bar = this.foo.x.y (`this.foo` is from param1)
+        this.setMockData(node.right, mockData); // process the right side expression
         Util.assign(right.this, params); // (source, target)
       } else {
         this.setMockData(node.right, mockData);

@@ -9,11 +9,26 @@ import { Observable, of as observableOf, throwError } from 'rxjs';
 import { Component } from '@angular/core';
 import { TotalDataDetailsComponent } from './example9.component';
 import { TranslateService } from '@ngx-translate/core';
+import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
+import { DataManagerService } from '../data-manager.service';
+import { EncryptionService } from '@rogers/oneview-components';
 
 @Injectable()
 class MockTranslateService {
   translate = jest.fn();
 }
+
+@Injectable()
+class MockHttpClient {
+  post = jest.fn();
+}
+
+@Injectable()
+class MockDataManagerService {}
+
+@Injectable()
+class MockEncryptionService {}
 
 @Directive({ selector: '[oneviewPermitted]' })
 class OneviewPermittedDirective {
@@ -49,7 +64,21 @@ describe('TotalDataDetailsComponent', () => {
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [
-        { provide: TranslateService, useClass: MockTranslateService }
+        { provide: TranslateService, useClass: MockTranslateService },
+        { provide: HttpClient, useClass: MockHttpClient },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {url: 'url', params: {}, queryParams: {}, data: {}},
+            url: observableOf('url'),
+            params: observableOf({}),
+            queryParams: observableOf({}),
+            fragment: observableOf('fragment'),
+            data: observableOf({})
+          }
+        },
+        { provide: DataManagerService, useClass: MockDataManagerService },
+        { provide: EncryptionService, useClass: MockEncryptionService }
       ]
     }).overrideComponent(TotalDataDetailsComponent, {
 
@@ -64,98 +93,16 @@ describe('TotalDataDetailsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should run #getBonusDataListForSharing()', async () => {
-
-    component.getBonusDataListForSharing({
-      body: {
-        dataPurchaseList: [{
-          size: '[object Object]'
-        }]
-      }
-    });
-
-  });
-
-  it('should run #getPastUsage()', async () => {
-
-    component.getPastUsage([{
-      shared_bundles: {
-        shared_bundle: [{}]
-      },
-      issue_date: '[object Object]'
-    }], {});
-
-  });
-
-  it('should run #funcParamAsArray()', async () => {
-
-    component.funcParamAsArray([{
-      foo: {
-        bar: {
-          baz: '[object Object]'
+  it('should run #ngOnInit()', async () => {
+    component.accountSummary = component.accountSummary || {};
+    component.accountSummary.subList = ['[
+      {
+        "shareEverything": {
+          "isSharingData": {}
         }
       }
-    }, {
-      a: {
-        b: {
-          c: '[object Object]'
-        }
-      }
-    }]);
-
-  });
-
-  it('should run #funcParamAsObject()', async () => {
-
-    component.funcParamAsObject(observableOf({
-      param3: {
-        foo: {
-          bar: {
-            baz: '[object Object]'
-          }
-        }
-      },
-      param4: {
-        a: {
-          b: {
-            c: '[object Object]'
-          }
-        }
-      }
-    }));
-
-  });
-
-  it('should run #funcParamAsCombined()', async () => {
-
-    component.funcParamAsCombined(observableOf({
-      foo: {
-        bar: {
-          baz: '[object Object]'
-        }
-      }
-    }, {
-      a: {
-        b: {
-          c: '[object Object]'
-        }
-      }
-    }, {
-      param3: {
-        x: {
-          y: {
-            z: '[object Object]'
-          }
-        }
-      },
-      param4: {
-        one: {
-          two: {
-            three: '[object Object]'
-          }
-        }
-      }
-    }));
+    ]'];
+    component.ngOnInit();
 
   });
 

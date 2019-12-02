@@ -18,7 +18,8 @@ module.exports = {
     Router: ['navigate = jest.fn();'],
     Document: ['querySelector = jest.fn();'],
     HttpClient: ['post = jest.fn();'],
-    TranslateService: ['translate = jest.fn();']
+    TranslateService: ['translate = jest.fn();'],
+    EncryptionService: [],
   },
   // with multi file gen, include only these files
   includeMatch: [/(component|directive|pipe|service).ts/],

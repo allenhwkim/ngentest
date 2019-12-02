@@ -7,14 +7,25 @@ import {
   ReflectiveInjector,
   ViewContainerRef
 } from '@angular/core';
+import { EncryptionService } from '@rogers/oneview-components';
+import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 @Injectable()
 export class DynamicComponentService {
   rootViewContainer: ViewContainerRef;
 
-  constructor(@Inject(ComponentFactoryResolver) private factoryResolver) {
-    // empty constructor
-  }
+  // TODO, !!!!! need mock for this.encryptionService and this.route.snapshot.params in a service
+  urlData$ = this.encryptionService.decrypt(
+    decodeURIComponent(this.route.snapshot.params['cipherText']), this.keyMap
+  );
+
+  constructor(
+    @Inject(ComponentFactoryResolver) private factoryResolver,
+    private http: HttpClient,
+    private route: ActivatedRoute,
+    private encryptionService: EncryptionService
+  ) { }
 
   createComponent(component: any, into?: ViewContainerRef): ComponentRef<any> {
     this.rootViewContainer = into || this.rootViewContainer;
