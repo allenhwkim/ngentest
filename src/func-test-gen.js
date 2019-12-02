@@ -223,7 +223,7 @@ class FuncTestGen {
     let nodeToUse, obj, one, two, code;
     if (typeof codeOrNode === 'string') {
       nodeToUse = Util.getNode(codeOrNode);
-      obj = Util.getObjectFromExpression(nodeToUse, returns);
+      obj = Util.getObjectFromExpression(nodeToUse, returns); // TODO: return function with params, not return
       code = codeOrNode;
       [one, two] = codeOrNode.split('.'); // this.prop
     } else {
@@ -236,6 +236,7 @@ class FuncTestGen {
       [one, two] = code.split('.'); // this.prop
       Util.DEBUG && console.log('  setPropsOrParams', { code, type: codeOrNode.type });
     }
+
     if (one === 'this' && two && map[`this.${two}`]) {
       Util.assign(obj.this, params);
     } else if (one === 'this' && two) {

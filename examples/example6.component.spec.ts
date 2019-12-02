@@ -138,7 +138,7 @@ describe('BillingPageComponent', () => {
     component.navigationService = component.navigationService || {};
     component.navigationService.isRoutedFromPayment = 'isRoutedFromPayment';
     component.router = component.router || {};
-    component.router.events = observableOf(observableOf({}));
+    component.router.events = observableOf({});
     component.ptpService = component.ptpService || {};
     component.ptpService.getAllPtpInfo = jest.fn().mockReturnValue(observableOf({
       ptpDetails: {

@@ -35,10 +35,12 @@ class Util {
   }
 
   static getCallExhaustedReturn(obj) {
-    const firstKey = typeof obj === 'object' && Object.keys(obj).filter(k => k !== 'undefined')[0];
+    const firstKey = typeof obj === 'object'
+      && !Array.isArray(obj)
+      && Object.keys(obj).filter(k => k !== 'undefined')[0];
     if (typeof obj === 'function') {
       return Util.getCallExhaustedReturn(obj);
-    } else if (typeof obj[firstKey] === 'function') {
+    } else if (firstKey && typeof obj[firstKey] === 'function') {
       return Util.getCallExhaustedReturn(obj[firstKey]());
     } else {
       return obj;
@@ -62,13 +64,22 @@ class Util {
     } else if (firstKey && firstKey.match(strFuncRE)) { // sring function
       return `'ngentest'`;
     } else if (firstKey && firstKey.match(arrFuncRE)) { // array function
-      const retValue = Util.objToJS(Util.getCallExhaustedReturn(obj));
-      return `[${retValue}]`;
+      const paramArray = Util.getCallExhaustedReturn(obj);
+      const paramValues = paramArray.map(el => {
+        return Util.objToJS( Util.getCallExhaustedReturn(el));
+      });
+
+      return `[${paramValues.join(', ')}]`;
     } else if (firstKey && firstKey.match(obsFuncRE)) { // observable function
-      const val = typeof obj[firstKey] === 'function' ? obj[firstKey]() : obj[firstKey];
-      return `observableOf(${Util.objToJS(val)})`;
+      const paramArray = Util.getCallExhaustedReturn(obj); // {}
+      const paramValues = [].concat(paramArray).map(el => {
+        return Util.objToJS( Util.getCallExhaustedReturn(el));
+      });
+      const valuesStr = paramValues.length ? paramValues.join(', ') : '{}';
+
+      return `observableOf(${valuesStr})`;
     } else if (Array.isArray(obj)) {
-      return JSON.stringify(obj);
+      return JSON.stringify(obj, null, '  ');
     } else {
       for (var key in obj) {
         if (key === 'undefined' || !obj.hasOwnProperty(key)) { continue; }
@@ -113,6 +124,7 @@ class Util {
       const sourceFuncRet = source[firstKey]();
       const targetFuncRet = typeof source[firstKey] === 'function' ? target[firstKey]() : {};
       const mergedFuncRet = Object.assign({}, sourceFuncRet, targetFuncRet);
+
       target[firstKey] = function() { return mergedFuncRet; }
     } else {
       Util.assign(source[firstKey], target[firstKey]);
@@ -287,9 +299,36 @@ class Util {
     const funcExprArg = Util.getFuncExprArg(node); // if the first argument is a function
     if (funcExprArg) {
       const funcCode = classCode.substring(funcExprArg.start, funcExprArg.end);
-      const paramObj = Util.getFuncParamObj(funcExprArg, funcCode); // {paranName: value, paranName, value}
-      const values = Object.values(paramObj);
-      const value = values.length > 1 ? values : values[0]; // TODO, need to handle multiple function params?
+      const paramObj = Util.getFuncParamObj(funcExprArg, funcCode); // {param1: value1, param2: value2}
+      // const value = values.length > 1 ? values : values[0]; // TODO, need to handle multiple function params?
+
+      let value = [];
+      funcExprArg.params.forEach( (param, index) => {
+        if (param.type === 'ArrayPattern') {
+          param.elements.forEach(prop => {
+            let ret;
+            if (prop.type === 'Identifier') {
+              ret = paramObj[prop.name];
+            } else if (prop.type === 'ArrayPattern') {
+              ret = prop.elements.map(el => paramObj[el.name]);
+            } else if (prop.type === 'ObjectPattern') {
+              ret = {};
+              prop.properties.forEach(prop => { 
+                ret[prop.key.name] = paramObj[prop.key.name];
+              });
+            }
+            value.push(ret);
+          });
+        } else if (param.type === 'ObjectPattern') {
+          value[index] = {};
+          param.properties.forEach(prop => { 
+            value[index][prop.key.name] = paramObj[prop.key.name];
+          });
+        } else if (param.type === 'Identifier') {
+          value[index] = paramObj[param.name];
+        }
+      });
+
       ret = { code: baseCode, value };
     } else {
       ret = { code: code, value: {} };
@@ -336,23 +375,38 @@ class Util {
     return funcParam;
   }
 
+  static getParamNames(node) {
+    const params = [];
+    if (node.type === 'Identifier') {
+      params.push(node.name);
+    } else if (node.type === 'ObjectPattern') {
+      node.properties.forEach(prop => {
+        params.push(prop.key.name);
+      });
+    } else if (node.type === 'ArrayPattern') {
+      node.elements.forEach(el => {
+        const elPropName = Util.getParamNames(el);
+        params.push(elPropName);
+      });
+    } else if (node.params) {
+      node.params.forEach(param => {
+        const elPropName = Util.getParamNames(param);
+        params.push(elPropName);
+      });
+    } else {
+      throw new Error(`ERROR getParamNames type error, "${node.type}"`);
+    }
+
+    return params.reduce((acc, val) => acc.concat(val), []);
+  }
+
   /**
    * returns function parameter related codes from the node
    */
   static getParamExprs (node, code) {
     const paramExprs = [];
 
-    const paramNames1 = node.params.map(param => {
-        if (param.type === 'Identifier') { // (foo, bar) => {... }
-          return param.name; 
-        } else if (param.type === 'ObjectPattern') { // ({foo, bar}) => {... }
-          return param.properties.map(prop => prop.key.name);
-        } else if (param.type === 'ArrayPattern') { // ([foo, bar]) => {... }
-          return param.elements.map(prop => prop.name);
-        } else {
-          throw new Error(`Unexpected param type, ${param.type}, for code: ${code}`)
-        }
-      })
+    const paramNames1 = Util.getParamNames(node);
 
     const paramNames = paramNames1.reduce((acc, val) => acc.concat(val), []);
     // const codeShortened = code.replace(/\n+/g, '').replace(/\s+/g, ' ');

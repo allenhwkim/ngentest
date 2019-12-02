@@ -122,9 +122,11 @@ describe('InteractionsComponent', () => {
     component.getInteractions({
       error: '[object Object]',
       filter: function() {
-        return {
-          itemType: '[object Object]'
-        };
+        return [
+          {
+            "itemType": {}
+          }
+        ];
       }
     });
     expect(component.translate.instant).toHaveBeenCalled();

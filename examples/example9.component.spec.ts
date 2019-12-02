@@ -76,4 +76,76 @@ describe('TotalDataDetailsComponent', () => {
 
   });
 
+  it('should run #funcParamAsArray()', async () => {
+
+    component.funcParamAsArray([{
+      foo: {
+        bar: {
+          baz: '[object Object]'
+        }
+      }
+    }, {
+      a: {
+        b: {
+          c: '[object Object]'
+        }
+      }
+    }]);
+
+  });
+
+  it('should run #funcParamAsObject()', async () => {
+
+    component.funcParamAsObject(observableOf({
+      param3: {
+        foo: {
+          bar: {
+            baz: '[object Object]'
+          }
+        }
+      },
+      param4: {
+        a: {
+          b: {
+            c: '[object Object]'
+          }
+        }
+      }
+    }));
+
+  });
+
+  it('should run #funcParamAsCombined()', async () => {
+
+    component.funcParamAsCombined(observableOf({
+      foo: {
+        bar: {
+          baz: '[object Object]'
+        }
+      }
+    }, {
+      a: {
+        b: {
+          c: '[object Object]'
+        }
+      }
+    }, {
+      param3: {
+        x: {
+          y: {
+            z: '[object Object]'
+          }
+        }
+      },
+      param4: {
+        one: {
+          two: {
+            three: '[object Object]'
+          }
+        }
+      }
+    }));
+
+  });
+
 });
