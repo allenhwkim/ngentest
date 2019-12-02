@@ -457,11 +457,10 @@ class Util {
           if (typeof value2 === 'function' && key2.match(/^(post|put)$/)) {
             js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(observableOf('${key2}'))`);
           } else if (key2.match(arrFuncRE)) {
-console.log('..............', key2, typeof value2[key2], value2[key2])
             if (typeof value2[key2] === 'function') {
               const arrElValue = value2[key2]();
               const arrElValueJS = Util.objToJS(arrElValue);
-              js.push(`${thisName}.${key1} = ['${arrElValueJS}']`);
+              js.push(`${thisName}.${key1} = ${arrElValueJS}`);
             } else {
               js.push(`${thisName}.${key1} = ['${key1}']`);
             }
@@ -494,7 +493,7 @@ console.log('..............', key2, typeof value2[key2], value2[key2])
               if (typeof value2[objVal21stKey] === 'function') {
                 const arrElValue = value2[objVal21stKey]();
                 const arrElValueJS = Util.objToJS(arrElValue);
-                js.push(`${thisName}.${key1}.${key2} = ['${arrElValueJS}']`);
+                js.push(`${thisName}.${key1}.${key2} = ${arrElValueJS}`);
               } else {
                 js.push(`${thisName}.${key1}.${key2} = ['${key2}']`);
               }
