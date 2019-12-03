@@ -135,6 +135,8 @@ describe('DashboardComponent', () => {
       ecid: {}
     }));
     component.actionService.getDispositionStatus = jest.fn().mockReturnValue(observableOf({}));
+    component.activeTreatments = component.activeTreatments || {};
+    component.activeTreatments.ecid = 'ecid';
     component.ngOnInit();
     expect(component.dashboardData.getBillingDetails).toHaveBeenCalled();
     expect(component.dashboardData.getPostDatedPPC).toHaveBeenCalled();

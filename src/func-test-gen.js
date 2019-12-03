@@ -175,11 +175,13 @@ class FuncTestGen {
       this.setMockData(node.argument, mockData);
     } else if (node.type === 'MemberExpression') { // this.xxxx, foo.xxxx
       this.setPropsOrParams(node, mockData);
-    } else if (node.type === 'CallExpression') {
+      this.setMockData(node.object, mockData);
+    } else if (node.type === 'CallExpression') { // callee, arguments
       const funcReturn = Util.getExprReturn(node, this.classCode);
       const exprReturnValue = returnValue || funcReturn.value;
       this.setPropsOrParams(funcReturn.code, mockData, exprReturnValue);
       
+      this.setMockData(node.callee, mockData);
       // procesa call arguments
       node.arguments.forEach(argument => {
         this.setMockData(argument, mockData);
@@ -240,6 +242,7 @@ class FuncTestGen {
       Util.DEBUG && console.log('  setPropsOrParams', { code, type: codeOrNode.type });
     }
 
+    Util.DEBUG && console.log('  setPropsOrParams', { one, two, obj });
     if (one === 'this' && two && map[`this.${two}`]) {
       Util.assign(obj.this, params);
     } else if (one === 'this' && two) {

@@ -355,30 +355,29 @@ class Util {
     if (!node.params.length)
       return false;
 
-    // const funcRetName = node.params[0].name;
-    // const codeReplaced = code.replace(/\n+/g, '').replace(/\s+/g, ' ');
-    // const paramNameMatchRE = new RegExp(`${funcRetName}(\\.[^\\s\\;\\)\\\+\-]},]+)+`, 'ig')
-    // const funcRetExprs = codeReplaced.match(paramNameMatchRE );
-
     const funcRetExprsRaw = Util.getParamExprs(node, code);
     const funcRetExprsFlat = funcRetExprsRaw.reduce((acc, val) => acc.concat(val), []);
     const funcRetExprs = Array.from(new Set(funcRetExprsFlat));
 
     const funcParam = {};
     (funcRetExprs || []).forEach(funcExpr => { // e.g., ['event.urlAfterRedirects.substr(1)', ..]
-      if (funcExpr.match(/\((['"]*)[^)]*$/) && !funcExpr.match(/\)$/)) { // if parenthesis not closed
-        const matches = funcExpr.match(/\((['"]*)[^)]*$/);
-        let replStr; // ('
-        if (matches[1] && funcExpr.endsWith( '(' + matches[1] )) { // e.g. ...('
-          funcExpr = `${funcExpr}${matches[1]})`;
-        } else if (matches[1] && funcExpr.endsWith( matches[1] )) { // e.g. ...('----'
-          funcExpr = `${funcExpr})`;
-        } else if (matches[1] && !funcExpr.endsWith( matches[1] + ')' )) { // e.g. ('----
-          funcExpr = `${funcExpr}${matches[1]})`;
+      const matches = funcExpr.match(/([\(\[])(['"]*)[^)]*$/); // 1: [ or ( 2: ' or "
+      const endEncloser = matches && (matches[1] === '(' ? ')' : ']');
+      // console.log('funcExpr..........', {funcExpr, matches, endEncloser});
+      if (matches && !funcExpr.endsWith(endEncloser)) { // if parenthesis or [ not closed
+        const [_, staEncloser, quotation] = matches;
+
+        if (quotation && funcExpr.endsWith( staEncloser + quotation )) { // e.g. ...('
+          funcExpr = `${funcExpr}${quotation}${endEncloser}`;
+        } else if (quotation && funcExpr.endsWith( quotation )) { // e.g. ...('----'
+          funcExpr = `${funcExpr}${endEncloser}`;
+        } else if (quotation && !funcExpr.endsWith( quotation + endEncloser )) { // e.g. ('----
+          funcExpr = `${funcExpr}${quotation}${endEncloser}`;
         } else {
-          funcExpr = `${funcExpr})`;
+          funcExpr = `${funcExpr}${endEncloser}`;
         }
       }
+
       const exprNode = Util.getNode(funcExpr);
       const newReturn = Util.getExprReturn(exprNode, funcExpr);
       const newCode = newReturn.code;

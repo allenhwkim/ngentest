@@ -23,6 +23,8 @@ class MockBillingDataService {
   catchError = function() {
     return observableOf({});
   };
+  getBilling = jest.fn();
+  loadUserBill = jest.fn();
 }
 
 @Injectable()
@@ -215,12 +217,12 @@ describe('BillingPageComponent', () => {
     component.billingService.getEncryptedString = jest.fn().mockReturnValue(observableOf({}));
     component.billingService.fetchUserBill = jest.fn().mockReturnValue(observableOf({}));
     component.billingService.downloadFile = jest.fn();
-    component.dialog = component.dialog || {};
-    component.dialog.close = jest.fn();
-    component.dialog.open = jest.fn();
     component.billSelection = component.billSelection || {};
     component.billSelection.content_id = 'content_id';
     component.billSelection.issue_date = 'issue_date';
+    component.dialog = component.dialog || {};
+    component.dialog.close = jest.fn();
+    component.dialog.open = jest.fn();
     component.fetchResource({});
     expect(component.billingService.getEncryptedString).toHaveBeenCalled();
     expect(component.billingService.fetchUserBill).toHaveBeenCalled();

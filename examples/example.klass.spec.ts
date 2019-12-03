@@ -80,10 +80,12 @@ describe('AgentInfo', () => {
   });
 
   it('should run #setDealerCode()', async () => {
+    obj.querySelectorAll = jest.fn();
     obj.querySelector = jest.fn().mockReturnValue({
       innerHTML: {}
     });
     obj.setDealerCode({});
+    expect(obj.querySelectorAll).toHaveBeenCalled();
     expect(obj.querySelector).toHaveBeenCalled();
   });
 
@@ -130,10 +132,10 @@ describe('AgentInfo', () => {
 
   it('should run #updateDealer()', async () => {
     obj.querySelector = jest.fn().mockReturnValue({
+      value: {},
       classList: {
         add: jest.fn()
-      },
-      value: {}
+      }
     });
     obj.agentInfo = obj.agentInfo || {};
     obj.agentInfo.consumer = {
@@ -159,17 +161,27 @@ describe('AgentInfo', () => {
         };
       }
     });
+    obj.updateSession = jest.fn();
+    obj.saveDealerCode = jest.fn();
+    obj.toggleChangeDealerForm = jest.fn();
+    obj.setDealerCode = jest.fn();
+    obj.toggleChangeDealer = jest.fn();
     obj.updateDealer({});
     expect(obj.querySelector).toHaveBeenCalled();
     expect(obj.validateDealerCode).toHaveBeenCalled();
+    expect(obj.updateSession).toHaveBeenCalled();
+    expect(obj.saveDealerCode).toHaveBeenCalled();
+    expect(obj.toggleChangeDealerForm).toHaveBeenCalled();
+    expect(obj.setDealerCode).toHaveBeenCalled();
+    expect(obj.toggleChangeDealer).toHaveBeenCalled();
   });
 
   it('should run #impersonate()', async () => {
     obj.querySelector = jest.fn().mockReturnValue({
+      value: {},
       classList: {
         add: jest.fn()
-      },
-      value: {}
+      }
     });
     obj.agentInfo = obj.agentInfo || {};
     obj.agentInfo.consumer = {
@@ -190,9 +202,17 @@ describe('AgentInfo', () => {
         };
       }
     });
+    obj.saveDealerCode = jest.fn();
+    obj.setDealerCode = jest.fn();
+    obj.i18n = obj.i18n || {};
+    obj.i18n.acting = 'acting';
+    obj.toggleChangeDealer = jest.fn();
     obj.impersonate({});
     expect(obj.querySelector).toHaveBeenCalled();
     expect(obj.validateDealerCode).toHaveBeenCalled();
+    expect(obj.saveDealerCode).toHaveBeenCalled();
+    expect(obj.setDealerCode).toHaveBeenCalled();
+    expect(obj.toggleChangeDealer).toHaveBeenCalled();
   });
 
 });
