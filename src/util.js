@@ -178,7 +178,7 @@ class Util {
     const { type, property, object, callee } = node;
     const member = /* eslint-disable */
       type === 'MemberExpression' ? property.name || property.raw :
-      type === 'CallExpression' ? `(${Util.getFuncArgNames(node)})` :
+      type === 'CallExpression' ? `(${Util.getFuncArgNames(code)})` :
       type === 'ThisExpression' ? 'this' :
       type === 'Identifier' ? node.name : undefined;
     member && result.push(member); /* eslint-enable */
@@ -203,7 +203,8 @@ class Util {
    * LogicalExpresssion   e.g., foo.bar.x().y || a.b
    *   returns {foo: {bar: x: function() { return {y: {}}}}}
    */
-  static getFuncArgNames (node) {
+  static getFuncArgNames (code) {
+    const node = Util.getNode(code);
     const argNames = node.arguments.map(arg => {
       if (arg.params && arg.params[0] && arg.params[0].name) {
         return arg.params[0].name;
