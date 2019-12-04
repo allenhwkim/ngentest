@@ -37,34 +37,6 @@ class Util {
     }
   }
 
-  // returns function parameters names
-  // e.g. function >>>> (a,b,{c,d},[e,f]) <<<< {} returns ['a', 'b', 'c', 'd', 'e', 'f']
-  static getFuncParamNames(node) {
-    const names = [];
-    if (node.type === 'Identifier') {
-      names.push(node.name);
-    } else if (node.type === 'ObjectPattern') {
-      node.properties.forEach(prop => {
-        names.push(prop.key.name);
-      });
-    } else if (node.type === 'ArrayPattern') {
-      node.elements.forEach(el => {
-        const elPropName = Util.getFuncParamNames(el);
-        names.push(elPropName);
-      });
-    } else if (node.params) {
-      node.params.forEach(param => {
-        const elPropName = Util.getFuncParamNames(param);
-        names.push(elPropName);
-      });
-    } else {
-      throw new Error(`ERROR getFuncParamNames type error, "${node.type}"`);
-    }
-
-    return names.reduce((acc, val) => acc.concat(val), []);
-  }
-
-
   static getAngularType (typescript) {
     return typescript.match(/^\s*@Component\s*\(/m) ? 'component' : /* eslint-disable */
       typescript.match(/^\s*@Directive\s*\(/m) ? 'directive' :
@@ -435,7 +407,7 @@ class Util {
     if (!node.params.length)
       return false;
 
-    const funcRetExprsRaw = Util.getParamExprs(node, code);
+    const funcRetExprsRaw = Util.getParamExprs(code);
     const funcRetExprsFlat = funcRetExprsRaw.reduce((acc, val) => acc.concat(val), []);
     const funcRetExprs = Array.from(new Set(funcRetExprsFlat));
 
@@ -474,10 +446,10 @@ class Util {
   /**
    * returns function parameter related codes from the node
    */
-  static getParamExprs (node, code) {
+  static getParamExprs (code) {
     const paramExprs = [];
 
-    const paramNames1 = Util.getFuncParamNames(node);
+    const paramNames1 = Util.getFuncParamNames(code);
 
     const paramNames = paramNames1.reduce((acc, val) => acc.concat(val), []);
     // const codeShortened = code.replace(/\n+/g, '').replace(/\s+/g, ' ');
@@ -494,16 +466,34 @@ class Util {
     return paramExprs;
   }
 
+  // returns function parameters names
+  // e.g. function(a,b,{c,d},[e,f]) {...} returns ['a', 'b', 'c', 'd', 'e', 'f']
+  static getFuncParamNames(code) {
+    const names = [];
+    const node = typeof code === 'string' ? Util.getNode(code) : code;
 
-  /**
-   * returns array of `this......` related codes from thesourceFuncRetnode
-   */
-  // static getThisExprs (node, allCode) {
-  //   const code = allCode.substring(node.start, node.end);
-  //   const code2 = code.replace(/\n+/g, '').replace(/\s+/g, ' ');
-  //   const thisExprs = code2.match(new RegExp(`this(\\.[^\\s\\;]+)+`, 'ig'));
-  //   return thisExprs;
-  // }
+    if (node.type === 'Identifier') {
+      names.push(node.name);
+    } else if (node.type === 'ObjectPattern') {
+      node.properties.forEach(prop => {
+        names.push(prop.key.name);
+      });
+    } else if (node.type === 'ArrayPattern') {
+      node.elements.forEach(el => {
+        const elPropName = Util.getFuncParamNames(el);
+        names.push(elPropName);
+      });
+    } else if (node.params) {
+      node.params.forEach(param => {
+        const elPropName = Util.getFuncParamNames(param);
+        names.push(elPropName);
+      });
+    } else {
+      throw new Error(`ERROR getFuncParamNames type error, "${node.type}"`);
+    }
+
+    return names.reduce((acc, val) => acc.concat(val), []);
+  }
 
   static getFuncMockJS (mockData, thisName = 'component') {
     const js = [];
