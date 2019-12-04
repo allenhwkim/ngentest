@@ -147,13 +147,25 @@ class Util {
       target[firstKey] = source[firstKey];
       return;
     }
+
     if (typeof source[firstKey] === 'function') {
       const sourceFuncRet = source[firstKey]();
       if (typeof sourceFuncRet === 'object') {
         const targetFuncRet = typeof source[firstKey] === 'function' ? target[firstKey]() : {};
+        const isTarget0EmptyObj =  targetFuncRet[0] && // e.g.,  { 0 : {} }
+            Object.keys(targetFuncRet[0]).length === 0 && targetFuncRet[0].constructor === Object;
+        const isTarget0Exists =  targetFuncRet[0] && // e.g.,  { 0 : {foo;bar} }
+            Object.keys(targetFuncRet[0]).length !== 0 && targetFuncRet[0].constructor === Object;
+
         if (typeof targetFuncRet === 'string') { // ignore string values bcoz it's from var xxx = foo.bar()
-          const mergedFuncRet = Object.assign({}, sourceFuncRet, {});
-          target[firstKey] = function() { return mergedFuncRet; }
+          target[firstKey] = function() { return sourceFuncRet; }
+        } else if (isTarget0EmptyObj) {
+          delete target[firstKey][0];
+          target[firstKey] = function() { return sourceFuncRet; }
+        } else if (isTarget0Exists) {
+          const ret = Object.assign({}, sourceFuncRet[0], targetFuncRet[0]);
+          target[firstKey] = function() { return [ret]; }
+          // console.log('###################################', {sourceFuncRet, targetFuncRet})
         } else {
           const mergedFuncRet = Object.assign({}, sourceFuncRet, targetFuncRet);
           target[firstKey] = function() { return mergedFuncRet; }
@@ -374,38 +386,6 @@ class Util {
     if (funcExprArg) {
       const funcCode = code.substring(funcExprArg.start, funcExprArg.end);
       const value = Util.getFuncParams(funcCode);
-// TODO: START the same as Util.getFuncParams(node, code)
-      // const paramObj = Util.getFuncParamObj(funcCode); // {param1: value1, param2: value2}
-      // // const value = values.length > 1 ? values : values[0]; // TODO, need to handle multiple function params?
-
-      // let value = [];
-      // funcExprArg.params.forEach( (param, index) => {
-      //   if (param.type === 'ArrayPattern') {
-      //     param.elements.forEach(prop => {
-      //       let ret;
-      //       if (prop.type === 'Identifier') {
-      //         ret = paramObj[prop.name];
-      //       } else if (prop.type === 'ArrayPattern') {
-      //         ret = prop.elements.map(el => paramObj[el.name]);
-      //       } else if (prop.type === 'ObjectPattern') {
-      //         ret = {};
-      //         prop.properties.forEach(prop => { 
-      //           ret[prop.key.name] = paramObj[prop.key.name];
-      //         });
-      //       }
-      //       value.push(ret);
-      //     });
-      //   } else if (param.type === 'ObjectPattern') {
-      //     value[index] = {};
-      //     param.properties.forEach(prop => { 
-      //       value[index][prop.key.name] = paramObj[prop.key.name];
-      //     });
-      //   } else if (param.type === 'Identifier') {
-      //     value[index] = paramObj[param.name];
-      //   }
-      // });
-// TODO: END the same as Util.getFuncParams(node, code)
-
       ret = { code: baseCode, value };
     } else {
       ret = { code: code, value: {} };
