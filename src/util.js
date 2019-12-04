@@ -20,6 +20,51 @@ class Util {
       node.arguments[0].type.match(/FunctionExpression/);
   }
 
+  // returns function parameters as a named object
+  // node.type Identifier, ObjectPattern, ArrayPattern 
+  // e.g. function >>>> ([a,b,{c,d},[e,f]]) <<<< {} returns ['a', 'b', {c:{}, d: {}}, ['e', 'f']]
+  static getObjFromVarPattern(node) {
+    if (node.type === 'Identifier') {
+      return node.name;
+    } else if (node.type === 'ObjectPattern') {
+      const obj = {};
+      node.properties.forEach( prop => obj[prop.key.name] = {} );
+      return obj;
+    } else if (node.type === 'ArrayPattern') {
+      const arr = [];
+      node.elements.forEach( el => arr.push(Util.getObjFromVarPattern(el)) );
+      return arr;
+    }
+  }
+
+  // returns function parameters names
+  // e.g. function >>>> (a,b,{c,d},[e,f]) <<<< {} returns ['a', 'b', 'c', 'd', 'e', 'f']
+  static getFuncParamNames(node) {
+    const names = [];
+    if (node.type === 'Identifier') {
+      names.push(node.name);
+    } else if (node.type === 'ObjectPattern') {
+      node.properties.forEach(prop => {
+        names.push(prop.key.name);
+      });
+    } else if (node.type === 'ArrayPattern') {
+      node.elements.forEach(el => {
+        const elPropName = Util.getFuncParamNames(el);
+        names.push(elPropName);
+      });
+    } else if (node.params) {
+      node.params.forEach(param => {
+        const elPropName = Util.getFuncParamNames(param);
+        names.push(elPropName);
+      });
+    } else {
+      throw new Error(`ERROR getFuncParamNames type error, "${node.type}"`);
+    }
+
+    return names.reduce((acc, val) => acc.concat(val), []);
+  }
+
+
   static getAngularType (typescript) {
     return typescript.match(/^\s*@Component\s*\(/m) ? 'component' : /* eslint-disable */
       typescript.match(/^\s*@Directive\s*\(/m) ? 'directive' :
@@ -426,52 +471,13 @@ class Util {
     return funcParam;
   }
 
-  static getObjFromVarPattern(node) { // node.type Identifier, ObjectPattern, ArrayPattern
-    if (node.type === 'Identifier') {
-      return node.name;
-    } else if (node.type === 'ObjectPattern') {
-      const obj = {};
-      node.properties.forEach( prop => obj[prop.key.name] = {} );
-      return obj;
-    } else if (node.type === 'ArrayPattern') {
-      const arr = [];
-      node.elements.forEach( el => arr.push(Util.getObjFromVarPattern(el)) );
-      return arr;
-    }
-  }
-
-  static getParamNames(node) {
-    const params = [];
-    if (node.type === 'Identifier') {
-      params.push(node.name);
-    } else if (node.type === 'ObjectPattern') {
-      node.properties.forEach(prop => {
-        params.push(prop.key.name);
-      });
-    } else if (node.type === 'ArrayPattern') {
-      node.elements.forEach(el => {
-        const elPropName = Util.getParamNames(el);
-        params.push(elPropName);
-      });
-    } else if (node.params) {
-      node.params.forEach(param => {
-        const elPropName = Util.getParamNames(param);
-        params.push(elPropName);
-      });
-    } else {
-      throw new Error(`ERROR getParamNames type error, "${node.type}"`);
-    }
-
-    return params.reduce((acc, val) => acc.concat(val), []);
-  }
-
   /**
    * returns function parameter related codes from the node
    */
   static getParamExprs (node, code) {
     const paramExprs = [];
 
-    const paramNames1 = Util.getParamNames(node);
+    const paramNames1 = Util.getFuncParamNames(node);
 
     const paramNames = paramNames1.reduce((acc, val) => acc.concat(val), []);
     // const codeShortened = code.replace(/\n+/g, '').replace(/\s+/g, ' ');
