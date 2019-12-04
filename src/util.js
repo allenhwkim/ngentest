@@ -229,7 +229,10 @@ class Util {
   static getFuncArgNames (code) {
     const node = Util.getNode(code);
     const argNames = node.arguments.map(arg => {
-      if (arg.params && arg.params[0] && arg.params[0].name) {
+      if (arg.type === 'ArrowFunctionExpression' || arg.type === 'FunctionExpression') {
+        return code.substring(arg.start, arg.end); 
+      } else if (arg.params && arg.params[0] && arg.params[0].name) {
+        console.log('OHHHHHHHHHHHH xxxxxxx NOOOOOOOOOOOOOOOOOOOOOHHHHH xxxxxxxxxxxxx')
         return arg.params[0].name;
       } else if (arg.params && arg.params[0] && arg.params[0].type === 'ArrayPattern') {
         return `ARR_PTRN`;
@@ -281,8 +284,22 @@ class Util {
     const exprMembers = Util.getExprMembers(code);
 
     let nxt, obj;
-    obj = exprMembers[0] && exprMembers[0].startsWith('(') ?
-      function () { return returns; } : returns;
+    const firstExpr = exprMembers[0];
+    const isFirstExprFuncLike = firstExpr && firstExpr.startsWith('(');
+    if (isFirstExprFuncLike && firstExpr === '()') {
+      obj = function() { return returns; }
+    } else if (isFirstExprFuncLike) {
+      const node = Util.getNode(firstExpr);
+      if (node.type.match(/FunctionExpression$/)) {
+        const funcParamVal = Util.getFuncParams(firstExpr);
+        obj = function() { return funcParamVal; }
+      } else {
+        obj = function() { return returns; }
+      }
+    } else {
+      obj = returns;
+    }
+
     exprMembers.forEach((str, ndx) => {
       nxt = exprMembers[ndx + 1];
       if (nxt && nxt.startsWith('(')) {
@@ -306,7 +323,7 @@ class Util {
     let parenthesisOpen;
 
     members.forEach(el => {
-      el = el.match(/^[0-9]$/) ? `[${el}]` : el; // change 12 to [12]
+      el = el.match(/^[0-9]$/) ? `[${el}]` : el; // change 0 to [0]
 
       if (parenthesisOpen) {
         const lastIndex = vars.length - 1;
@@ -337,8 +354,7 @@ class Util {
 
     // const members = Util.getExprMembers(node).reverse();
     const vars = Util.getVars(code); // parenthesis taken care of array.
-    const baseCode = vars.join('.')
-      .replace(/\.\[/g, '[').replace(/\]\./g, ']'); // replace .[0]. to [0]
+    const baseCode = vars.join('.').replace(/\.\[/g, '['); // replace .[0]. to [0]
 
     // const baseCode = vars.join('.')
     //   .replace(/\.([0-9]+)\./, (_, $1) => `[${$1}].`) // replace .0. to [0]
@@ -357,35 +373,38 @@ class Util {
     const funcExprArg = Util.isFunctionExpr(node) && node.arguments[0]; // if the first argument is a function
     if (funcExprArg) {
       const funcCode = code.substring(funcExprArg.start, funcExprArg.end);
-      const paramObj = Util.getFuncParamObj(funcCode); // {param1: value1, param2: value2}
-      // const value = values.length > 1 ? values : values[0]; // TODO, need to handle multiple function params?
+      const value = Util.getFuncParams(funcCode);
+// TODO: START the same as Util.getFuncParams(node, code)
+      // const paramObj = Util.getFuncParamObj(funcCode); // {param1: value1, param2: value2}
+      // // const value = values.length > 1 ? values : values[0]; // TODO, need to handle multiple function params?
 
-      let value = [];
-      funcExprArg.params.forEach( (param, index) => {
-        if (param.type === 'ArrayPattern') {
-          param.elements.forEach(prop => {
-            let ret;
-            if (prop.type === 'Identifier') {
-              ret = paramObj[prop.name];
-            } else if (prop.type === 'ArrayPattern') {
-              ret = prop.elements.map(el => paramObj[el.name]);
-            } else if (prop.type === 'ObjectPattern') {
-              ret = {};
-              prop.properties.forEach(prop => { 
-                ret[prop.key.name] = paramObj[prop.key.name];
-              });
-            }
-            value.push(ret);
-          });
-        } else if (param.type === 'ObjectPattern') {
-          value[index] = {};
-          param.properties.forEach(prop => { 
-            value[index][prop.key.name] = paramObj[prop.key.name];
-          });
-        } else if (param.type === 'Identifier') {
-          value[index] = paramObj[param.name];
-        }
-      });
+      // let value = [];
+      // funcExprArg.params.forEach( (param, index) => {
+      //   if (param.type === 'ArrayPattern') {
+      //     param.elements.forEach(prop => {
+      //       let ret;
+      //       if (prop.type === 'Identifier') {
+      //         ret = paramObj[prop.name];
+      //       } else if (prop.type === 'ArrayPattern') {
+      //         ret = prop.elements.map(el => paramObj[el.name]);
+      //       } else if (prop.type === 'ObjectPattern') {
+      //         ret = {};
+      //         prop.properties.forEach(prop => { 
+      //           ret[prop.key.name] = paramObj[prop.key.name];
+      //         });
+      //       }
+      //       value.push(ret);
+      //     });
+      //   } else if (param.type === 'ObjectPattern') {
+      //     value[index] = {};
+      //     param.properties.forEach(prop => { 
+      //       value[index][prop.key.name] = paramObj[prop.key.name];
+      //     });
+      //   } else if (param.type === 'Identifier') {
+      //     value[index] = paramObj[param.name];
+      //   }
+      // });
+// TODO: END the same as Util.getFuncParams(node, code)
 
       ret = { code: baseCode, value };
     } else {
@@ -395,16 +414,51 @@ class Util {
     return ret;
   }
 
+  static getFuncParams (code) { // TODO rename it. it returns parameter values in sequence as an array format
+    if (typeof code !== 'string') throw '%%%%%%%%%%%%%%%%% getFuncParams' + code;
+
+    const paramValues = Util.getFuncParamObj(code); // {param1: value1, param2: value2}
+    const node = Util.getNode(code);
+
+    let funcParams = [];
+    node.params.forEach( (param, index) => {
+      if (param.type === 'ArrayPattern') {
+        param.elements.forEach(prop => {
+          let ret;
+          if (prop.type === 'Identifier') {
+            ret = paramValues[prop.name];
+          } else if (prop.type === 'ArrayPattern') {
+            ret = prop.elements.map(el => paramValues[el.name]);
+          } else if (prop.type === 'ObjectPattern') {
+            ret = {};
+            prop.properties.forEach(prop => { 
+              ret[prop.key.name] = paramValues[prop.key.name];
+            });
+          }
+          funcParams.push(ret);
+        });
+      } else if (param.type === 'ObjectPattern') {
+        funcParams[index] = {};
+        param.properties.forEach(prop => { 
+          funcParams[index][prop.key.name] = paramValues[prop.key.name];
+        });
+      } else if (param.type === 'Identifier') {
+        funcParams[index] = paramValues[param.name];
+      }
+    });
+
+    return funcParams;
+  }
+
   /**
    *  Returns function param as an object from CallExpression
-   *  e.g. 'foo.bar.x(event => { event.x.y.z() }' returns
-   *    {x : { y: z: function() {} }}
+   *  e.g. 'foo.bar.x(event => { event.x.y.z() }' returns  {x : { y: z: function() {} }}
    */
   static getFuncParamObj (code) { // CallExpression
     if (typeof code !== 'string') throw '%%%%%%%%%%%%%%%%% getFuncParamObj';
 
     const node = Util.getNode(code);
-    if (!node.params.length)
+    if (!node.type.match(/FunctionExpression$/))
       return false;
 
     const funcRetExprsRaw = Util.getParamExprs(code);
@@ -415,7 +469,6 @@ class Util {
     (funcRetExprs || []).forEach(funcExpr => { // e.g., ['event.urlAfterRedirects.substr(1)', ..]
       const matches = funcExpr.match(/([\(\[])(['"]*)[^)]*$/); // 1: [ or ( 2: ' or "
       const endEncloser = matches && (matches[1] === '(' ? ')' : ']');
-      // console.log('funcExpr..........', {funcExpr, matches, endEncloser});
       if (matches && !funcExpr.endsWith(endEncloser)) { // if parenthesis or [ not closed
         const [_, staEncloser, quotation] = matches;
 

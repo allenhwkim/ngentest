@@ -240,10 +240,11 @@ class FuncTestGen {
       code = this.getCode(codeOrNode);
       obj = Util.getObjectFromExpression(code, returns);
       [one, two] = code.split('.'); // this.prop
-      Util.DEBUG && console.log('  setPropsOrParams', { code, type: codeOrNode.type });
+      Util.DEBUG && console.log('      ** setPropsOrParams', { code, type: codeOrNode.type });
     }
 
-    Util.DEBUG && console.log('  setPropsOrParams', { one, two, obj });
+    Util.DEBUG && console.log('      ** setPropsOrParams', { one, two});
+    Util.DEBUG && console.log('      ** setPropsOrParams', { obj });
     if (one === 'this' && two && map[`this.${two}`]) {
       Util.assign(obj.this, params);
     } else if (one === 'this' && two) {
