@@ -177,7 +177,8 @@ class FuncTestGen {
       this.setPropsOrParams(node, mockData);
       this.setMockData(node.object, mockData);
     } else if (node.type === 'CallExpression') { // callee, arguments
-      const funcReturn = Util.getExprReturn(node, this.classCode);
+      const kode = this.getCode(node);
+      const funcReturn = Util.getExprReturn(kode);
       const exprReturnValue = returnValue || funcReturn.value;
       this.setPropsOrParams(funcReturn.code, mockData, exprReturnValue);
       
@@ -188,7 +189,7 @@ class FuncTestGen {
       });
 
       // What if call argument is a function?
-      const funcExpArg = Util.getFuncExprArg(node);
+      const funcExpArg = Util.isFunctionExpr(node) && node.arguments[0];
       Util.DEBUG && console.log('      *** CallExpression ***', {funcExpArg});
       if (funcExpArg) { // process ArrowFunctionExpression or FunctionExpression
         this.setMockData(funcExpArg, mockData);

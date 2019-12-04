@@ -10,6 +10,16 @@ class Util {
   static get DEBUG () { return !!Util.__debug; }
   static set DEBUG (bool) { Util.__debug = bool; }
 
+  static getCode(node, code) {
+    return code.substring(node.start, node.end);
+  }
+
+  static isFunctionExpr (node) {
+    return node.arguments &&
+      node.arguments[0] &&
+      node.arguments[0].type.match(/FunctionExpression/);
+  }
+
   static getAngularType (typescript) {
     return typescript.match(/^\s*@Component\s*\(/m) ? 'component' : /* eslint-disable */
       typescript.match(/^\s*@Directive\s*\(/m) ? 'directive' :
@@ -159,10 +169,6 @@ class Util {
     return node;
   }
 
-  static getCode(node, code) {
-    return code.substring(node.start, node.end);
-  }
-
   /**
    * Returns expression members in array
    *
@@ -237,13 +243,6 @@ class Util {
     return argNames.join(',');
   }
 
-  static getFuncExprArg (node) {
-    return node.arguments &&
-      node.arguments[0] &&
-      node.arguments[0].type.match(/FunctionExpression/) &&
-      node.arguments[0];
-  }
-
   /**
    * Build a Javascript object from expression by parsing expression members
    *
@@ -280,45 +279,54 @@ class Util {
     return obj;
   }
 
+  // returns parenthesis taken care of array.
+  // e.g. Brom ['a','b', '(c)'] to ['a', 'b(c)']
+  static getVars(code) {
+    if (typeof code !== 'string') throw '%%%%%%%%%%%%%%%%% getVars';
+
+    const members = Util.getExprMembers(code).reverse().join('.').replace(/\.\(/g, '(').split('.');
+    let vars = [];
+    let parenthesisOpen;
+
+    members.forEach(el => {
+      el = el.match(/^[0-9]$/) ? `[${el}]` : el; // change 12 to [12]
+
+      if (parenthesisOpen) {
+        const lastIndex = vars.length - 1;
+        vars[lastIndex] = vars[lastIndex] + '.' + el;
+      } else {
+        vars.push(el);
+      }
+
+      parenthesisOpen =
+        el.match(/\(.*\)$/) ? false :
+        el.match(/\(/) ? true :
+        el.match(/\)$/) ? false : parenthesisOpen;
+    });
+    return vars;
+  };
+
+
   /**
    * if ends with something, return certain type.
    * e.g. for `foo.bar.substr(1)` , 'foo.bar' returns string
    * e.g. for 'foo.bar.subscribe(...)', 'foo.bar' returns Observable
    * e.g. for 'foo.bar.forEach(...)', 'foo.bar' returns array
    */
-  static getExprReturn (node, classCode) {
+  static getExprReturn (code) {
+    if (typeof code !== 'string') throw '%%%%%%%%%%%%%%%%% getExprReturn';
 
-    const code = classCode.substring(node.start, node.end);
-
-    const getVars = function (code) {
-      if (typeof code !== 'string') throw '%%%%%%%%%%%%%%%%%';
-
-      const members = Util.getExprMembers(code).reverse().join('.').replace(/\.\(/g, '(').split('.');
-      let vars = [];
-      let flagged;
-
-      members.forEach(el => {
-        if (flagged) {
-          const lastIndex = vars.length - 1;
-          vars[lastIndex] = vars[lastIndex] + '.' + el;
-        } else {
-          vars.push(el);
-        }
-
-        flagged =
-          el.match(/\(.*\)$/) ? false :
-          el.match(/\(/) ? true :
-          el.match(/\)$/) ? false : flagged;
-      });
-      return vars;
-    };
+    // const code = classCode.substring(node.start, node.end);
 
     // const members = Util.getExprMembers(node).reverse();
-    const vars = getVars(code); // parenthesis taken care of array.
+    const vars = Util.getVars(code); // parenthesis taken care of array.
     const baseCode = vars.join('.')
-      .replace(/\.([0-9]+)\./, (_, $1) => `[${$1}].`) // replace .0. to [0]
-      .replace(/\.([0-9]+)\./, (_, $1) => `[${$1}].`) // repeat
-      .replace(/\.([0-9]+)$/, (_, $1) => `[${$1}]`);  // what if ends with .0
+      .replace(/\.\[/g, '[').replace(/\]\./g, ']'); // replace .[0]. to [0]
+
+    // const baseCode = vars.join('.')
+    //   .replace(/\.([0-9]+)\./, (_, $1) => `[${$1}].`) // replace .0. to [0]
+    //   .replace(/\.([0-9]+)\./, (_, $1) => `[${$1}].`) // repeat
+    //   .replace(/\.([0-9]+)$/, (_, $1) => `[${$1}]`);  // what if ends with .0
     const last = vars[vars.length - 1];
 
     try {
@@ -328,10 +336,11 @@ class Util {
     }
 
     let ret;
-    const funcExprArg = Util.getFuncExprArg(node); // if the first argument is a function
+    const node = Util.getNode(code);
+    const funcExprArg = Util.isFunctionExpr(node) && node.arguments[0]; // if the first argument is a function
     if (funcExprArg) {
-      const funcCode = classCode.substring(funcExprArg.start, funcExprArg.end);
-      const paramObj = Util.getFuncParamObj(funcExprArg, funcCode); // {param1: value1, param2: value2}
+      const funcCode = code.substring(funcExprArg.start, funcExprArg.end);
+      const paramObj = Util.getFuncParamObj(funcCode); // {param1: value1, param2: value2}
       // const value = values.length > 1 ? values : values[0]; // TODO, need to handle multiple function params?
 
       let value = [];
@@ -374,7 +383,10 @@ class Util {
    *  e.g. 'foo.bar.x(event => { event.x.y.z() }' returns
    *    {x : { y: z: function() {} }}
    */
-  static getFuncParamObj (node, code) { // CallExpression
+  static getFuncParamObj (code) { // CallExpression
+    if (typeof code !== 'string') throw '%%%%%%%%%%%%%%%%% getFuncParamObj';
+
+    const node = Util.getNode(code);
     if (!node.params.length)
       return false;
 
@@ -401,8 +413,8 @@ class Util {
         }
       }
 
-      const exprNode = Util.getNode(funcExpr);
-      const newReturn = Util.getExprReturn(exprNode, funcExpr);
+      // const exprNode = Util.getNode(funcExpr);
+      const newReturn = Util.getExprReturn(funcExpr);
       const newCode = newReturn.code;
       const newValue = newReturn.value;
       const newNode = Util.getNode(newCode);
