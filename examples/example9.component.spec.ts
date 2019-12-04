@@ -127,6 +127,23 @@ describe('TotalDataDetailsComponent', () => {
     expect(component.getPastUsage3).toHaveBeenCalled();
   });
 
+  it('should run #getPrimaryCtn()', async () => {
+    component.commonData = component.commonData || {};
+    component.commonData.accountSummary = {
+      subList: [{
+        0: {
+          subNumber: {}
+        }
+      }]
+    };
+    component.getPrimaryCtn({
+      featureGroupList: observableOf({
+        0: {}
+      })
+    });
+
+  });
+
   it('should run #openErrorDialog()', async () => {
     component.dialog = component.dialog || {};
     component.dialog.open = jest.fn().mockReturnValue({

@@ -143,6 +143,10 @@ class Util {
 
   static getNode (code) {
     let parsed;
+
+    if (code.replace(/\n/g,'').match(/^{.*}$/m)) {
+      code = `(${code})`;
+    }
     try {
       parsed = jsParser.parse(code);
     } catch (e) {
@@ -155,6 +159,10 @@ class Util {
     return node;
   }
 
+  static getCode(node, code) {
+    return code.substring(node.start, node.end);
+  }
+
   /**
    * Returns expression members in array
    *
@@ -163,7 +171,10 @@ class Util {
    * ThisExpression   e.g.  this -> [this]
    * Identifier       e.g.  foo -> [foo]
    */
-  static getExprMembers (node, result = []) {
+  static getExprMembers (code, result = []) {
+    if (typeof code !== 'string') throw new Error('%%%%%%%%%%%%%%%%%');
+
+    const node = Util.getNode(code);
     const { type, property, object, callee } = node;
     const member = /* eslint-disable */
       type === 'MemberExpression' ? property.name || property.raw :
@@ -173,9 +184,11 @@ class Util {
     member && result.push(member); /* eslint-enable */
 
     if (object) {
-      result = Util.getExprMembers(object, result);
+      const kode = Util.getCode(object, code);
+      result = Util.getExprMembers(kode, result);
     } else if (callee) {
-      result = Util.getExprMembers(callee, result);
+      const kode = Util.getCode(callee, code);
+      result = Util.getExprMembers(kode, result);
     }
     return result;
   }
@@ -240,8 +253,15 @@ class Util {
    * LogicalExpresssion   e.g., foo.bar.x().y || a.b
    *   returns {foo: {bar: x: function() { return {y: {}}}}}
    */
-  static getObjectFromExpression (node, returns = {}) {
-    const exprMembers = Util.getExprMembers(node);
+  static getObjectFromExpression (code, returns = {}) {
+    if (typeof code !== 'string') throw '%%%%%%%%%%%%%%%%%';
+
+    if (code.match(/yield /)) {
+      code = code.replace(/yield /g, '');
+    }
+
+    const node = Util.getNode(code);
+    const exprMembers = Util.getExprMembers(code);
 
     let nxt, obj;
     obj = exprMembers[0] && exprMembers[0].startsWith('(') ?
@@ -269,8 +289,10 @@ class Util {
 
     const code = classCode.substring(node.start, node.end);
 
-    const getVars = function (node) {
-      const members = Util.getExprMembers(node).reverse().join('.').replace(/\.\(/g, '(').split('.');
+    const getVars = function (code) {
+      if (typeof code !== 'string') throw '%%%%%%%%%%%%%%%%%';
+
+      const members = Util.getExprMembers(code).reverse().join('.').replace(/\.\(/g, '(').split('.');
       let vars = [];
       let flagged;
 
@@ -291,7 +313,7 @@ class Util {
     };
 
     // const members = Util.getExprMembers(node).reverse();
-    const vars = getVars(node); // parenthesis taken care of array.
+    const vars = getVars(code); // parenthesis taken care of array.
     const baseCode = vars.join('.')
       .replace(/\.([0-9]+)\./, (_, $1) => `[${$1}].`) // replace .0. to [0]
       .replace(/\.([0-9]+)\./, (_, $1) => `[${$1}].`) // repeat
@@ -383,7 +405,7 @@ class Util {
       const newCode = newReturn.code;
       const newValue = newReturn.value;
       const newNode = Util.getNode(newCode);
-      const newObj = Util.getObjectFromExpression(newNode, newValue);
+      const newObj = Util.getObjectFromExpression(newCode, newValue);
       // const source = newObj[Object.keys(newObj)[0]];
       Util.assign(newObj, funcParam);
     });

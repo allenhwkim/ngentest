@@ -202,7 +202,7 @@ class FuncTestGen {
       const [right1, right2] = rightCode.split('.'); // param
       const { params, map } = mockData;
 
-      const right = Util.getObjectFromExpression(rightObj);
+      const right = Util.getObjectFromExpression(rightCode);
       if (left1 === 'this' && left2 && !left3 && params[right1] && !right2) {
         // set map between params to `this value`. e.g. this.foo = param1
         map[`this.${left2}`] = right1;
@@ -228,16 +228,16 @@ class FuncTestGen {
     let nodeToUse, obj, one, two, code;
     if (typeof codeOrNode === 'string') {
       nodeToUse = Util.getNode(codeOrNode);
-      obj = Util.getObjectFromExpression(nodeToUse, returns); // TODO: return function with params, not return
       code = codeOrNode;
+      obj = Util.getObjectFromExpression(code, returns); // TODO: return function with params, not return
       [one, two] = codeOrNode.split('.'); // this.prop
     } else {
       nodeToUse = /* eslint-disable */
         codeOrNode.type === 'LogicalExpression' ? codeOrNode.left :
         codeOrNode.type === 'BinaryExpression' ? codeOrNode.left :
         codeOrNode; /* eslint-enable */
-      obj = Util.getObjectFromExpression(nodeToUse, returns);
       code = this.getCode(codeOrNode);
+      obj = Util.getObjectFromExpression(code, returns);
       [one, two] = code.split('.'); // this.prop
       Util.DEBUG && console.log('  setPropsOrParams', { code, type: codeOrNode.type });
     }

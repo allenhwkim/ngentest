@@ -51,6 +51,15 @@ export class TotalDataDetailsComponent implements OnInit {
     // this.totalRemainingPercentage = (this.dataDetails.remainingData / this.dataDetails.totalData) * 100;
   }
 
+  getPrimaryCtn(pricePlansCurrent): any {
+    const featureGroup = pricePlansCurrent.featureGroupList
+      .subscribe(group => group.featureGroup.label.en === 'Data')[0];
+
+    return this.commonData.accountSummary.subList
+      .filter(contact => contact.shareEverything.isPrimaryCtn)[0]
+      .subNumber;
+  }
+
   openErrorDialog(title, code): Observable<any> {
     return this.dialog.open(ErrorComponent, {
       data: {
