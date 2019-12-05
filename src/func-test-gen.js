@@ -195,16 +195,54 @@ class FuncTestGen {
         this.setMockData(funcExpArg, mockData);
       }
     } else if (node.type === 'AssignmentExpression') {
-      const rightObj = node.right.type === 'LogicalExpression' ? node.right.left : node.right;
-      const leftCode = this.getCode(node.left);
-      const rightCode = this.getCode(rightObj);
+      const nodeRight = node.right.type === 'LogicalExpression' ? node.right.left : node.right;
+      const nodeLeft = node.left;
+      const leftCode = this.getCode(nodeLeft);
+      const rightCode = this.getCode(nodeRight);
 
       const [left1, left2, left3] = leftCode.split('.'); // this.prop
       const [right1, right2] = rightCode.split('.'); // param
       const { params, map } = mockData;
 
       const right = Util.getObjectFromExpression(rightCode);
-// console.log('.................... AssignmentExp', right, rightCode);
+
+//
+// NOTE. this.funcCode
+//
+//   set map only if right-side source start with
+//     . this.xxxx 
+//     . a parameter
+//     and left-side target is following
+//        . starts with this.yyyy or yyyy
+//        . and this.yyyy or yyyy used in this.funcCode at least twice. search it with this.xxx. or xxx.
+//
+
+// if (
+//   ['Indetifier', 'MemberExpression'].includes(nodeLeft.type) && 
+//   ['MemberExpression', 'CallExpression'].includes(nodeRight.type)
+// ) {
+//   const varNameLeft  = leftCode;
+//   const varNameRight = rightCode.replace(/\s+/g,'').replace(/\(.*\)/g,'');
+//   const paramNames = Object.keys(mockData.params);
+//   const paramMatchRE = new RegExp(`^(${paramNames.join('|')})\\.`);
+//   const thisMatchRE = /^this\./;
+//   const mapTargets = Object.values(mockData.map);
+//   const mapTargetMatchRE = new RegExp(`^(${mapTargets.join('|')})\\.`);
+
+//   console.log(1111111111, varNameLeft, varNameLeft.match(/^[a-z\.0-9]+$/i), varNameRight.match(thisMatchRE) );
+//   // map only for source starts with `this.xxxxx`
+//   if ( varNameLeft.match(/^[a-z\.0-9]+$/i) && varNameRight.match(thisMatchRE) ) {
+//     // right value is a param or found in pre-mapped one
+//     // if (varNameRight.match(paramMatchRE) || varNameRight.match(mapTargetMatchRE)) {
+//       // console.log('..............', {mapTargets, paramNames});
+//       // console.log('..............', paramMatchRE, varNameRight.match(paramMatchRE));
+//       // console.log('..............', !!varNameRight.match(thisMatchRE), !!varNameRight.match(paramMatchRE), !!varNameRight.match(mapTargetMatchRE) );
+//       console.log('.................... AssignmentExp', varNameLeft, varNameRight);
+//       mockData.map[varNameLeft] = varNameRight;
+//     // }
+//   }
+// }
+//
       if (left1 === 'this' && left2 && !left3 && params[right1] && !right2) {
         // set map between params to `this value`. e.g. this.foo = param1
         map[`this.${left2}`] = right1;
@@ -244,17 +282,33 @@ class FuncTestGen {
       Util.DEBUG && console.log('      ** setPropsOrParams', { code, type: codeOrNode.type });
     }
 
+    // console.log('      ** setPropsOrParams', { code, map });
     Util.DEBUG && console.log('      ** setPropsOrParams', { one, two});
-    Util.DEBUG && console.log('      ** setPropsOrParams', { obj });
-    if (one === 'this' && two && map[`this.${two}`]) {
-      Util.merge(obj.this, params);
-    } else if (one === 'this' && two) {
-      Util.merge(obj.this, props);
-    } else if (params[one] && two) {
-      Util.merge(obj, params);
-    } else if (one === 'window' || obj === 'document') {
-      Util.merge(obj, globals);
+    // function(param) {
+    //   this.x = param;
+    //   this.mapped = this.foo.bar.x.y;
+    //   this.mapped.a.b.c; // this.foo.bar.x.y
+    // }
+
+    const variableExpression = code.replace(/\s+/g,'').replace(/\(.*\)/g,'');
+    const mapKey = (variableExpression.match(/(this\.)?[a-zA-Z0-9_\$]+/) || [])[0]; // foo or this.foo
+    const exprFoundInmap = Object.entries(map).find( ([k, v]) => variableExpression.startsWith(k + '.'));
+
+    if (map[mapKey] && params[map[mapKey]]) {
+      if (one === 'this' && two && map[`this.${two}`]) { // parameter map found
+console.log('      ** setPropsOrParams map found', { variableExpression, mapKey, map });
+        Util.merge(obj.this, params);
+      } 
+    } else {
+      if (one === 'this' && two) {
+        Util.merge(obj.this, props);
+      } else if (params[one] && two) {
+        Util.merge(obj, params);
+      } else if (one === 'window' || obj === 'document') {
+        Util.merge(obj, globals);
+      }
     }
+    // handle mapping only for two cases xxxx, or this.xxxx, NOT this.xxx.yyy
   }
 
 }
