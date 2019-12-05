@@ -322,34 +322,34 @@ class Util {
     return obj;
   }
 
-  /**
-   * returns parenthesis taken care of array.
-   * e.g. Brom ['a','b', '(c)'] to ['a', 'b(c)']
-   */
-  static getExprMembersRegrouped(code) {
-    if (typeof code !== 'string') throw '%%%%%%%%%%%%%%%%% getExprMembersRegrouped';
+  // /**
+  //  * returns parenthesis taken care of array.
+  //  * e.g. Brom ['a','b', '(c)'] to ['a', 'b(c)']
+  //  */
+  // static getExprMembersRegrouped(code) {
+  //   if (typeof code !== 'string') throw '%%%%%%%%%%%%%%%%% getExprMembersRegrouped';
 
-    const members = Util.getExprMembers(code).reverse().join('.').replace(/\.\(/g, '(').split('.');
-    let membersRegrouped = [];
-    let parenthesisOpen;
+  //   const members = Util.getExprMembers(code).reverse().join('.').replace(/\.\(/g, '(').split('.');
+  //   let membersRegrouped = [];
+  //   let parenthesisOpen;
 
-    members.forEach(el => {
-      el = el.match(/^[0-9]$/) ? `[${el}]` : el; // change 0 to [0]
+  //   members.forEach(el => {
+  //     el = el.match(/^[0-9]$/) ? `[${el}]` : el; // change 0 to [0]
 
-      if (parenthesisOpen) {
-        const lastIndex = membersRegrouped.length - 1;
-        membersRegrouped[lastIndex] = membersRegrouped[lastIndex] + '.' + el;
-      } else {
-        membersRegrouped.push(el);
-      }
+  //     if (parenthesisOpen) {
+  //       const lastIndex = membersRegrouped.length - 1;
+  //       membersRegrouped[lastIndex] = membersRegrouped[lastIndex] + '.' + el;
+  //     } else {
+  //       membersRegrouped.push(el);
+  //     }
 
-      parenthesisOpen =
-        el.match(/\(.*\)$/) ? false :
-        el.match(/\(/) ? true :
-        el.match(/\)$/) ? false : parenthesisOpen;
-    });
-    return membersRegrouped;
-  };
+  //     parenthesisOpen =
+  //       el.match(/\(.*\)$/) ? false :
+  //       el.match(/\(/) ? true :
+  //       el.match(/\)$/) ? false : parenthesisOpen;
+  //   });
+  //   return membersRegrouped;
+  // };
 
 
   /**
@@ -359,13 +359,13 @@ class Util {
   static getNewExprAndReturn (code) {
     if (typeof code !== 'string') throw '%%%%%%%%%%%%%%%%% getNewExprAndReturn';
 
-    const exprMembers = Util.getExprMembersRegrouped(code); // parenthesis taken care of array.
-    const baseCode = exprMembers.join('.').replace(/\.\[/g, '['); // replace .[0]. to [0]
+    // const exprMembers = Util.getExprMembersRegrouped(code); // parenthesis taken care of array.
+    // const baseCode = exprMembers.join('.').replace(/\.\[/g, '['); // replace .[0]. to [0]
 
     try {
-      jsParser.parse(baseCode);
+      jsParser.parse(code);
     } catch (e) {
-      throw new Error(`ERROR this JS code is invalid, "${baseCode}"`);
+      throw new Error(`ERROR this JS code is invalid, "${code}"`);
     }
 
     let ret;
@@ -374,7 +374,7 @@ class Util {
     if (funcExprArg) { // if the first argument is a function
       const funcCode = code.substring(funcExprArg.start, funcExprArg.end);
       const funcArguments = Util.getFuncArguments(funcCode);
-      ret = { code: baseCode, value: funcArguments };
+      ret = { code: code, value: funcArguments };
     } else {
       ret = { code: code, value: {} };
     }
