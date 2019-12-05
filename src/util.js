@@ -441,7 +441,7 @@ class Util {
     if (!node.type.match(/FunctionExpression$/))
       return false;
 
-    const funcRetExprsRaw = Util.getParamExprs(code);
+    const funcRetExprsRaw = Util.getFuncParamCodes(code);
     const funcRetExprsFlat = funcRetExprsRaw.reduce((acc, val) => acc.concat(val), []);
     const funcRetExprs = Array.from(new Set(funcRetExprsFlat));
 
@@ -477,10 +477,10 @@ class Util {
   }
 
   /**
-   * returns function parameter related codes from the node
+   * returns function parameter related codes from a function codes
    */
-  static getParamExprs (code) {
-    const paramExprs = [];
+  static getFuncParamCodes (code) {
+    const paramCodes = [];
 
     const paramNames1 = Util.getFuncParamNames(code);
 
@@ -492,11 +492,11 @@ class Util {
       const matches = code.match(paramNameMatchRE);
       if (matches) {
         // remove the invalid first character. e.g. '\nmyParam.foo.bar'
-        paramExprs.push(matches.map(el => el.slice(1))); 
+        paramCodes.push(matches.map(el => el.slice(1))); 
       }
     });
 
-    return paramExprs;
+    return paramCodes;
   }
 
   // returns function parameters names
@@ -629,6 +629,9 @@ class Util {
     return js;
   }
 
+  /**
+   * Return JS expression of parameter
+   */
   static getFuncParamJS (params) {
     const js = [];
     Object.entries(params).forEach(([key2, value2]) => {

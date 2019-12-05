@@ -181,17 +181,6 @@ describe('TotalDataDetailsComponent', () => {
 
   });
 
-  it('should run #getObjToEncrypt()', async () => {
-    component.deviceDetails = component.deviceDetails || {};
-    component.deviceDetails.deviceDetailsNumber = 'deviceDetailsNumber';
-    component.accSub = component.accSub || {};
-    component.accSub.firstName = 'firstName';
-    component.dialogService = component.dialogService || {};
-    component.dialogService.open = jest.fn();
-    component.getObjToEncrypt();
-    expect(component.dialogService.open).toHaveBeenCalled();
-  });
-
   it('should run #getPastUsage()', async () => {
 
     component.getPastUsage([{

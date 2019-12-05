@@ -204,6 +204,7 @@ class FuncTestGen {
       const { params, map } = mockData;
 
       const right = Util.getObjectFromExpression(rightCode);
+// console.log('.................... AssignmentExp', right, rightCode);
       if (left1 === 'this' && left2 && !left3 && params[right1] && !right2) {
         // set map between params to `this value`. e.g. this.foo = param1
         map[`this.${left2}`] = right1;
