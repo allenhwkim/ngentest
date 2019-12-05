@@ -178,9 +178,9 @@ class FuncTestGen {
       this.setMockData(node.object, mockData);
     } else if (node.type === 'CallExpression') { // callee, arguments
       const kode = this.getCode(node);
-      const funcReturn = Util.getNewExprAndReturn(kode);
-      const exprReturnValue = returnValue || funcReturn.value;
-      this.setPropsOrParams(funcReturn.code, mockData, exprReturnValue);
+      const funcReturn = Util.getFuncReturn(kode);
+      const exprReturnValue = returnValue || funcReturn;
+      this.setPropsOrParams(kode, mockData, exprReturnValue);
       
       this.setMockData(node.callee, mockData);
       // procesa call arguments

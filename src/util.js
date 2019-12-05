@@ -80,8 +80,7 @@ class Util {
     const firstKey = typeof obj === 'object' && Object.keys(obj).filter(k => k !== 'undefined')[0];
     if (typeof obj === 'function') {
       const objRet = obj();
-      const objRet1stKey = typeof objRet === 'object' &&
-        Object.keys(objRet).filter(k => k !== 'undefined')[0];
+      const objRet1stKey = Util.getFirstKey(objRet);
       if (!objRet1stKey) {
         return 'jest.fn()';
       } else {
@@ -111,8 +110,7 @@ class Util {
       for (var key in obj) {
         if (key === 'undefined' || !obj.hasOwnProperty(key)) { continue; }
 
-        const obj1stKey = (typeof obj[key] === 'object') &&
-          Object.keys(obj[key]).filter(k => k !== 'undefined')[0];
+        const obj1stKey = Util.getFirstKey(obj[key]);
         if (typeof obj[key] === 'object' && !obj1stKey) { // is empty obj, e.g. {}
           exprs.push(`${key}: ${Util.objToJS(obj[key])}`);
         } else if (obj1stKey && obj1stKey.match(strFuncRE)) { // string in form of an object
@@ -322,45 +320,13 @@ class Util {
     return obj;
   }
 
-  // /**
-  //  * returns parenthesis taken care of array.
-  //  * e.g. Brom ['a','b', '(c)'] to ['a', 'b(c)']
-  //  */
-  // static getExprMembersRegrouped(code) {
-  //   if (typeof code !== 'string') throw '%%%%%%%%%%%%%%%%% getExprMembersRegrouped';
-
-  //   const members = Util.getExprMembers(code).reverse().join('.').replace(/\.\(/g, '(').split('.');
-  //   let membersRegrouped = [];
-  //   let parenthesisOpen;
-
-  //   members.forEach(el => {
-  //     el = el.match(/^[0-9]$/) ? `[${el}]` : el; // change 0 to [0]
-
-  //     if (parenthesisOpen) {
-  //       const lastIndex = membersRegrouped.length - 1;
-  //       membersRegrouped[lastIndex] = membersRegrouped[lastIndex] + '.' + el;
-  //     } else {
-  //       membersRegrouped.push(el);
-  //     }
-
-  //     parenthesisOpen =
-  //       el.match(/\(.*\)$/) ? false :
-  //       el.match(/\(/) ? true :
-  //       el.match(/\)$/) ? false : parenthesisOpen;
-  //   });
-  //   return membersRegrouped;
-  // };
-
-
   /**
-   * Return code and return value from an expression.
-   * e.g. `x.y.z(foo => foo.bar.baz)` returns {code: <same>, value: [{bar: {baz: {}} }]
+   * return function argument value from a CallExpression code.
+   * e.g. `x.y.z(foo => foo.bar.baz)` returns [{bar: {baz: {}} }
+   * e.g. `x.y.z()` returns  undefined
    */
-  static getNewExprAndReturn (code) {
-    if (typeof code !== 'string') throw '%%%%%%%%%%%%%%%%% getNewExprAndReturn';
-
-    // const exprMembers = Util.getExprMembersRegrouped(code); // parenthesis taken care of array.
-    // const baseCode = exprMembers.join('.').replace(/\.\[/g, '['); // replace .[0]. to [0]
+  static getFuncReturn (code) {
+    if (typeof code !== 'string') throw '%%%%%%%%%%%%%%%%% getFuncReturn';
 
     try {
       jsParser.parse(code);
@@ -368,20 +334,22 @@ class Util {
       throw new Error(`ERROR this JS code is invalid, "${code}"`);
     }
 
-    let ret;
     const node = Util.getNode(code);
     const funcExprArg = Util.isFunctionExpr(node) && node.arguments[0];
     if (funcExprArg) { // if the first argument is a function
       const funcCode = code.substring(funcExprArg.start, funcExprArg.end);
       const funcArguments = Util.getFuncArguments(funcCode);
-      ret = { code: code, value: funcArguments };
-    } else {
-      ret = { code: code, value: {} };
-    }
-
-    return ret;
+      return funcArguments;
+    } 
   }
 
+  /**
+   * return value-filled function arguments in array format
+   * e.g. `foo => foo.bar.baz` returns [{bar: {baz: {}}]
+   * e.g. `(foo,bar) => {}` returns [{}, {}]
+   * e.g. `([foo,bar]) => {}` returns [[{}, {}]]
+   * e.g. `({foo,bar}) => {}` returns [{foo:{}, bar:{}}]
+   */
   static getFuncArguments (code) {
     if (typeof code !== 'string') throw '%%%%%%%%%%%%%%%%% getFuncArguments ' + code;
 
@@ -451,13 +419,8 @@ class Util {
         }
       }
 
-      // const exprNode = Util.getNode(funcExpr);
-      const newReturn = Util.getNewExprAndReturn(funcExpr);
-      const newCode = newReturn.code;
-      const newValue = newReturn.value;
-      const newNode = Util.getNode(newCode);
-      const newObj = Util.getObjectFromExpression(newCode, newValue);
-      // const source = newObj[Object.keys(newObj)[0]];
+      const newReturn = Util.getFuncReturn(funcExpr);
+      const newObj = Util.getObjectFromExpression(funcExpr, newReturn);
       Util.merge(newObj, funcParam);
     });
 
@@ -545,7 +508,7 @@ class Util {
             }
           } else if (typeof value2 === 'function' && JSON.stringify(value2()) === '{}') {
             const funcRetVal = value2();
-            const funcRet1stKey = Object.keys(funcRetVal).filter(el => el !== 'undefined')[0];
+            const funcRet1stKey = Util.getFirstKey(funcRetVal);
             if (typeof funcRetVal === 'object' && ['toPromise'].includes(funcRet1stKey)) {
               const retStr = Util.objToJS(funcRetVal[funcRet1stKey]());
               js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(observableOf(${retStr}))`);
@@ -639,6 +602,10 @@ class Util {
     return js.join(', ');
   }
 
+  static getFirstKey(obj) {
+    const firstKey = typeof obj === 'object' && Object.keys(obj).filter(k => k !== 'undefined')[0];
+    return firstKey || undefined;
+  }
 }
 
 module.exports = Util;
