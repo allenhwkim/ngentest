@@ -3,7 +3,7 @@ const Util = require('./util.js');
 
 class FuncTestGen {
 
-  // TODO: getter/setter differntiate the same name function getter/setter
+  // TODO: differntiate the same name getter/setter function getter/setter
   constructor (Klass, funcName) {
     this.Klass = Klass;
     this.funcName = funcName;
@@ -22,7 +22,7 @@ class FuncTestGen {
 
   getInitialParameters () {
     const params = {};
-    // TODO: getter/setter differntiate the same name function getter/setter
+    // TODO:  differntiate the same name function getter/setter
     const methodDefinition = this.klassDecl.body.body.find(node => node.key.name === this.funcName);
     if (methodDefinition) {
       methodDefinition.value.params.forEach(el => (params[el.name] = {}));
@@ -178,7 +178,7 @@ class FuncTestGen {
       this.setMockData(node.object, mockData);
     } else if (node.type === 'CallExpression') { // callee, arguments
       const kode = this.getCode(node);
-      const funcReturn = Util.getExprReturn(kode);
+      const funcReturn = Util.getNewExprAndReturn(kode);
       const exprReturnValue = returnValue || funcReturn.value;
       this.setPropsOrParams(funcReturn.code, mockData, exprReturnValue);
       
@@ -211,7 +211,7 @@ class FuncTestGen {
       } else if (left1 === 'this' && right1 === 'this' && map[`this.${right2}`]) {
         // set param value instead of 'this'(prop) value e.g., this.bar = this.foo.x.y (`this.foo` is from param1)
         this.setMockData(node.right, mockData); // process the right side expression
-        Util.assign(right.this, params); // (source, target)
+        Util.merge(right.this, params); // (source, target)
       } else {
         this.setMockData(node.right, mockData);
         this.setMockData(node.left, mockData);
@@ -231,7 +231,7 @@ class FuncTestGen {
     if (typeof codeOrNode === 'string') {
       nodeToUse = Util.getNode(codeOrNode);
       code = codeOrNode;
-      obj = Util.getObjectFromExpression(code, returns); // TODO: return function with params, not return
+      obj = Util.getObjectFromExpression(code, returns);
       [one, two] = codeOrNode.split('.'); // this.prop
     } else {
       nodeToUse = /* eslint-disable */
@@ -247,13 +247,13 @@ class FuncTestGen {
     Util.DEBUG && console.log('      ** setPropsOrParams', { one, two});
     Util.DEBUG && console.log('      ** setPropsOrParams', { obj });
     if (one === 'this' && two && map[`this.${two}`]) {
-      Util.assign(obj.this, params);
+      Util.merge(obj.this, params);
     } else if (one === 'this' && two) {
-      Util.assign(obj.this, props);
+      Util.merge(obj.this, props);
     } else if (params[one] && two) {
-      Util.assign(obj, params);
+      Util.merge(obj, params);
     } else if (one === 'window' || obj === 'document') {
-      Util.assign(obj, globals);
+      Util.merge(obj, globals);
     }
   }
 

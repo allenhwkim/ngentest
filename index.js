@@ -54,7 +54,7 @@ if (fs.existsSync(path.join(appRoot.path, 'ngentest.config.js'))) {
 }
 Util.DEBUG && console.log('  *** config ***', config);
 
-// TODO: getter/setter differntiate the same name function getter/setter
+// getter/setter differntiate the same name function getter/setter
 function getFuncMockData (Klass, funcName, props) {
   const funcTestGen = new FuncTestGen(Klass, funcName);
   const funcMockData = {
@@ -90,7 +90,7 @@ function getFuncTest(Klass, func, angularType) {
     console.log('\x1b[36m%s\x1b[0m', `\nPROCESSING #${func.name}`);
 
   const type = func.constructor.name;
-  // TODO: getter/setter differntiate the same name function getter/setter
+  // getter/setter differntiate the same name function getter/setter
   const funcMockData = getFuncMockData(Klass, func.name, {});
   const allFuncMockJS = Util.getFuncMockJS(funcMockData, angularType);
   const funcMockJS = [...new Set(allFuncMockJS)];
@@ -170,7 +170,7 @@ async function run (tsFile) {
     const errors = [];
     klass.accessors.forEach(accessor => {
       const type = accessor.constructor.name === 'SetterDeclaration' ? '=' : '';
-      // TODO: getter/setter differntiate the same name function getter/setter
+      // getter/setter differntiate the same name function getter/setter
       ejsData.accessorTests[accessor.name + type] =
         Util.indent(getFuncTest(Klass, accessor, angularType), '  ');
     });

@@ -15,7 +15,6 @@ import { ActivatedRoute } from '@angular/router';
 export class DynamicComponentService {
   rootViewContainer: ViewContainerRef;
 
-  // TODO, !!!!! need mock for this.encryptionService and this.route.snapshot.params in a service
   urlData$ = this.encryptionService.decrypt(
     decodeURIComponent(this.route.snapshot.params['cipherText']), this.keyMap
   );

@@ -141,15 +141,15 @@ class Util {
    * For example, assuming source is {foo: {bar: 1}}, and target is {foo: {baz: 2}}
    * AFter this function, target wil become { foo: {bar: 1, baz: 2}}
    */
-  static assign (source, target) {
+  static merge (source, target) {
     const firstKey = Object.keys(source)[0];
     if (!target[firstKey]) {
-      target[firstKey] = source[firstKey];
-      return;
-    }
 
-    if (typeof source[firstKey] === 'function') {
+      target[firstKey] = source[firstKey];
+
+    } else if (typeof source[firstKey] === 'function') {
       const sourceFuncRet = source[firstKey]();
+
       if (typeof sourceFuncRet === 'object') {
         const targetFuncRet = typeof source[firstKey] === 'function' ? target[firstKey]() : {};
         const isTarget0EmptyObj =  targetFuncRet[0] && // e.g.,  { 0 : {} }
@@ -172,11 +172,14 @@ class Util {
         }
         
       } else if (typeof sourceFuncRet === 'string') {
+
         target[firstKey] = function() { return sourceFuncRet; }
+
       }
-    } else {
-      Util.assign(source[firstKey], target[firstKey]);
-      return;
+    } else if (typeof source[firstKey] !== 'function') {
+
+      Util.merge(source[firstKey], target[firstKey]);
+
     }
   }
 
@@ -199,10 +202,10 @@ class Util {
   }
 
   /**
-   * Returns expression members in array
+   * Returns dot(.) separated members as an array from an code expression in reverse order
    *
-   * MemberExpression e.g., foo.bar().x -> [foo, bar, (), x]
-   * CallExpression   e.g.  foo.x.bar() -> [foo, x, bar, ()]
+   * MemberExpression e.g., foo.bar().x -> [x, (), bar, foo]
+   * CallExpression   e.g.  foo.x.bar() -> [(), bar, x, foo]
    * ThisExpression   e.g.  this -> [this]
    * Identifier       e.g.  foo -> [foo]
    */
@@ -229,23 +232,19 @@ class Util {
   }
 
   /**
-   * Build a Javascript object from expression by parsing expression members
-   *
-   * MemberExpression     e.g., foo.bar.x().y
-   *   returns {foo: {bar: x: function() { return {y: {}}}}}
-   * Identifier           e.g., foo
-   *   returns {}
-   * LogicalExpresssion   e.g., foo.bar.x().y || a.b
-   *   returns {foo: {bar: x: function() { return {y: {}}}}}
+   * return simplified function arguments in string format
+   * e.g. from `myFunc(x => [x.y])`
+   *     returns, 'x => [x.y]'
+   * e.g. from `myFunc(foo, bar, [1,2], a||b, x(), foo.bar, {}, a ? b:c)`
+   *     returns, 'foo,bar,[],BIN_EXPR,CALL_EXPR,MBR_EXPR,UNRU_EXPR,COND_EXPR'
    */
   static getFuncArgNames (code) {
+    if (typeof code !== 'string') throw new Error('%%%%%%%%%%%%%%%%% getFuncArgNames');
+
     const node = Util.getNode(code);
     const argNames = node.arguments.map(arg => {
       if (arg.type === 'ArrowFunctionExpression' || arg.type === 'FunctionExpression') {
         return code.substring(arg.start, arg.end); 
-      } else if (arg.params && arg.params[0] && arg.params[0].name) {
-        console.log('OHHHHHHHHHHHH xxxxxxx NOOOOOOOOOOOOOOOOOOOOOHHHHH xxxxxxxxxxxxx')
-        return arg.params[0].name;
       } else if (arg.params && arg.params[0] && arg.params[0].type === 'ArrayPattern') {
         return `ARR_PTRN`;
       } else if (arg.type === 'ArrayExpression') {
@@ -255,8 +254,6 @@ class Util {
       } else if (arg.type === 'Identifier' && arg.name) {
         return arg.name;
       } else if (arg.type === 'BinaryExpression') return 'BIN_EXPR';
-      else if (arg.type === 'ArrowFunctionExpression') return 'ARROW_FUNC_EXPR';
-      else if (arg.type === 'FunctionExpression') return 'FUNC_EXPR';
       else if (arg.type === 'CallExpression') return 'CALL_EXPR';
       else if (arg.type === 'LogicalExpression') return 'LOGI_EXPR';
       else if (arg.type === 'MemberExpression') return 'MBR_EXPR';
@@ -286,7 +283,7 @@ class Util {
    *   returns {foo: {bar: x: function() { return {y: {}}}}}
    */
   static getObjectFromExpression (code, returns = {}) {
-    if (typeof code !== 'string') throw '%%%%%%%%%%%%%%%%%';
+    if (typeof code !== 'string') throw '%%%%%%%%%%%%%%%%% getObjectFromExpression';
 
     if (code.match(/yield /)) {
       code = code.replace(/yield /g, '');
@@ -303,8 +300,8 @@ class Util {
     } else if (isFirstExprFuncLike) {
       const node = Util.getNode(firstExpr);
       if (node.type.match(/FunctionExpression$/)) {
-        const funcParamVal = Util.getFuncParams(firstExpr);
-        obj = function() { return funcParamVal; }
+        const funcArguments = Util.getFuncArguments(firstExpr);
+        obj = function() { return funcArguments; }
       } else {
         obj = function() { return returns; }
       }
@@ -325,23 +322,25 @@ class Util {
     return obj;
   }
 
-  // returns parenthesis taken care of array.
-  // e.g. Brom ['a','b', '(c)'] to ['a', 'b(c)']
-  static getVars(code) {
-    if (typeof code !== 'string') throw '%%%%%%%%%%%%%%%%% getVars';
+  /**
+   * returns parenthesis taken care of array.
+   * e.g. Brom ['a','b', '(c)'] to ['a', 'b(c)']
+   */
+  static getExprMembersRegrouped(code) {
+    if (typeof code !== 'string') throw '%%%%%%%%%%%%%%%%% getExprMembersRegrouped';
 
     const members = Util.getExprMembers(code).reverse().join('.').replace(/\.\(/g, '(').split('.');
-    let vars = [];
+    let membersRegrouped = [];
     let parenthesisOpen;
 
     members.forEach(el => {
       el = el.match(/^[0-9]$/) ? `[${el}]` : el; // change 0 to [0]
 
       if (parenthesisOpen) {
-        const lastIndex = vars.length - 1;
-        vars[lastIndex] = vars[lastIndex] + '.' + el;
+        const lastIndex = membersRegrouped.length - 1;
+        membersRegrouped[lastIndex] = membersRegrouped[lastIndex] + '.' + el;
       } else {
-        vars.push(el);
+        membersRegrouped.push(el);
       }
 
       parenthesisOpen =
@@ -349,30 +348,19 @@ class Util {
         el.match(/\(/) ? true :
         el.match(/\)$/) ? false : parenthesisOpen;
     });
-    return vars;
+    return membersRegrouped;
   };
 
 
   /**
-   * if ends with something, return certain type.
-   * e.g. for `foo.bar.substr(1)` , 'foo.bar' returns string
-   * e.g. for 'foo.bar.subscribe(...)', 'foo.bar' returns Observable
-   * e.g. for 'foo.bar.forEach(...)', 'foo.bar' returns array
+   * Return code and return value from an expression.
+   * e.g. `x.y.z(foo => foo.bar.baz)` returns {code: <same>, value: [{bar: {baz: {}} }]
    */
-  static getExprReturn (code) {
-    if (typeof code !== 'string') throw '%%%%%%%%%%%%%%%%% getExprReturn';
+  static getNewExprAndReturn (code) {
+    if (typeof code !== 'string') throw '%%%%%%%%%%%%%%%%% getNewExprAndReturn';
 
-    // const code = classCode.substring(node.start, node.end);
-
-    // const members = Util.getExprMembers(node).reverse();
-    const vars = Util.getVars(code); // parenthesis taken care of array.
-    const baseCode = vars.join('.').replace(/\.\[/g, '['); // replace .[0]. to [0]
-
-    // const baseCode = vars.join('.')
-    //   .replace(/\.([0-9]+)\./, (_, $1) => `[${$1}].`) // replace .0. to [0]
-    //   .replace(/\.([0-9]+)\./, (_, $1) => `[${$1}].`) // repeat
-    //   .replace(/\.([0-9]+)$/, (_, $1) => `[${$1}]`);  // what if ends with .0
-    const last = vars[vars.length - 1];
+    const exprMembers = Util.getExprMembersRegrouped(code); // parenthesis taken care of array.
+    const baseCode = exprMembers.join('.').replace(/\.\[/g, '['); // replace .[0]. to [0]
 
     try {
       jsParser.parse(baseCode);
@@ -382,11 +370,11 @@ class Util {
 
     let ret;
     const node = Util.getNode(code);
-    const funcExprArg = Util.isFunctionExpr(node) && node.arguments[0]; // if the first argument is a function
-    if (funcExprArg) {
+    const funcExprArg = Util.isFunctionExpr(node) && node.arguments[0];
+    if (funcExprArg) { // if the first argument is a function
       const funcCode = code.substring(funcExprArg.start, funcExprArg.end);
-      const value = Util.getFuncParams(funcCode);
-      ret = { code: baseCode, value };
+      const funcArguments = Util.getFuncArguments(funcCode);
+      ret = { code: baseCode, value: funcArguments };
     } else {
       ret = { code: code, value: {} };
     }
@@ -394,8 +382,8 @@ class Util {
     return ret;
   }
 
-  static getFuncParams (code) { // TODO rename it. it returns parameter values in sequence as an array format
-    if (typeof code !== 'string') throw '%%%%%%%%%%%%%%%%% getFuncParams' + code;
+  static getFuncArguments (code) {
+    if (typeof code !== 'string') throw '%%%%%%%%%%%%%%%%% getFuncArguments ' + code;
 
     const paramValues = Util.getFuncParamObj(code); // {param1: value1, param2: value2}
     const node = Util.getNode(code);
@@ -464,13 +452,13 @@ class Util {
       }
 
       // const exprNode = Util.getNode(funcExpr);
-      const newReturn = Util.getExprReturn(funcExpr);
+      const newReturn = Util.getNewExprAndReturn(funcExpr);
       const newCode = newReturn.code;
       const newValue = newReturn.value;
       const newNode = Util.getNode(newCode);
       const newObj = Util.getObjectFromExpression(newCode, newValue);
       // const source = newObj[Object.keys(newObj)[0]];
-      Util.assign(newObj, funcParam);
+      Util.merge(newObj, funcParam);
     });
 
     return funcParam;

@@ -4,32 +4,32 @@ let parsed, code, node, obj;
 
 // code = `group => group.featureGroup.label.en === 'Data'`;
 // node = Util.getNode(code);
-// console.log('Util.getFuncParams(node, code)', { code });
-// console.log('util-test result: ',  Util.objToJS( Util.getFuncParams(node, code)) );
+// console.log('Util.getFuncArguments(node, code)', { code });
+// console.log('util-test result: ',  Util.objToJS( Util.getFuncArguments(node, code)) );
 // console.log('-'.repeat(80));
 
 code = `foo.bar.baz( ([foo, event]) => { event.x.y.z(); foo.bar.x.y = 1; })`;
 node = Util.getNode(code).arguments[0];
-console.log('Util.getFuncParams(node, code)');
-console.log({ code,  result: Util.getFuncParams(node, code) });
+console.log('Util.getFuncArguments(node, code)');
+console.log({ code,  result: Util.getFuncArguments(node, code) });
 console.log('-'.repeat(80));
 
 code = `foo.bar.baz( (foo) => { event.x.y.z(); foo.bar.x.y = 1; })`;
 node = Util.getNode(code).arguments[0];
-console.log('Util.getFuncParams(node, code)');
-console.log({ code,  result: Util.getFuncParams(node, code) });
+console.log('Util.getFuncArguments(node, code)');
+console.log({ code,  result: Util.getFuncArguments(node, code) });
 console.log('-'.repeat(80));
 
 code = `foo.bar.baz( (foo, event) => { event.x.y.z(); foo.bar.x.y = 1; })`;
 node = Util.getNode(code).arguments[0];
-console.log('Util.getFuncParams(node, code)');
-console.log({ code,  result: Util.getFuncParams(node, code) });
+console.log('Util.getFuncArguments(node, code)');
+console.log({ code,  result: Util.getFuncArguments(node, code) });
 console.log('-'.repeat(80));
 
 code = `foo.bar.baz( ({foo, event}) => { event.x.y.z(); foo.bar.x.y = 1; })`;
 node = Util.getNode(code).arguments[0];
-console.log('Util.getFuncParams(node, code)');
-console.log({ code,  result: Util.getFuncParams(node, code) });
+console.log('Util.getFuncArguments(node, code)');
+console.log({ code,  result: Util.getFuncArguments(node, code) });
 console.log('-'.repeat(80));
 
 // code = `pricePlansCurrent.featureGroupList.subscribe(group => group.featureGroup.label.en === \'Data\')[0]`;
