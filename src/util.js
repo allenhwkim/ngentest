@@ -602,6 +602,9 @@ class Util {
     return js.join(', ');
   }
 
+  /**
+   * Get first key of an object
+   */
   static getFirstKey(obj) {
     const firstKey = typeof obj === 'object' && Object.keys(obj).filter(k => k !== 'undefined')[0];
     return firstKey || undefined;
