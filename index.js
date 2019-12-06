@@ -101,7 +101,7 @@ function getFuncTest(Klass, func, angularType) {
     .filter(el => el.match(assertRE))
     .map(el => {
       el = el.replace(/\n/g,' ');
-      return el.replace(assertRE, (_, m1) => `expect(${m1}).toHaveBeenCalled()`);
+      return el.replace(assertRE, (_, m1) => `// expect(${m1}).toHaveBeenCalled()`);
     });
   const jsToRun = 
     type === 'SetterDeclaration' ? `${angularType}.${func.name} = ${funcParamJS || '{}'}`: 

@@ -53,6 +53,11 @@ describe('<%- className %>', () => {
     component = fixture.debugElement.componentInstance;
   });
 
+  afterEach(() => {
+    component.ngOnDestroy = jest.fn();
+    fixture.destroy();
+  });
+
   it('should run #constructor()', async () => {
     expect(component).toBeTruthy();
   });
