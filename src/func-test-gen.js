@@ -195,6 +195,8 @@ class FuncTestGen {
         this.setMockData(funcExpArg, mockData);
       }
     } else if (node.type === 'AssignmentExpression') {
+      this.setMockDataMap(node, mockData); // setting map data for this expression
+
       const nodeRight = node.right.type === 'LogicalExpression' ? node.right.left : node.right;
       const nodeLeft = node.left;
       const leftCode = this.getCode(nodeLeft);
@@ -206,48 +208,12 @@ class FuncTestGen {
 
       const right = Util.getObjectFromExpression(rightCode);
 
-//
-// NOTE. this.funcCode
-//
-//   set map only if right-side source start with
-//     . this.xxxx 
-//     . a parameter
-//     and left-side target is following
-//        . starts with this.yyyy or yyyy
-//        . and this.yyyy or yyyy used in this.funcCode at least twice. search it with this.xxx. or xxx.
-//
-
-// if (
-//   ['Indetifier', 'MemberExpression'].includes(nodeLeft.type) && 
-//   ['MemberExpression', 'CallExpression'].includes(nodeRight.type)
-// ) {
-//   const varNameLeft  = leftCode;
-//   const varNameRight = rightCode.replace(/\s+/g,'').replace(/\(.*\)/g,'');
-//   const paramNames = Object.keys(mockData.params);
-//   const paramMatchRE = new RegExp(`^(${paramNames.join('|')})\\.`);
-//   const thisMatchRE = /^this\./;
-//   const mapTargets = Object.values(mockData.map);
-//   const mapTargetMatchRE = new RegExp(`^(${mapTargets.join('|')})\\.`);
-
-//   console.log(1111111111, varNameLeft, varNameLeft.match(/^[a-z\.0-9]+$/i), varNameRight.match(thisMatchRE) );
-//   // map only for source starts with `this.xxxxx`
-//   if ( varNameLeft.match(/^[a-z\.0-9]+$/i) && varNameRight.match(thisMatchRE) ) {
-//     // right value is a param or found in pre-mapped one
-//     // if (varNameRight.match(paramMatchRE) || varNameRight.match(mapTargetMatchRE)) {
-//       // console.log('..............', {mapTargets, paramNames});
-//       // console.log('..............', paramMatchRE, varNameRight.match(paramMatchRE));
-//       // console.log('..............', !!varNameRight.match(thisMatchRE), !!varNameRight.match(paramMatchRE), !!varNameRight.match(mapTargetMatchRE) );
-//       console.log('.................... AssignmentExp', varNameLeft, varNameRight);
-//       mockData.map[varNameLeft] = varNameRight;
-//     // }
-//   }
-// }
-//
       if (left1 === 'this' && left2 && !left3 && params[right1] && !right2) {
         // set map between params to `this value`. e.g. this.foo = param1
         map[`this.${left2}`] = right1;
       } else if (left1 === 'this' && right1 === 'this' && map[`this.${right2}`]) {
-        // set param value instead of 'this'(prop) value e.g., this.bar = this.foo.x.y (`this.foo` is from param1)
+        // set param value instead of 'this'(prop) value 
+        // e.g., this.bar = this.foo.x.y (`this.foo` is from param1)
         this.setMockData(node.right, mockData); // process the right side expression
         Util.merge(right.this, params); // (source, target)
       } else {
@@ -257,6 +223,47 @@ class FuncTestGen {
     } else {
       console.warn({ node });
       console.warn('\x1b[33m%s\x1b[0m', `WARNING WARNING WARNING unprocessed expression ${node.type} ${code}`);
+    }
+  }
+
+
+  /**
+   * set mockdata map for AssignmentExpression
+   * only if right-side source start with . this.xxxx or a parameter
+   *   and left-side target is following
+   *      . starts with this.yyyy or yyyy
+   *      . and this.yyyy or yyyy used in this.funcCode at least twice. search it with this.xxx. or xxx.
+   *      . e.g., `\{\nxxx.yyy.zzz, \n   xx.yy \n foo.bar.xxx.yyy\n\n this.a=xxx.yys`.match(/[^\.]xxx\./g)
+   */
+  setMockDataMap(node, mockData) {
+    if (node.type !== 'AssignmentExpression') throw '%%%%%%%%%%%%%%% setMockDataMap' + node.type;
+
+    const nodeRight = node.right.type === 'LogicalExpression' ? node.right.left : node.right;
+    const nodeLeft = node.left;
+    if ( // ignore if left-side is a ObjectExpression or Array Pattern
+      ['Indetifier', 'MemberExpression'].includes(nodeLeft.type) && 
+      ['MemberExpression', 'CallExpression'].includes(nodeRight.type)
+    ) {
+      const [leftCode, rightCode] = [this.getCode(nodeLeft), this.getCode(nodeRight)];
+      const paramNames = Object.keys(mockData.params);
+      // const paramMatchRE = paramNames.length && new RegExp(`^(${paramNames.join('|')})$`);
+
+      // only if left-side is a this.llll or llll
+      if (leftCode.match(/^this\.[a-zA-Z0-9_$]+$/) || leftCode.match(/^[a-zA-Z0-9_$]+$/)) {
+        const numLeftCodeRepeats = 
+          (this.funcCode.match(new RegExp(`[^\\.]${leftCode}\\.`, 'g')) || []).length;
+ 
+        const rightCodeVarName = rightCode.replace(/\s+/g,'').replace(/\(.*\)/g,'()')
+        // if (rightCode.match(paramMatchRE)) { // if right-side is a parameter value
+        //   console.log(1111111111, {leftCode, rightCode, paramMatchRE, rightCodeVarName})
+        //   mockData.map[leftCode] = rightCodeVarName;
+        // } 
+        if (rightCode.match(/^this\./) && numLeftCodeRepeats > 1) { // or right-side starts with . this.xxxx 
+// console.log(2222222222, {leftCode, rightCode, numLeftCodeRepeats, leftCode, rightCodeVarName})
+          !mockData.map[leftCode] && (mockData.map[leftCode] = rightCodeVarName);
+        }
+      }
+
     }
   }
 
@@ -292,13 +299,20 @@ class FuncTestGen {
 
     const variableExpression = code.replace(/\s+/g,'').replace(/\(.*\)/g,'');
     const mapKey = (variableExpression.match(/(this\.)?[a-zA-Z0-9_\$]+/) || [])[0]; // foo or this.foo
-    const exprFoundInmap = Object.entries(map).find( ([k, v]) => variableExpression.startsWith(k + '.'));
+    const exprFoundInMap = Object.entries(map).find( ([k, v]) => variableExpression.startsWith(k + '.'));
 
     if (map[mapKey] && params[map[mapKey]]) {
       if (one === 'this' && two && map[`this.${two}`]) { // parameter map found
-console.log('      ** setPropsOrParams map found', { variableExpression, mapKey, map });
+// console.log('      ** setPropsOrParams params map found **', `${map[mapKey]} : ${mapKey} `, { variableExpression });
         Util.merge(obj.this, params);
       } 
+    } else if (map[mapKey] && exprFoundInMap) {
+      console.log(`      ** setPropsOrParams func map found in "${variableExpression}"`);
+      console.log('       ', `{${mapKey}: {${map[mapKey]}}`, {map});
+      const newlyMappedCode = code.replace(mapKey, map[mapKey]);
+      // console.log('         eval ', eval(`mockData.props.${newlyMappedCode.replace('this.','')}`))
+      console.log('       ', {newlyMappedCode});
+      this.setPropsOrParams (newlyMappedCode, mockData, returns)
     } else {
       if (one === 'this' && two) {
         Util.merge(obj.this, props);

@@ -150,11 +150,11 @@ describe('BillingHeaderComponent', () => {
   it('should run #setCreditCardDetails()', async () => {
     component.billingDetails = component.billingDetails || {};
     component.billingDetails.methodOfPayment = {
-      creditCardDetails: {}
+      creditCardDetails: {
+        ccType: {},
+        ccExpiry: {}
+      }
     };
-    component.creditCard = component.creditCard || {};
-    component.creditCard.ccType = 'ccType';
-    component.creditCard.ccExpiry = 'ccExpiry';
     component.billingHeader = component.billingHeader || {};
     component.billingHeader.getLocalDate = jest.fn();
     component.billingHeader.formatDate = jest.fn();
