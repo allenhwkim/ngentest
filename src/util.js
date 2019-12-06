@@ -219,11 +219,14 @@ class Util {
       type === 'Identifier' ? node.name : undefined;
     member && result.push(member); /* eslint-enable */
 
-    if (object) {
+    if (object) { // MemberExpression
       const kode = Util.getCode(object, code);
       result = Util.getExprMembers(kode, result);
-    } else if (callee) {
+    } else if (callee) { // CallExpression
       const kode = Util.getCode(callee, code);
+      result = Util.getExprMembers(kode, result);
+    } else if (node.left) { // BinaryExpression
+      const kode = Util.getCode(node.left, code);
       result = Util.getExprMembers(kode, result);
     }
     return result;
