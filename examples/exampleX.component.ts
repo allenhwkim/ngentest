@@ -18,6 +18,9 @@ export class TotalDataDetailsComponent {
     const x = param.x.y.z;
     x.foo.bar();
 
+    const thisVar = this.foo.bar.baz();
+    thisVar.a.boc = '123';
+
     const dialogComponent = this.dialogService.open(HupErrorComponent, { data: { result, reasonCode } });
     dialogComponent.userAction.subscribe(ret => ret);
   }

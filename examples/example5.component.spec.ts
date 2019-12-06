@@ -127,9 +127,9 @@ describe('DashboardComponent', () => {
     component.appData = component.appData || {};
     component.appData.getIDVSummary$ = observableOf({});
     component.shareEverythingService = component.shareEverythingService || {};
-    component.shareEverythingService.getShareEverythingData = jest.fn();
-    component.shareEverythingData = component.shareEverythingData || {};
-    component.shareEverythingData.planName = 'planName';
+    component.shareEverythingService.getShareEverythingData = jest.fn().mockReturnValue({
+      planName: {}
+    });
     component.actionService = component.actionService || {};
     component.actionService.getActiveTreatments = jest.fn().mockReturnValue(observableOf({
       ecid: {}
@@ -185,7 +185,9 @@ describe('DashboardComponent', () => {
     component.ramPermissionService = component.ramPermissionService || {};
     component.ramPermissionService.isPermitted = jest.fn();
     component.dialogService = component.dialogService || {};
-    component.dialogService.open = jest.fn();
+    component.dialogService.open = jest.fn().mockReturnValue({
+      dealerCodeChange$: observableOf({})
+    });
     component.dealerCodeService = component.dealerCodeService || {};
     component.dealerCodeService.checkIfDealerCodeUpdated = jest.fn();
     component.changePlan = component.changePlan || {};
@@ -208,7 +210,9 @@ describe('DashboardComponent', () => {
     component.ramPermissionService = component.ramPermissionService || {};
     component.ramPermissionService.isPermitted = jest.fn();
     component.dialogService = component.dialogService || {};
-    component.dialogService.open = jest.fn();
+    component.dialogService.open = jest.fn().mockReturnValue({
+      dealerCodeChange$: observableOf({})
+    });
     component.processHup = component.processHup || {};
     component.processHup.handleDealerCodeChange = jest.fn();
     component.processHup.checkEligibility = jest.fn();

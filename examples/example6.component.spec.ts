@@ -273,6 +273,14 @@ describe('BillingPageComponent', () => {
     component.iFrameBill.first = {
       nativeElement: {}
     };
+    component.iFrameBill.contentDocument = {
+      body: {
+        scrollHeight: {}
+      }
+    };
+    component.iFrameBill.style = {
+      height: {}
+    };
     component.setIframeHeight({});
 
   });
@@ -332,7 +340,9 @@ describe('BillingPageComponent', () => {
     component.commonData = component.commonData || {};
     component.commonData.language = 'language';
     component.dialog = component.dialog || {};
-    component.dialog.open = jest.fn();
+    component.dialog.open = jest.fn().mockReturnValue({
+      submitPTP$: observableOf({})
+    });
     component.billingDetails = component.billingDetails || {};
     component.billingDetails.balanceAmount = 'balanceAmount';
     component.savePtp = jest.fn();

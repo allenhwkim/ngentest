@@ -67,8 +67,8 @@ describe('AdjustmentFormComponent', () => {
   it('should run GetterDeclaration #toolTipDescAndSites', async () => {
     component.adjustmentsDetailsCms = component.adjustmentsDetailsCms || {};
     component.adjustmentsDetailsCms.tooltip = {
-      amount: {},
-      site: {}
+      amount: 'amount',
+      site: 'site'
     };
     component.adjustmentsDetailsCms.location = {
       threshold: {},

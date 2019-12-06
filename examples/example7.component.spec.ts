@@ -75,7 +75,9 @@ describe('ChangePlanComponent', () => {
     component.changePlanData.getActiveSubs = jest.fn();
     component.changePlanData.getPrimaryNumberShareStatus = jest.fn();
     component.changePlanData.hasActiveAdditionalSubs = jest.fn();
-    component.changePlanData.getMainSub = jest.fn();
+    component.changePlanData.getMainSub = jest.fn().mockReturnValue({
+      subscriberNumber: {}
+    });
     component.changePlanData.getSingleSubNumber = jest.fn();
     component.setEligibilityAndStatePostData = jest.fn();
     component.getIndividualSubPostData = jest.fn();
@@ -123,7 +125,9 @@ describe('ChangePlanComponent', () => {
     component.changePlanData.getPendingCases = jest.fn();
     component.changePlanData.closeCase = jest.fn().mockReturnValue(observableOf({}));
     component.dialog = component.dialog || {};
-    component.dialog.open = jest.fn();
+    component.dialog.open = jest.fn().mockReturnValue({
+      saveStateAndChangePlan$: observableOf({})
+    });
     component.saveStateAndChangePlan = jest.fn();
     await component.checkIfBOTEligible({
       availableCreditAmount: {}
@@ -150,11 +154,19 @@ describe('ChangePlanComponent', () => {
     component.changePlanData.hasActiveMain = jest.fn();
     component.changePlanData.hasOtherIndividualSubs = jest.fn();
     component.changePlanData.getIndSubPostData = 'getIndSubPostData';
-    component.changePlanData.getMainSub = jest.fn();
+    component.changePlanData.getMainSub = jest.fn().mockReturnValue({
+      subscriberNumber: {}
+    });
     component.changePlanData.getActiveAdditionalSubsWithPrimary = jest.fn();
     component.changePlanData.getOtherIndividualSubs = jest.fn();
     component.dialog = component.dialog || {};
-    component.dialog.open = jest.fn();
+    component.dialog.open = jest.fn().mockReturnValue({
+      createASharedPlanWithYourOtherLines$: observableOf({
+        ctn: {},
+        selectAdditionalSubscribers: {}
+      }),
+      makeChangesToYourCurrentPlan$: observableOf({})
+    });
     await component.getIndividualSubPostData({}, {});
     expect(component.changePlanData.hasActiveMain).toHaveBeenCalled();
     expect(component.changePlanData.hasOtherIndividualSubs).toHaveBeenCalled();

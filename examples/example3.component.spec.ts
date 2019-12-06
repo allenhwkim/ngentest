@@ -139,11 +139,13 @@ describe('BillingHeaderComponent', () => {
   it('should run #setDebitCardDetails()', async () => {
     component.billingDetails = component.billingDetails || {};
     component.billingDetails.methodOfPayment = {
-      chequingDetails: {}
+      chequingDetails: {
+        accountNumber: {}
+      }
     };
-    component.debitCard = component.debitCard || {};
-    component.debitCard.accountNumber = 'accountNumber';
-    component.setDebitCardDetails();
+    component.setDebitCardDetails({
+      accountNumber: {}
+    });
 
   });
 
@@ -173,7 +175,9 @@ describe('BillingHeaderComponent', () => {
     component.billingHeader = component.billingHeader || {};
     component.billingHeader.formatDate = jest.fn();
     component.dialog = component.dialog || {};
-    component.dialog.open = jest.fn();
+    component.dialog.open = jest.fn().mockReturnValue({
+      $changedToManual: observableOf({})
+    });
     component.openChangePayment({});
     expect(component.billingHeader.formatDate).toHaveBeenCalled();
     expect(component.dialog.open).toHaveBeenCalled();

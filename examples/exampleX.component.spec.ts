@@ -63,13 +63,36 @@ describe('TotalDataDetailsComponent', () => {
       totalData: {}
     });
     component.deviceDetails = component.deviceDetails || {};
-    component.deviceDetails.deviceDetailsNumber = 'deviceDetailsNumber';
+    component.deviceDetails.deviceDetailsNumber = {
+      EN: {
+        productTitle: {}
+      },
+      FR: {
+        productTitle: {}
+      }
+    };
+    component.foo = component.foo || {};
+    component.foo.bar = {
+      baz: function() {
+        return {
+          a: {
+            boc: {}
+          }
+        };
+      }
+    };
     component.dialogService = component.dialogService || {};
-    component.dialogService.open = jest.fn();
+    component.dialogService.open = jest.fn().mockReturnValue({
+      userAction: observableOf({})
+    });
     component.doMore({
       x: {
         y: {
-          z: {}
+          z: {
+            foo: {
+              bar: jest.fn()
+            }
+          }
         }
       }
     });

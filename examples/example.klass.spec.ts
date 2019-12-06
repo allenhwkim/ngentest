@@ -21,7 +21,15 @@ describe('AgentInfo', () => {
   });
 
   it('should run #connectedCallback()', async () => {
-    obj.closest = jest.fn();
+    obj.closest = jest.fn().mockReturnValue({
+      enableChangeDealerCode: {},
+      userPreferences: {},
+      ramPermission: {},
+      i18n: {
+        agentInfo: {}
+      },
+      agentInfo: {}
+    });
     obj.renderWith = jest.fn().mockReturnValue({
       then: function() {
         return [
@@ -97,7 +105,13 @@ describe('AgentInfo', () => {
   });
 
   it('should run #attachListeners()', async () => {
-    obj.querySelector = jest.fn();
+    obj.querySelector = jest.fn().mockReturnValue({
+      setAttribute: jest.fn(),
+      classList: {
+        add: jest.fn()
+      },
+      removeAttribute: jest.fn()
+    });
     obj.attachListeners();
     expect(obj.querySelector).toHaveBeenCalled();
   });

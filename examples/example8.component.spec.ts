@@ -165,13 +165,14 @@ describe('CreditManagementComponent', () => {
   });
 
   it('should run #handleIssueChanged()', async () => {
-    component.existingIssueSelected = component.existingIssueSelected || {};
-    component.existingIssueSelected.autoAdjustment = 'autoAdjustment';
+
     await component.handleIssueChanged({
-      issueSelected: {},
+      issueSelected: {
+        autoAdjustment: {}
+      },
       newInputEntered: {},
       isOpenOrClosed: {}
-    });
+    }, {});
 
   });
 
@@ -213,7 +214,9 @@ describe('CreditManagementComponent', () => {
 
   it('should run #openInteractionOrSubmitModal()', async () => {
     component.dialog = component.dialog || {};
-    component.dialog.open = jest.fn();
+    component.dialog.open = jest.fn().mockReturnValue({
+      doneClicked: observableOf({})
+    });
     component.dialog.close = jest.fn();
     component.selectedAdjustment = component.selectedAdjustment || {};
     component.selectedAdjustment.name = 'name';
