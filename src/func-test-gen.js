@@ -210,15 +210,16 @@ class FuncTestGen {
       const right = Util.getObjectFromExpression(rightCode);
 
       if (left1 === 'this' && left2 && !left3 && params[right1] && !right2) {
+        // TODO. Is this really nece
         // set map between params to `this value`. e.g. this.foo = param1
         map[`this.${left2}`] = right1;
       } else if (left1 === 'this' && right1 === 'this' && map[`this.${right2}`]) {
         // set param value instead of 'this'(prop) value 
         // e.g., this.bar = this.foo.x.y (`this.foo` is from param1)
-        this.setMockData(node.right, mockData); // process the right side expression
+        this.setMockData(node.right, mockData); // DONT change to nodeRight!! process the right side expression
         Util.merge(right.this, params); // (source, target)
       } else {
-        this.setMockData(node.right, mockData);
+        this.setMockData(node.right, mockData); // DONT change to nodeRight!!
         this.setMockData(node.left, mockData);
       }
     } else {

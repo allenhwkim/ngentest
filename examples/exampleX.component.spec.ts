@@ -85,6 +85,8 @@ describe('TotalDataDetailsComponent', () => {
     component.dialogService.open = jest.fn().mockReturnValue({
       userAction: observableOf({})
     });
+    component.dates = component.dates || {};
+    component.dates = ['dates'];
     component.doMore({
       x: {
         y: {

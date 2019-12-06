@@ -23,14 +23,11 @@ export class TotalDataDetailsComponent {
 
     const dialogComponent = this.dialogService.open(HupErrorComponent, { data: { result, reasonCode } });
     dialogComponent.userAction.subscribe(ret => ret);
+
+    this.totalAverageUsageAmongBills = this.dates.reduce((acc, val) => acc + +val.totalUsageThisDate, 0) / this.dates.length;
   }
 
   setCreditCardDetails() {
-    const cardImg = {
-      visa: 'assets/visa.png',
-      master: 'assets/master.png',
-      amex: 'assets/amex.png'
-    };
     this.creditCard = this.billingDetails.methodOfPayment.creditCardDetails;
     if (this.creditCard && this.creditCard.ccType) {
       this.ccImg = cardImg[this.creditCard.ccType.toLowerCase()];
