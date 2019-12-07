@@ -177,7 +177,7 @@ describe('CreditManagementComponent', () => {
       },
       newInputEntered: {},
       isOpenOrClosed: {}
-    }, {});
+    });
 
   });
 

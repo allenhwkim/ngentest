@@ -148,9 +148,7 @@ describe('BillingHeaderComponent', () => {
         accountNumber: {}
       }
     };
-    component.setDebitCardDetails({
-      accountNumber: {}
-    });
+    component.setDebitCardDetails();
 
   });
 
