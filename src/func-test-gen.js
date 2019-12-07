@@ -43,54 +43,8 @@ class FuncTestGen {
    * Iterate function expressions one by one
    *  then, sets the given props, params, maps from the expressinns
    */
-  setMockData (nodeIn, mockData, returnValue) { // node: ExpressionStatement
-    if (!nodeIn || !mockData) {
-      console.error({ nodeIn, mockData });
-      console.error('\x1b[31m%s\x1b[0m', 'Error: parameter nodeIn or mockData is invalid');
-      throw new Error('ERROR: parameter is invalid');
-    }
-    const node = /* eslint-disable */
-      nodeIn.type === 'ArrayExpression' ? nodeIn :
-      nodeIn.type === 'ArrayPattern' ? nodeIn :
-      nodeIn.type === 'ArrowFunctionExpression' ? nodeIn:
-      nodeIn.type === 'AssignmentExpression' ? nodeIn :
-      nodeIn.type === 'BinaryExpression' ? nodeIn :
-      nodeIn.type === 'BlockStatement' ? nodeIn :
-      nodeIn.type === 'BreakStatement' ? nodeIn :
-      nodeIn.type === 'CallExpression' ? nodeIn :
-      nodeIn.type === 'CatchClause' ? nodeIn :
-      nodeIn.type === 'ConditionalExpression' ? nodeIn :
-      nodeIn.type === 'ExpressionStatement' ? nodeIn.expression :
-      nodeIn.type === 'ForStatement' ? nodeIn.body : // node.init, node.test, node.updte, node.boby
-      nodeIn.type === 'ForInStatement' ? nodeIn :
-      nodeIn.type === 'ForOfStatement' ? nodeIn :
-      nodeIn.type === 'FunctionExpression' ? nodeIn :
-      nodeIn.type === 'Identifier' ? nodeIn :
-      nodeIn.type === 'IfStatement' ? nodeIn : // node.test, consequent, alternate
-      nodeIn.type === 'Literal' ? nodeIn :
-      nodeIn.type === 'LogicalExpression' ? nodeIn :
-      nodeIn.type === 'MemberExpression' ? nodeIn :
-      nodeIn.type === 'NewExpression' ? nodeIn :
-      nodeIn.type === 'ObjectExpression' ? nodeIn :
-      nodeIn.type === 'ReturnStatement' ? nodeIn :
-      nodeIn.type === 'SpreadElement' ? nodeIn.argument :
-      nodeIn.type === 'SwitchStatement' ? nodeIn :
-      nodeIn.type === 'TemplateLiteral' ? nodeIn :
-      nodeIn.type === 'ThrowStatement' ? nodeIn :
-      nodeIn.type === 'ThisExpression' ? nodeIn :
-      nodeIn.type === 'TryStatement' ? nodeIn :
-      nodeIn.type === 'UpdateExpression' ? nodeIn :
-      nodeIn.type === 'UnaryExpression' ? nodeIn.argument :
-      nodeIn.type === 'VariableDeclaration' ? nodeIn :
-      nodeIn.type === 'WhileStatement' ? nodeIn :
-      nodeIn.type === 'YieldExpression' ? nodeIn :
-      null; /* eslint-enable */
-
-    if (!node) {
-      console.error(`ERROR: Invalid JS node type ${nodeIn.type} '${this.getCode(nodeIn)}'`);
-      throw new Error(`ERROR: Invalid JS node type ${nodeIn.type} '${this.getCode(nodeIn)}'`);
-    }
-    const code = this.getCode(node);
+  setMockData (node, mockData, returnValue) { // node: ExpressionStatement
+    if (!node) return;
 
     Util.DEBUG && console.log('    *** EXPRESSION ' + node.type + ' ***', this.getCode(node));
     if ([
@@ -100,82 +54,99 @@ class FuncTestGen {
       'ThisExpression',
       'ThrowStatement'
     ].includes(node.type)) {
-      // ignore these expressions/statements
+      // ignore these expressions/statements, which is meaningless for mockData
+    } else if (node.type === 'ArrayExpression') {
+      node.elements.forEach(element => {
+        this.setMockData(element, mockData);
+      });
+    } else if (node.type === 'ArrayPattern') {
+      node.elements.forEach(element => {
+        this.setMockData(element, mockData)
+      });
     } else if (node.type === 'ArrowFunctionExpression') { // params, body
       this.setMockData(node.body, mockData);
-    } else if (node.type === 'FunctionExpression') { // params, body
-      this.setMockData(node.body, mockData);
-    } else if (node.type === 'NewExpression') {
-      node.arguments.forEach(argument => this.setMockData(argument, mockData));
-    } else if (node.type === 'ArrayExpression') {
-      node.elements.forEach(element => element && this.setMockData(element, mockData));
-    } else if (node.type === 'ArrayPattern') {
-      node.elements.forEach(element => element && this.setMockData(element, mockData));
-    } else if (node.type === 'ForOfStatement') {
-      this.setMockData(node.left, mockData);
+    } else if (node.type === 'BinaryExpression') {
       this.setMockData(node.right, mockData);
-      this.setMockData(node.body, mockData);
-    } else if (node.type === 'TemplateLiteral') {
-      node.expressions.forEach(expr => expr && this.setMockData(expr, mockData));
-    } else if (node.type === 'VariableDeclaration') {
-      node.declarations.forEach(decl => { // decl.id, decl.init
-        this.setMockDataMap(decl, mockData);
-        const declReturn = Util.getObjFromVarPattern(decl.id);
-        decl.init && this.setMockData(decl.init, mockData, declReturn);
-      });
-    } else if (node.type === 'ReturnStatement') {
-      node.argument && this.setMockData(node.argument, mockData);
-    } else if (node.type === 'IfStatement') {
-      this.setMockData(node.test, mockData);
-      this.setMockData(node.consequent, mockData);
-      node.alternate && this.setMockData(node.alternate, mockData);
-    } else if (node.type === 'WhileStatement') {
-      this.setMockData(node.test, mockData);
-      this.setMockData(node.body, mockData);
-    } else if (node.type === 'SwitchStatement') {
-      this.setMockData(node.discriminant, mockData);
-      node.cases.forEach(kase => {
-        kase.test && this.setMockData(kase.test, mockData);
-        kase.consequent.forEach(stmt => stmt && this.setMockData(stmt, mockData));
-      });
-    } else if (node.type === 'ConditionalExpression') {
-      this.setMockData(node.test, mockData);
-      this.setMockData(node.consequent, mockData);
-      this.setMockData(node.alternate, mockData);
-    } else if (node.type === 'ForInStatement') {
       this.setMockData(node.left, mockData);
-      this.setMockData(node.body, mockData);
-    } else if (node.type === 'LogicalExpression') {
-      this.setMockData(node.left, mockData);
-      this.setMockData(node.right, mockData);
     } else if (node.type === 'BlockStatement') {
       node.body.forEach(expr => {
         this.setMockData(expr, mockData);
       });
-    } else if (node.type === 'BinaryExpression') {
-      this.setMockData(node.right, mockData);
+    } else if (node.type === 'CatchClause') {
+      this.setMockData(node.block, mockData);
+      this.setMockData(node.handler, mockData);
+    } else if (node.type === 'ConditionalExpression') {
+      this.setMockData(node.test, mockData);
+      this.setMockData(node.consequent, mockData);
+      this.setMockData(node.alternate, mockData);
+    } else if (node.type === 'ExpressionStatement') {
+      this.setMockData(node.expression, mockData);
+    } else if (node.type === 'ForInStatement') {
       this.setMockData(node.left, mockData);
+      this.setMockData(node.body, mockData);
+    } else if (node.type === 'ForOfStatement') {
+      this.setMockData(node.left, mockData);
+      this.setMockData(node.right, mockData);
+      this.setMockData(node.body, mockData);
+    } else if (node.type === 'ForStatement') {// init, test, updte, boby
+      this.setMockData(node.body, mockData);
+    } else if (node.type === 'FunctionExpression') { // params, body
+      this.setMockData(node.body, mockData);
+    } else if (node.type === 'IfStatement') {
+      this.setMockData(node.test, mockData);
+      this.setMockData(node.consequent, mockData);
+      this.setMockData(node.alternate, mockData);
+    } else if (node.type === 'LogicalExpression') {
+      this.setMockData(node.left, mockData);
+      this.setMockData(node.right, mockData);
+    } else if (node.type === 'NewExpression') {
+      node.arguments.forEach(argument => {
+        this.setMockData(argument, mockData)
+      });
     } else if (node.type === 'ObjectExpression') {
       node.properties.forEach(property => {
         this.setMockData(property.value, mockData);
       });
+    } else if (node.type === 'ReturnStatement') {
+      this.setMockData(node.argument, mockData);
+    } else if (node.type === 'SpreadElement') {
+      this.setMockData(node.argument, mockData);
+    } else if (node.type === 'SwitchStatement') {
+      this.setMockData(node.discriminant, mockData);
+      node.cases.forEach(kase => {
+        this.setMockData(kase.test, mockData);
+        kase.consequent.forEach(stmt => this.setMockData(stmt, mockData));
+      });
+    } else if (node.type === 'TemplateLiteral') {
+      node.expressions.forEach(expr => this.setMockData(expr, mockData));
     } else if (node.type === 'TryStatement') {
       this.setMockData(node.block, mockData);
+    } else if (node.type === 'UnaryExpression') {
+      this.setMockData(node.argument, mockData);
     } else if (node.type === 'UpdateExpression') {
       this.setMockData(node.argument, mockData);
-    } else if (node.type === 'CatchClause') {
-      this.setMockData(node.block, mockData);
-      this.setMockData(node.handler, mockData);
+    } else if (node.type === 'VariableDeclaration') {
+      node.declarations.forEach(decl => { // decl.id, decl.init
+        this.setMockDataMap(decl, mockData);
+        const declReturn = Util.getObjFromVarPattern(decl.id);
+        this.setMockData(decl.init, mockData, declReturn);
+      });
+    } else if (node.type === 'WhileStatement') {
+      this.setMockData(node.test, mockData);
+      this.setMockData(node.body, mockData);
     } else if (node.type === 'WhileExpression') {
       this.setMockData(node.test, mockData);
       this.setMockData(node.body, mockData);
     } else if (node.type === 'YieldExpression') {
       this.setMockData(node.argument, mockData);
-    } else if (node.type === 'UnaryExpression') {
-      this.setMockData(node.argument, mockData);
-    } else if (node.type === 'MemberExpression') {
-      this.setPropsOrParams(node, mockData);
-      this.setMockData(node.object, mockData);
+    } else if (node.type === 'AssignmentExpression') {
+      const mapped = this.setMockDataMap(node, mockData); // setting map data for this expression
+      if (mapped.type !== 'param') { // do NOT remove this
+        // skip param mapping e.g. `this.param = param`, which causes a bug. 
+        // map, `map[this.param] = param` will be used later
+        this.setMockData(node.right, mockData);
+        this.setMockData(node.left, mockData);
+      }
     } else if (node.type === 'CallExpression') { // callee, arguments
       const kode = this.getCode(node);
       const funcReturn = Util.getFuncReturn(kode);
@@ -185,26 +156,18 @@ class FuncTestGen {
       this.setMockData(node.callee, mockData);
       node.arguments.forEach(argument => this.setMockData(argument, mockData));
 
-      // What if call argument is a function?
-      const funcExpArg = Util.isFunctionExpr(node) && node.arguments[0];
-      Util.DEBUG && console.log('      *** CallExpression ***', {funcExpArg});
-      if (funcExpArg) { // process ArrowFunctionExpression or FunctionExpression
-        this.setMockData(funcExpArg, mockData);
-      }
-    } else if (node.type === 'AssignmentExpression') {
-      const mapped = this.setMockDataMap(node, mockData); // setting map data for this expression
-      if (mapped.type !== 'param') { // do NOT remove this
-        // skip param mapping e.g. `this.param = param`, which causes a bug. 
-        // map, `map[this.param] = param` will be used later
-        this.setMockData(node.right, mockData);
-        this.setMockData(node.left, mockData);
-      }
+      // const funcExpArg = Util.isFunctionExpr(node) && node.arguments[0];
+      // if (funcExpArg) { // when call arg is a function, process a FunctionExpression
+      //   this.setMockData(funcExpArg, mockData);
+      // }
+    } else if (node.type === 'MemberExpression') {
+      this.setPropsOrParams(node, mockData);
+      this.setMockData(node.object, mockData);
     } else {
-      console.warn({ node });
-      console.warn('\x1b[33m%s\x1b[0m', `WARNING WARNING WARNING unprocessed expression ${node.type} ${code}`);
+      console.error(`ERROR: Invalid JS node type ${node.type} '${this.getCode(node)}'`);
+      throw new Error(`ERROR: Invalid JS node type ${node.type} '${this.getCode(node)}'`);
     }
   }
-
 
   /**
    * set mockdata map for AssignmentExpression return mapped key and value
@@ -230,7 +193,6 @@ class FuncTestGen {
       }
     }
 
-// nodeLeft && nodeRight && console.log(`mapping ..... -1`, {left: nodeLeft.type, riht: nodeRight.type})
     let mapped = {};
     if ( // ignore if left-side is a ObjectExpression or Array Pattern
       nodeLeft && nodeRight && ['Identifier', 'MemberExpression'].includes(nodeLeft.type) 
@@ -240,7 +202,6 @@ class FuncTestGen {
       const paramMatchRE = paramNames.length ?
         new RegExp(`^(${paramNames.join('|')})$`) : undefined;
 
-// console.log(`mapping ..... 0`, {leftCode, rightCode})
       // only if left-side is a this.llll or llll
       if (leftCode.match(/^this\.[a-zA-Z0-9_$]+$/) || leftCode.match(/^[a-zA-Z0-9_$]+$/)) {
         const numLeftCodeRepeats = 
@@ -249,11 +210,9 @@ class FuncTestGen {
         const rightCodeVarName = rightCode.replace(/\s+/g,'').replace(/\(.*\)/g,'()')
         if (!mockData.map[leftCode] && paramMatchRE && rightCode.match(paramMatchRE)) {
           mockData.map[leftCode] = rightCodeVarName;
-// console.log(`................. 1 map[${leftCode}] = ${rightCodeVarName}`)
           mapped = {type: 'param', key: leftCode, value: rightCodeVarName};
         // or right-side starts with . this.xxxx 
         } else if (!mockData.map[leftCode] && numLeftCodeRepeats > 0) { 
-// console.log(`mapping ..... 1-2 map[\'${leftCode}\'] = ${rightCodeVarName}`)
           mockData.map[leftCode] = rightCodeVarName;
           mapped = {type: 'this', key: leftCode, value: rightCodeVarName};
         }
@@ -282,44 +241,33 @@ class FuncTestGen {
       code = this.getCode(codeOrNode);
       obj = Util.getObjectFromExpression(code, returns);
       [one, two] = code.split('.'); // this.prop
-      Util.DEBUG && console.log('      ** setPropsOrParams', { code, type: codeOrNode.type });
     }
-
-    Util.DEBUG && console.log('      ** setPropsOrParams', { one, two});
+    Util.DEBUG && console.log('      ** setPropsOrParams', { one, two, code});
 
     const variableExpression = code.replace(/\s+/g,'').replace(/\(.*\)/g,'');
     const mapKey = (variableExpression.match(/(this\.)?[a-zA-Z0-9_\$]+/) || [])[0]; // foo or this.foo
-    const exprFoundInMap = Object.entries(map).find( ([k, v]) => variableExpression.startsWith(k + '.'));
+    const exprFoundInMap = Object.entries(map).find( // set map only if `expression.` is used
+      ([k, v]) => variableExpression.startsWith(k + '.')
+    );
 
-
-    if (map[mapKey] && params[map[mapKey]]) {
- // console.log('........ 1', {key: map[mapKey], code, obj, one, two})
-      if (one === 'this' && two && map[`this.${two}`]) { // parameter map found
+    if (map[mapKey] && params[map[mapKey]]) { // if param mapped
+      if (one === 'this' && two && map[`this.${two}`]) { // if param map found
         Util.merge(obj.this, params);
       } else {
         Util.merge(obj, params);
       }
-    } else if (map[mapKey] && exprFoundInMap) {
- // console.log('........ 2', {code, obj, one, two})
+    } else if (map[mapKey] && exprFoundInMap) { // if non-param map found
       const newlyMappedCode = code.replace(mapKey, map[mapKey]);
-      // console.log(`      ** setPropsOrParams func map found in "${variableExpression}"`);
-      // console.log('       ', `{${mapKey}: {${map[mapKey]}}`, {map});
-      // console.log('       ', {newlyMappedCode});
       this.setPropsOrParams (newlyMappedCode, mockData, returns)
     } else {
- // console.log('........ 3', {code, obj, one, two})
       if (one === 'this' && two) {
- // console.log('........ 3-1', {code, obj, one, two})
         Util.merge(obj.this, props);
       } else if (params[one] && two) {
- // console.log('........ 3-2', {code, obj, one, two})
         Util.merge(obj, params);
       } else if (one === 'window' || obj === 'document') {
- // console.log('........ 3-3', {code, obj, one, two})
         Util.merge(obj, globals);
       }
     }
-    // handle mapping only for two cases xxxx, or this.xxxx, NOT this.xxx.yyy
   }
 
 }
