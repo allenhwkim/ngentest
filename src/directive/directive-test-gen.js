@@ -44,6 +44,7 @@ class DirectiveTestGen {
     this.template = fs.readFileSync(path.join(__dirname, 'directive.template.ts.ejs'), 'utf8');
 
     result.className = this.klass.name;
+    result.fileName = path.basename(this.tsPath); 
     result.inputs = this._getInputs(this.klass);
     result.outputs = this._getOutputs(this.klass);
     result.providers = this._getProviders(this.klass);

@@ -9,19 +9,16 @@ import {FormGroup, FormControl, FormBuilder, Validators} from '@angular/forms';
 })
 
 export class AdjustmentFormComponent implements OnInit {
-  @Input() selectedAdjustmentType;
-  @Input() selectedCharge;
-  @Input() adjustmentsDetailsCms;
-  @Input() selectedBill;
-  @Input() wirelessPostpaidDetails;
-  @Input() selectedIssue;
-  @Input() tooltipPosition = 'bottom';
+  @Input('item') options: any = {};
   @Input('showAutomaticAdjustmentFlow')
   set showAutomaticAdjustmentFlow(isAutomatic) {
     this.isAutomaticFlow = isAutomatic;
     this.getControlsAndCreateForm();
   }
   @Output() formSubmitted = new EventEmitter();
+  @Output('inview') nguiInview: EventEmitter<any> = new EventEmitter();
+  @Output('outview') nguiOutview: EventEmitter<any> = new EventEmitter();
+
   adjustmentForm: FormGroup;
   formControlsKeys: string[];
   adjustmentAmountVal = 0;
@@ -31,6 +28,9 @@ export class AdjustmentFormComponent implements OnInit {
   recommendedAmount: number;
   isAdjustmentFieldInValid: boolean;
   isAutomaticFlow: boolean;
+  get me(): Number {
+    return 123;
+  }
 
   constructor(private formBuilder: FormBuilder, @Inject(LOCALE_ID) private language) {
   }

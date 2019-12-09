@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 
-const Base = require('../common-test-functions.js');
+const Base = require('../common-gen-functions.js');
 
 class ComponentTestGen {
   constructor (tsPath, config) {
@@ -12,50 +12,35 @@ class ComponentTestGen {
       throw new Error(`Error. invalid typescript file. e.g., Usage $0 ${tsPath} [options]`);
     }
 
-    // this.template;
     this.tsPath = tsPath;
     this.typescript = fs.readFileSync(path.resolve(tsPath), 'utf8');
+    this.template = fs.readFileSync(path.join(__dirname, 'component.template.ts.ejs'), 'utf8');
 
-    // input code related (properties(for JS) / attributes(for HTML))
-    this._getInputs = Base.getInputs.bind(this);
-    // output code related (properties(for JS) / attributes(for HTML))
-    this._getOutputs = Base.getOutputs.bind(this);
+    this.klass = Base.getKlass.bind(this)();
+    this.imports = Base.getImports.bind(this)();
+    this.klassProperties = Base.getKlassProperties.bind(this)();
+    this.klassGetters = Base.getKlassGetters.bind(this)(),
+    this.klassSetters = Base.getKlassSetters.bind(this)(),
+    this.klassMethods = Base.getKlassMethods.bind(this)(),
 
-    // import statement related. keys are lib names, values are classses
-    this._getImports = Base.getImports.bind(this);
-    // module provide statement related codes. keys are constructor variable names
-    this._getProviders = Base.getProviders.bind(this);
     this.getProviderMocks = Base.getProviderMocks.bind(this);
     this.getGenerated = Base.getGenerated.bind(this);
     this.writeGenerated = Base.writeGenerated.bind(this);
-    this.getKlass = Base.getKlass.bind(this);
-    this.getKlassImports = Base.getKlassImports.bind(this);
   }
 
-  async getData () {
-    this.klass = await this.getKlass();
-    this.imports = await this.getKlassImports();
+  getData () {
+    const angularType = Base.getAngularType.bind(this)();
+    const typescript = this.typescript;
 
-    return {
-      klass: this.klass,
-      typescript: this.typescript,
-      ejsData: this.getEjsData()
-    };
-  }
+    const ejsData = {
+      className: this.klass.node.name.escapedText,
+      importMocks: Base.getImportMocks.bind(this)(),
+      inputMocks: Base.getInputMocks.bind(this)(),
+      outpuMocks: Base.getOutputMocks.bind(this)(),
+      componentProviderMocks: Base.getComponentProviderMocks.bind(this)()
+    }
 
-  getEjsData () {
-    const result = {};
-    this.template = fs.readFileSync(path.join(__dirname, 'component.template.ts.ejs'), 'utf8');
-
-    result.className = this.klass.name;
-    result.inputs = this._getInputs(this.klass);
-    result.outputs = this._getOutputs(this.klass);
-    result.providers = this._getProviders(this.klass);
-    // result.windowMocks = this._getWindowMocks(this.klass);
-    result.imports = this._getImports(this.klass);
-    // result.parsedImports = this.imports;
-
-    return result;
+    return {angularType, typescript, ejsData};
   }
 
 }

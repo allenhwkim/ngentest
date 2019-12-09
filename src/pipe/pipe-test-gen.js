@@ -32,6 +32,7 @@ class PipeTestGen {
     this.template = fs.readFileSync(path.join(__dirname, 'pipe.template.ts.ejs'), 'utf8');
 
     result.className = this.klass.name;
+    result.fileName = path.basename(this.tsPath); 
     result.providers = this._getProviders(this.klass);
     // result.functionTests = this._getItBlocks(this.klass);
     result.imports = this._getImports(this.klass);

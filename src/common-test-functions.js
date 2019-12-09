@@ -2,9 +2,68 @@ const path = require('path');
 const ejs = require('ejs');
 const fs = require('fs');
 const { TypescriptParser } = require('typescript-parser');
+const { MyTypescriptParser } = require('./typescript-parser');
 
 const Util = require('./util.js');
+/*
+................ { getKlassImports:
+   { Component: { mport: [NamedImport], specifier: [SymbolSpecifier] },
+     OnInit: { mport: [NamedImport], specifier: [SymbolSpecifier] },
+     Inject: { mport: [NamedImport], specifier: [SymbolSpecifier] },
+     PLATFORM_ID: { mport: [NamedImport], specifier: [SymbolSpecifier] },
+     ViewChild: { mport: [NamedImport], specifier: [SymbolSpecifier] },
+     ElementRef: { mport: [NamedImport], specifier: [SymbolSpecifier] },
+     isPlatformBrowser: { mport: [NamedImport], specifier: [SymbolSpecifier] },
+     Router: { mport: [NamedImport], specifier: [SymbolSpecifier] },
+     ActivatedRoute: { mport: [NamedImport], specifier: [SymbolSpecifier] },
+     NavigationEnd: { mport: [NamedImport], specifier: [SymbolSpecifier] },
+     AuthGuardService: { mport: [NamedImport], specifier: [SymbolSpecifier] },
+     CookieService: { mport: [NamedImport], specifier: [SymbolSpecifier] },
+     AppLoadService: { mport: [NamedImport], specifier: [SymbolSpecifier] },
+     CommonUtilsService: { mport: [NamedImport], specifier: [SymbolSpecifier] } } }
+................ { getImports:
+   { '@angular/core': [ 'Component', 'PLATFORM_ID' ],
+     './example.component': [ 'ExampleComponent' ],
+     './auth-guard.service': [ 'AuthGuardService' ],
+     './cookie.service': [ 'CookieService' ],
+     './app-load.service': [ 'AppLoadService' ],
+     '@angular/router': [ 'Router' ],
+     './common-utils.service': [ 'CommonUtilsService' ] } }
+*/
 
+/*
+parameters
+  parser.rootNode.get('ClassDeclaration').get('Constructor').node.parameters
+    parameter(node): 
+      start : param.node.pos
+      end : param.node.end
+      type : param.node.type.typeName.escapedText
+      name: param.node.name.excapedText
+
+class imports
+  parser.rootNode.get('ImportDeclaration').map(prop => {
+    const library = prop.node.moduleSpecifier).map(token => token.text)
+    const members = prop.node.importClause.namedBindings).map(node => {
+      if (node.name) { // NameSpaceImport with alias
+        return {alias: node.name.escapedText};
+      } else if (node.elements) { // Named import
+        return node.elements.map(node => node.name.escapedText)
+      }
+    });
+  })
+
+Properties(Input, Output, and class variables)
+  parser.rootNode.get('ClassDeclaration').get('PropertyDeclaration').map( prop => {
+    if (prop.node.decorators) {
+      const varName = prop.node.name.escapedText;
+      const inputOutput = prop.node.decorators[0].expression.expression.escapedText;
+      return {decoraator: inputOutput, name: varName};
+    } else {
+      const varName = prop.node.name.escapedText
+      return {decoraator: undefined, name: varName};
+    }
+  });
+*/
 async function getKlass () {
   const parser = new TypescriptParser();
   const klassName = Util.getClassName(this.tsPath);
@@ -24,6 +83,27 @@ async function getKlass () {
   return klass;
 }
 
+
+function getClass() {
+  const parsed = new MyTypescriptParser(this.typescript);
+  const fileBasedKlassName = Util.getClassName(this.tsPath);
+  
+  const klassDeclarations = Array.from(parser.rootNode.get('ClassDeclaration'));
+  const klass =
+    klassDeclarations.find(decl => decl.node.name.escapedText === fileBasedKlassName) ||
+    klassDeclarations.find(decl => decl.node.syntaxKind === 'ClassDeclaration');
+
+  if (!klass) {
+    throw new Error(`Error:NgTypeScriptParser Could not find ` +
+      `${this.klassName || 'a class'} from ${this.tsPath}`);
+  }
+
+  return klass.node;
+}
+
+
+// all imports info. from typescript
+// { Component: { mport: [NamedImport], specifier: [SymbolSpecifier] }, ... }
 async function getKlassImports () {
   const imports = {};
 
@@ -43,6 +123,22 @@ async function getKlassImports () {
 
   return imports;
 }
+
+// function getInputs (klass) {
+//   const inputs = { attributes: [], properties: [] };
+//   (klass.properties || []).forEach(prop => {
+//     const key = prop.name;
+//     const body = this.typescript.substring(prop.start, prop.end);
+//     if (body.match(/@Input\(/)) {
+//       const attrName =
+//         prop.body ? (prop.body.match(/@Input\(['"](.*?)['"]\)/) || [])[1] : prop.name;
+//       inputs.attributes.push(`[${attrName || key}]="${key}"`);
+//       inputs.properties.push(`${key}: ${prop.type};`);
+//     }
+//   });
+
+//   return inputs;
+// }
 
 function getInputs (klass) {
   const inputs = { attributes: [], properties: [] };
@@ -77,6 +173,8 @@ function getOutputs (klass) {
   return outputs;
 }
 
+// imports needed for this a class constructor
+// e.g., { '@angular/core': [ 'Component', 'PLATFORM_ID' ], ...}
 function getImports (klass) {
   const imports = {};
   const constructorParams = (klass.ctor && klass.ctor.parameters) || [];

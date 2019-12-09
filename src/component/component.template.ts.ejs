@@ -6,13 +6,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
-<% for(var importLib in imports) { -%>
-import { <%- imports[importLib].map(el => `${el}`).join(', ') -%> } from '<%- importLib -%>';
-<% } -%>
-<%-                        -%>
-<% for(var klassName in providerMocks) { %>
-<%- providerMocks[klassName] -%>
-<% } -%>
+import { Component } from '@angular/core';
+
+<%- importMocks.join('\n') %>
+<%- providerMocks.mocks.join('\n') %>
 
 <% config.directives.forEach(directive => { %>
 @Directive({ selector: '[<%- directive -%>]' })
@@ -42,11 +39,11 @@ describe('<%- className %>', () => {
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [
-        <%- Object.entries(providers).map( ([_, value]) => value ).join(',\n        ') %>
+        <%- providerMocks.providers.join(',\n        ') %>
       ]
     }).overrideComponent(<%- className %>, {
-    <% klassProviders.forEach(provider => { %>
-      set: { providers: [{ provide: <%- provider -%>, useClass: Mock<%- provider -%> }] }
+    <% componentProviderMocks.forEach(mock => { %>
+      <%- mock -%>
     <% }) %>
     }).compileComponents();
     fixture = TestBed.createComponent(<%- className %>);

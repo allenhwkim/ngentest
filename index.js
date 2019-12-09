@@ -10,7 +10,6 @@ const appRoot = require('app-root-path');
 const config = require('./ngentest.config');
 const Util = require('./src/util.js');
 const FuncTestGen = require('./src/func-test-gen.js');
-const TypescriptParser = require('./src/typescript-parser.js');
 
 const ComponentTestGen = require('./src/component/component-test-gen.js');
 const DirectiveTestGen = require('./src/directive/directive-test-gen.js');
@@ -85,30 +84,26 @@ function getTestGenerator (tsPath, config) {
   return testGenerator;
 }
 
-function getFuncTest(Klass, func, angularType) {
+function getFuncTest(Klass, funcName, funcType, angularType) {
   Util.DEBUG &&
-    console.log('\x1b[36m%s\x1b[0m', `\nPROCESSING #${func.name}`);
+    console.log('\x1b[36m%s\x1b[0m', `\nPROCESSING #${funcName}`);
 
-  const type = func.constructor.name;
   // getter/setter differntiate the same name function getter/setter
-  const funcMockData = getFuncMockData(Klass, func.name, {});
+  const funcMockData = getFuncMockData(Klass, funcName, {});
   const allFuncMockJS = Util.getFuncMockJS(funcMockData, angularType);
   const funcMockJS = [...new Set(allFuncMockJS)];
   const funcParamJS = Util.getFuncParamJS(funcMockData.params);
 
-  const assertRE = /(.*?)\s*=\s*jest\.fn\(.*/;
+  const assertRE = new RegExp('\(.*?\)\\s*=\\s*' + 'jest.fn()');
   const funcAssertJS = funcMockJS
     .filter(el => el.match(assertRE))
-    .map(el => {
-      el = el.replace(/\n/g,' ');
-      return el.replace(assertRE, (_, m1) => `// expect(${m1}).toHaveBeenCalled()`);
-    });
+    .map(el => `// expect(${el.match(assertRE)[1]}).toHaveBeenCalled()`);
   const jsToRun = 
-    type === 'SetterDeclaration' ? `${angularType}.${func.name} = ${funcParamJS || '{}'}`: 
-    type === 'GetterDeclaration' ? `const ${func.name} = ${angularType}.${func.name}` : 
-    `${angularType}.${func.name}(${funcParamJS})`;
-  const itBlockName = type === 'MethodDeclaration' ? 
-    `should run #${func.name}()` : `should run ${type} #${func.name}`;
+    funcType === 'Setter' ? `${angularType}.${funcName} = ${funcParamJS || '{}'}`: 
+    funcType === 'Getter' ? `const ${funcName} = ${angularType}.${funcName}` : 
+    `${angularType}.${funcName}(${funcParamJS})`;
+  const itBlockName = funcType === 'Method' ? 
+    `should run #${funcName}()` : `should run ${funcType}#${funcName}`;
   const asyncStr = funcMockData.isAsync ? 'await ' : '';
 
   return `
@@ -123,16 +118,14 @@ function getFuncTest(Klass, func, angularType) {
 async function run (tsFile) {
   try {
     const testGenerator = getTestGenerator(tsFile, config);
-    const { klass, typescript, ejsData } = await testGenerator.getData();
-    const angularType = Util.getAngularType(typescript).toLowerCase();
-    const tsParser = new TypescriptParser(typescript);
+    const {angularType, typescript, ejsData} = testGenerator.getData();
 
     ejsData.config = config;
-    ejsData.ctorParamJs;
-    ejsData.providerMocks;
-    ejsData.klassProviders = tsParser.getDecoratorProviders();
-    ejsData.accessorTests = {};
-    ejsData.functionTests = {};
+    // mockData is set after each statement is being analyzed from getFuncMockData
+    ejsData.ctorParamJs; // declarition only, will be set from mockData
+    ejsData.providerMocks; //  declarition only, will be set from mockData
+    ejsData.accessorTests = {}; //  declarition only, will be set from mockData
+    ejsData.functionTests = {}; //  declarition only, will be set from mockData
 
     const result = ts.transpileModule(typescript, {
       compilerOptions: {
@@ -162,33 +155,36 @@ async function run (tsFile) {
 
     const ctorParamJs = Util.getFuncParamJS(ctorMockData.params);
     ejsData.ctorParamJs = Util.indent(ctorParamJs, ' '.repeat(6)).trim();
-    ejsData.providerMocks = testGenerator.getProviderMocks(klass, ctorMockData.params);
-    for (var key in ejsData.providerMocks) {
-      ejsData.providerMocks[key] = Util.indent(ejsData.providerMocks[key]).replace(/\{\s+\}/gm, '{}');
-    }
+    ejsData.providerMocks = testGenerator.getProviderMocks(ctorMockData.params);
+    // for (var key in ejsData.providerMocks) {
+    //   ejsData.providerMocks[key] = Util.indent(ejsData.providerMocks[key]).replace(/\{\s+\}/gm, '{}');
+    // }
 
     const errors = [];
-    klass.accessors.forEach(accessor => {
-      const type = accessor.constructor.name === 'SetterDeclaration' ? '=' : '';
-      // getter/setter differntiate the same name function getter/setter
-      ejsData.accessorTests[accessor.name + type] =
-        Util.indent(getFuncTest(Klass, accessor, angularType), '  ');
+    testGenerator.klassSetters.forEach(setter => {
+      const setterName = setter.node.name.escapedText;
+      ejsData.accessorTests[`${setterName} Setter`] =
+        Util.indent(getFuncTest(Klass, setterName, 'Setter', angularType), '  ');
     });
 
-
-    klass.methods.forEach(method => {
+    testGenerator.klassMethods.forEach(method => {
+      const methodName = method.node.name.escapedText;
       try {
-        ejsData.functionTests[method.name] =
-          Util.indent(getFuncTest(Klass, method, angularType), '  ');
+        ejsData.functionTests[methodName] =
+          Util.indent(getFuncTest(Klass, methodName, 'Method', angularType), '  ');
       } catch (e) {
         const msg = '    // '+ e.stack;
         const itBlock = `it('should run #${method.name}()', async () => {\n` +
           `${msg.replace(/\n/g, '\n    // ')}\n` +
           `  });\n`
-        ejsData.functionTests[method.name] = itBlock;
+        ejsData.functionTests[methodName] = itBlock;
         errors.push(e);
       }
     });
+
+console.log('..................................................................')
+console.log(ejsData)
+console.log('..................................................................')
 
     const generated = testGenerator.getGenerated(ejsData, argv);
     generated && testGenerator.writeGenerated(generated, argv);
