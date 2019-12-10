@@ -82,7 +82,7 @@ class Util {
       const objRet = obj();
       const objRet1stKey = Util.getFirstKey(objRet);
       if (!objRet1stKey) {
-        return 'jest.fn()';
+        return 'function() {}';
       } else {
         const funcRet = Util.objToJS(objRet, level + 1);
         return `function() {\n${indent}  return ${funcRet};\n${indent}}`;

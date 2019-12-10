@@ -7,7 +7,7 @@ const injectableTemplate = fs.readFileSync(path.join(__dirname, 'src', 'injectab
 const pipeTemplate = fs.readFileSync(path.join(__dirname, 'src', 'pipe', 'pipe.template.ts.ejs'), 'utf8');
 
 module.exports = {
-  // framework: 'karma',
+  // framework: 'karma', // or 'jest'
   // .spec file EJS templtes
   templates: {
     klass: klassTemplate,
@@ -33,10 +33,10 @@ module.exports = {
   // e.g. @Injectable() MockElementRef { nativeElement = {}; }
   providerMocks: {
     ElementRef: ['nativeElement = {};'],
-    Router: ['navigate = jest.fn();'],
-    Document: ['querySelector = jest.fn();'],
-    HttpClient: ['post = jest.fn();'],
-    TranslateService: ['translate = jest.fn();'],
+    Router: ['navigate() {};'],
+    Document: ['querySelector() {};'],
+    HttpClient: ['post() {};'],
+    TranslateService: ['translate() {};'],
     EncryptionService: [],
   },
   // when ngentest runs with a directory, include only these files

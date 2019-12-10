@@ -10,12 +10,12 @@ import { EncryptionService } from '@rogers/oneview-components';
 
 @Injectable()
 class MockHttpClient {
-  post = jest.fn();
+  post() {};
 }
 
 @Injectable()
 class MockEncryptionService {
-  decrypt = jest.fn();
+  decrypt = function() {};
 }
 
 describe('DynamicComponentService', () => {
@@ -29,14 +29,14 @@ describe('DynamicComponentService', () => {
           }
         }
       }, {
-        decrypt: jest.fn()
+        decrypt: function() {}
       });
   });
 
   it('should run #createComponent()', async () => {
     service.factoryResolver = service.factoryResolver || {};
     service.factoryResolver.resolveComponentFactory = jest.fn().mockReturnValue({
-      create: jest.fn()
+      create: function() {}
     });
     service.createComponent({}, {}, {
       parentInjector: {}
@@ -50,7 +50,7 @@ describe('DynamicComponentService', () => {
     service.insertComponent({
       location: {
         nativeElement: {
-          setAttribute: jest.fn()
+          setAttribute: function() {}
         }
       },
       instance: {

@@ -13,5 +13,6 @@ set -e
 ./index.js examples/exampleX.component.ts -sf
 ./index.js examples/example.directive.ts -sf
 ./index.js examples/example.service.ts -sf
+./index.js examples/example2.service.ts -sf
 ./index.js examples/example.pipe.ts -sf
 ./index.js examples/example2.pipe.ts -sf

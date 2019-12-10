@@ -91,7 +91,7 @@ describe('BillingHeaderComponent', () => {
   });
 
   afterEach(() => {
-    component.ngOnDestroy = jest.fn();
+    component.ngOnDestroy = function() {};
     fixture.destroy();
   });
 
@@ -189,10 +189,10 @@ describe('BillingHeaderComponent', () => {
   it('should run #openSchedulePTP()', async () => {
     component.el = component.el || {};
     component.el.nativeElement = {
-      dispatchEvent: jest.fn()
+      dispatchEvent: function() {}
     };
     component.openSchedulePTP({
-      stopPropagation: jest.fn()
+      stopPropagation: function() {}
     });
 
   });
@@ -200,10 +200,10 @@ describe('BillingHeaderComponent', () => {
   it('should run #openSchedulePTPHistory()', async () => {
     component.el = component.el || {};
     component.el.nativeElement = {
-      dispatchEvent: jest.fn()
+      dispatchEvent: function() {}
     };
     component.openSchedulePTPHistory({
-      stopPropagation: jest.fn()
+      stopPropagation: function() {}
     });
 
   });

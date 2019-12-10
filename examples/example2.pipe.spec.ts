@@ -14,7 +14,7 @@ describe('TruncatePipe', () => {
 
     pipe.transform({
       length: {},
-      substring: jest.fn()
+      substring: function() {}
     });
 
   });

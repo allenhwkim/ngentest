@@ -53,7 +53,7 @@ describe('TotalDataDetailsComponent', () => {
   });
 
   afterEach(() => {
-    component.ngOnDestroy = jest.fn();
+    component.ngOnDestroy = function() {};
     fixture.destroy();
   });
 
@@ -97,7 +97,7 @@ describe('TotalDataDetailsComponent', () => {
         y: {
           z: {
             foo: {
-              bar: jest.fn()
+              bar: function() {}
             }
           }
         }

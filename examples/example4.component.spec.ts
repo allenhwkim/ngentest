@@ -13,7 +13,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Injectable()
 class MockTranslateService {
-  translate = jest.fn();
+  translate() {};
 }
 
 @Directive({ selector: '[oneviewPermitted]' })
@@ -71,7 +71,7 @@ describe('InteractionsComponent', () => {
   });
 
   afterEach(() => {
-    component.ngOnDestroy = jest.fn();
+    component.ngOnDestroy = function() {};
     fixture.destroy();
   });
 
