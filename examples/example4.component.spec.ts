@@ -79,15 +79,15 @@ describe('InteractionsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should run GetterDeclaration #currentPage', async () => {
-
-    const currentPage = component.currentPage;
-
-  });
-
   it('should run SetterDeclaration #currentPage', async () => {
 
     component.currentPage = {};
+
+  });
+
+  it('should run GetterDeclaration #currentPage', async () => {
+
+    const currentPage = component.currentPage;
 
   });
 

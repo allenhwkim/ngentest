@@ -5,30 +5,26 @@ import { isPlatformBrowser } from '@angular/common';
 import { By } from '@angular/platform-browser';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
-<% for(var key in imports) { -%>
-import {<%- imports[key].map(el => `${el}`).join(', ') -%>} from '<%- key -%>';
-<% } -%>
-<%-                        -%>
-<% for(var klassName in providerMocks) { %>
-<%- providerMocks[klassName] -%>
-<% } -%>
+<%- importMocks.join('\n') -%>
+
+<%- providerMocks.mocks.join('\n') %>
 
 @Component({
   template: `
 <% if (selector.type === 'element') { -%>
-  <<%- selector.name -%> <%- inputs.attributes.join(' ') -%> <%- outputs.attributes.join(' ') -%>></<%- selector.name %>>
+  <<%- selector.name -%> <%- inputMocks.html.join(' ') -%> <%- outputMocks.html.join(' ') -%>></<%- selector.name %>>
 <% } else if (selector.type === 'attribute') { -%>
-  <div <%- selector.name -%> <%- inputs.attributes.join(' ') -%> <%- outputs.attributes.join(' ') -%>></div>
+  <div <%- selector.name -%> <%- inputMocks.html.join(' ') -%> <%- outputMocks.html.join(' ') -%>></div>
 <% } else if (selector.type === 'class') { -%>
-  <div class="<%- selector.name -%>" <%- inputs.attributes.join(' ') -%> <%- outputs.attributes.join(' ') -%>></div>
+  <div class="<%- selector.name -%>" <%- inputMocks.html.join(' ') -%> <%- outputMocks.html.join(' ') -%>></div>
 <% } -%>
   `
 })
 class DirectiveTestComponent {
-<% inputs.properties.forEach(function(prop) { -%>
+<% inputMocks.js.forEach(function(prop) { -%>
   <%- prop -%>
 <% }) %>
-<% outputs.properties.forEach(function(prop) { %>
+<% outputMocks.js.forEach(function(prop) { %>
   <%- prop -%>
 <% }) %>
 }
@@ -42,8 +38,8 @@ describe('<%- className %>', () => {
   beforeEach(async () => {
     TestBed.configureTestingModule({
       declarations: [<%- className %>, DirectiveTestComponent],
-      providers: [<% for(var key in providers) { %>
-        <%- providers[key]+ ',' %><% } %>
+      providers: [
+        <%- providerMocks.providers.join(',\n        ') %>
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     }).compileComponents();

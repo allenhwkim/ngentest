@@ -4,12 +4,15 @@ const Util = require('./util.js');
 class FuncTestGen {
 
   // TODO: differntiate the same name getter/setter function getter/setter
-  constructor (Klass, funcName) {
+  constructor (Klass, funcName, funcType) {
     this.Klass = Klass;
     this.funcName = funcName;
+    this.funcType = funcType; // constructor, get, set, method
     this.classCode = '' + Klass.prototype.constructor;
     this.klassDecl = jsParser.parse(this.classCode).body[0];
-    const methodDefinition = this.klassDecl.body.body.find(node => node.key.name === this.funcName);
+    const methodDefinition = this.klassDecl.body.body.find(node => {
+      return (node.kind === this.funcType) && (node.key.name === this.funcName);
+    });
     if (methodDefinition) {
       this.funcCode = this.classCode.substring(methodDefinition.start, methodDefinition.end);
       this.isAsync = this.funcCode.includes('return __awaiter(this, void 0, void 0, function* ()');
@@ -23,7 +26,9 @@ class FuncTestGen {
   getInitialParameters () {
     const params = {};
     // TODO:  differntiate the same name function getter/setter
-    const methodDefinition = this.klassDecl.body.body.find(node => node.key.name === this.funcName);
+    const methodDefinition = this.klassDecl.body.body.find(node => {
+      return (node.kind === this.funcType) && (node.key.name === this.funcName);
+    });
     if (methodDefinition) {
       methodDefinition.value.params.forEach(el => (params[el.name] = {}));
     }
@@ -209,8 +214,10 @@ class FuncTestGen {
 
         const rightCodeVarName = rightCode.replace(/\s+/g,'').replace(/\(.*\)/g,'()')
         if (!mockData.map[leftCode] && paramMatchRE && rightCode.match(paramMatchRE)) {
-          mockData.map[leftCode] = rightCodeVarName;
-          mapped = {type: 'param', key: leftCode, value: rightCodeVarName};
+          if (leftCode !== rightCodeVarName) { // ignore map to the same name, it causes a bug
+            mockData.map[leftCode] = rightCodeVarName;
+            mapped = {type: 'param', key: leftCode, value: rightCodeVarName};
+          }
         // or right-side starts with . this.xxxx 
         } else if (!mockData.map[leftCode] && numLeftCodeRepeats > 0) { 
           mockData.map[leftCode] = rightCodeVarName;
@@ -254,7 +261,7 @@ class FuncTestGen {
       if (one === 'this' && two && map[`this.${two}`]) { // if param map found
         Util.merge(obj.this, params);
       } else {
-        Util.merge(obj, params);
+        Util.merge(code, obj, params);
       }
     } else if (map[mapKey] && exprFoundInMap) { // if non-param map found
       const newlyMappedCode = code.replace(mapKey, map[mapKey]);

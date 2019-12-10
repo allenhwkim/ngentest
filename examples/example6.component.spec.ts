@@ -123,15 +123,15 @@ describe('BillingPageComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should run GetterDeclaration #billSelection', async () => {
-
-    const billSelection = component.billSelection;
-
-  });
-
   it('should run SetterDeclaration #billSelection', async () => {
 
     component.billSelection = {};
+
+  });
+
+  it('should run GetterDeclaration #billSelection', async () => {
+
+    const billSelection = component.billSelection;
 
   });
 

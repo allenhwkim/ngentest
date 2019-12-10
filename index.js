@@ -53,12 +53,11 @@ if (fs.existsSync(path.join(appRoot.path, 'ngentest.config.js'))) {
 }
 Util.DEBUG && console.log('  *** config ***', config);
 
-// getter/setter differntiate the same name function getter/setter
-function getFuncMockData (Klass, funcName, props) {
-  const funcTestGen = new FuncTestGen(Klass, funcName);
+function getFuncMockData (Klass, funcName, funcType) {
+  const funcTestGen = new FuncTestGen(Klass, funcName, funcType);
   const funcMockData = {
     isAsync: funcTestGen.isAsync,
-    props,
+    props: {},
     params: funcTestGen.getInitialParameters(),
     map: {},
     globals: {}
@@ -88,8 +87,7 @@ function getFuncTest(Klass, funcName, funcType, angularType) {
   Util.DEBUG &&
     console.log('\x1b[36m%s\x1b[0m', `\nPROCESSING #${funcName}`);
 
-  // getter/setter differntiate the same name function getter/setter
-  const funcMockData = getFuncMockData(Klass, funcName, {});
+  const funcMockData = getFuncMockData(Klass, funcName, funcType);
   const allFuncMockJS = Util.getFuncMockJS(funcMockData, angularType);
   const funcMockJS = [...new Set(allFuncMockJS)];
   const funcParamJS = Util.getFuncParamJS(funcMockData.params);
@@ -99,11 +97,13 @@ function getFuncTest(Klass, funcName, funcType, angularType) {
     .filter(el => el.match(assertRE))
     .map(el => `// expect(${el.match(assertRE)[1]}).toHaveBeenCalled()`);
   const jsToRun = 
-    funcType === 'Setter' ? `${angularType}.${funcName} = ${funcParamJS || '{}'}`: 
-    funcType === 'Getter' ? `const ${funcName} = ${angularType}.${funcName}` : 
+    funcType === 'set' ? `${angularType}.${funcName} = ${funcParamJS || '{}'}`: 
+    funcType === 'get' ? `const ${funcName} = ${angularType}.${funcName}` : 
     `${angularType}.${funcName}(${funcParamJS})`;
-  const itBlockName = funcType === 'Method' ? 
-    `should run #${funcName}()` : `should run ${funcType}#${funcName}`;
+  const itBlockName = 
+    funcType === 'method' ? `should run #${funcName}()` : 
+    funcType === 'get' ? `should run GetterDeclaration #${funcName}` :
+    funcType === 'set' ? `should run SetterDeclaration #${funcName}` : '';
   const asyncStr = funcMockData.isAsync ? 'await ' : '';
 
   return `
@@ -115,10 +115,12 @@ function getFuncTest(Klass, funcName, funcType, angularType) {
     `;
 }
 
-async function run (tsFile) {
+function run (tsFile) {
   try {
     const testGenerator = getTestGenerator(tsFile, config);
-    const {angularType, typescript, ejsData} = testGenerator.getData();
+    const typescript = fs.readFileSync(path.resolve(tsFile), 'utf8');
+    const angularType = Util.getAngularType(typescript).toLowerCase();
+    const {ejsData} = testGenerator.getData();
 
     ejsData.config = config;
     // mockData is set after each statement is being analyzed from getFuncMockData
@@ -151,7 +153,7 @@ async function run (tsFile) {
     const Klass = modjule[ejsData.className];
     Util.DEBUG &&
       console.warn('\x1b[36m%s\x1b[0m', `PROCESSING ${klass.ctor && klass.ctor.name} constructor`);
-    const ctorMockData = getFuncMockData(Klass, 'constructor', {});
+    const ctorMockData = getFuncMockData(Klass, 'constructor', 'constructor');
 
     const ctorParamJs = Util.getFuncParamJS(ctorMockData.params);
     ejsData.ctorParamJs = Util.indent(ctorParamJs, ' '.repeat(6)).trim();
@@ -163,15 +165,20 @@ async function run (tsFile) {
     const errors = [];
     testGenerator.klassSetters.forEach(setter => {
       const setterName = setter.node.name.escapedText;
-      ejsData.accessorTests[`${setterName} Setter`] =
-        Util.indent(getFuncTest(Klass, setterName, 'Setter', angularType), '  ');
+      ejsData.accessorTests[`${setterName} SetterDeclaration`] =
+        Util.indent(getFuncTest(Klass, setterName, 'set', angularType), '  ');
+    });
+    testGenerator.klassGetters.forEach(better => {
+      const getterName = better.node.name.escapedText;
+      ejsData.accessorTests[`${getterName} GetterDeclaration`] =
+        Util.indent(getFuncTest(Klass, getterName, 'get', angularType), '  ');
     });
 
     testGenerator.klassMethods.forEach(method => {
       const methodName = method.node.name.escapedText;
       try {
         ejsData.functionTests[methodName] =
-          Util.indent(getFuncTest(Klass, methodName, 'Method', angularType), '  ');
+          Util.indent(getFuncTest(Klass, methodName, 'method', angularType), '  ');
       } catch (e) {
         const msg = '    // '+ e.stack;
         const itBlock = `it('should run #${method.name}()', async () => {\n` +
@@ -182,10 +189,9 @@ async function run (tsFile) {
       }
     });
 
-console.log('..................................................................')
-console.log(ejsData)
-console.log('..................................................................')
-
+    // console.log('..................................................................')
+    // console.log(ejsData)
+    // console.log('..................................................................')
     const generated = testGenerator.getGenerated(ejsData, argv);
     generated && testGenerator.writeGenerated(generated, argv);
 

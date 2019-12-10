@@ -1,16 +1,12 @@
 import { async } from '@angular/core/testing';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
-<% for(var key in imports) { -%>
-import {<%- imports[key].map(el => `${el}`).join(', ') -%>} from '<%- key -%>';
-<% } -%>
+<%- importMocks.join('\n') -%>
+
+<%- providerMocks.mocks.join('\n') %>
 
 describe('<%- className %>', () => {
   let pipe;
-
-  <% for(var klassName in providerMocks) { %>
-  <%- providerMocks[klassName] -%>
-  <% } -%>
 
   beforeEach(() => {
     pipe = new <%- className %>(<%- ctorParamJs %>);

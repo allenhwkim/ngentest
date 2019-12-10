@@ -28,9 +28,6 @@ export class AdjustmentFormComponent implements OnInit {
   recommendedAmount: number;
   isAdjustmentFieldInValid: boolean;
   isAutomaticFlow: boolean;
-  get me(): Number {
-    return 123;
-  }
 
   constructor(private formBuilder: FormBuilder, @Inject(LOCALE_ID) private language) {
   }

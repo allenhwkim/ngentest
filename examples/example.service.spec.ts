@@ -2,11 +2,11 @@ import { async } from '@angular/core/testing';
 import { Injectable } from '@angular/core';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
-import {Component} from '@angular/core';
-import {DynamicComponentService} from './example.service';
-import {HttpClient} from '@angular/common/http';
-import {ActivatedRoute} from '@angular/router';
-import {EncryptionService} from '@rogers/oneview-components';
+import { DynamicComponentService } from './example.service';
+import { ComponentFactoryResolver } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
+import { EncryptionService } from '@rogers/oneview-components';
 
 @Injectable()
 class MockHttpClient {
@@ -17,6 +17,7 @@ class MockHttpClient {
 class MockEncryptionService {
   decrypt = jest.fn();
 }
+
 describe('DynamicComponentService', () => {
   let service;
 

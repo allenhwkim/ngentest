@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 
-const Base = require('../common-gen-functions.js');
+const Base = require('../common-test-gen.js');
 
 class ComponentTestGen {
   constructor (tsPath, config) {
@@ -18,6 +18,7 @@ class ComponentTestGen {
 
     this.klass = Base.getKlass.bind(this)();
     this.imports = Base.getImports.bind(this)();
+    this.angularType = Base.getAngularType.bind(this)().toLowerCase();
     this.klassProperties = Base.getKlassProperties.bind(this)();
     this.klassGetters = Base.getKlassGetters.bind(this)(),
     this.klassSetters = Base.getKlassSetters.bind(this)(),
@@ -29,18 +30,21 @@ class ComponentTestGen {
   }
 
   getData () {
-    const angularType = Base.getAngularType.bind(this)();
-    const typescript = this.typescript;
-
     const ejsData = {
       className: this.klass.node.name.escapedText,
       importMocks: Base.getImportMocks.bind(this)(),
       inputMocks: Base.getInputMocks.bind(this)(),
-      outpuMocks: Base.getOutputMocks.bind(this)(),
-      componentProviderMocks: Base.getComponentProviderMocks.bind(this)()
+      outputMocks: Base.getOutputMocks.bind(this)(),
+      componentProviderMocks: Base.getComponentProviderMocks.bind(this)(),
+      selector: Base.getDirectiveSelector.bind(this)(),
+
+      ctorParamJs: undefined, // declarition only, will be set from mockData
+      providerMocks: undefined, //  declarition only, will be set from mockData
+      accessorTests: undefined, //  declarition only, will be set from mockData
+      functionTests: undefined //  declarition only, will be set from mockData
     }
 
-    return {angularType, typescript, ejsData};
+    return {ejsData};
   }
 
 }

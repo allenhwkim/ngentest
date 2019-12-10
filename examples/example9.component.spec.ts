@@ -84,8 +84,7 @@ describe('TotalDataDetailsComponent', () => {
       ]
     }).overrideComponent(TotalDataDetailsComponent, {
 
-      set: { providers: [{ provide: SuspendCtnService, useClass: MockSuspendCtnService }] }
-
+      set: { providers: [{ provide: SuspendCtnService, useClass: MockSuspendCtnService }] }    
     }).compileComponents();
     fixture = TestBed.createComponent(TotalDataDetailsComponent);
     component = fixture.debugElement.componentInstance;

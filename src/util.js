@@ -141,10 +141,8 @@ class Util {
    */
   static merge (source, target) {
     const firstKey = Object.keys(source)[0];
-    if (!target[firstKey]) {
-
+    if (firstKey && !target[firstKey]) {
       target[firstKey] = source[firstKey];
-
     } else if (typeof source[firstKey] === 'function') {
       const sourceFuncRet = source[firstKey]();
 
@@ -174,10 +172,8 @@ class Util {
         target[firstKey] = function() { return sourceFuncRet; }
 
       }
-    } else if (typeof source[firstKey] !== 'function') {
-
+    } else if (firstKey && typeof source[firstKey] !== 'function') {
       Util.merge(source[firstKey], target[firstKey]);
-
     }
   }
 
