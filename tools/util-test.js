@@ -1,5 +1,5 @@
 const jsParser = require('acorn').Parser;
-const Util = require('./src/util.js');
+const Util = require('../src/util.js');
 let parsed, code, node, obj;
 
 // code = `group => group.featureGroup.label.en === 'Data'`;

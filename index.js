@@ -31,13 +31,15 @@ const argv = yargs.usage('Usage: $0 <tsFile> [options]')
       type: 'boolean'
     },
     'm': { alias: 'method', describe: 'Show code only for this method', type: 'string' },
-    'v': { alias: 'verbose', describe: 'log verbose debug messages', type: 'boolean' }
+    'v': { alias: 'verbose', describe: 'log verbose debug messages', type: 'boolean' },
+    'framework': { describe: 'test framework, jest or karma', type: 'string' }
   })
   .example('$0 my.component.ts', 'generate Angular unit test for my.component.ts')
   .help('h')
   .argv;
 
 Util.DEBUG = argv.verbose;
+Util.FRAMEWORK = config.framework || argv.framework;
 const tsFile = argv._[0].replace(/\.spec\.ts$/, '.ts');
 // const writeToSpec = argv.spec;
 if (!(tsFile && fs.existsSync(tsFile))) {
@@ -88,14 +90,11 @@ function getFuncTest(Klass, funcName, funcType, angularType) {
     console.log('\x1b[36m%s\x1b[0m', `\nPROCESSING #${funcName}`);
 
   const funcMockData = getFuncMockData(Klass, funcName, funcType);
-  const allFuncMockJS = Util.getFuncMockJS(funcMockData, angularType);
+  const [allFuncMockJS, asserts] = Util.getFuncMockJS(funcMockData, angularType);
   const funcMockJS = [...new Set(allFuncMockJS)];
   const funcParamJS = Util.getFuncParamJS(funcMockData.params);
 
-  const assertRE = new RegExp('\(.*?\)\\s*=\\s*' + 'jest.fn()');
-  const funcAssertJS = funcMockJS
-    .filter(el => el.match(assertRE))
-    .map(el => `// expect(${el.match(assertRE)[1]}).toHaveBeenCalled()`);
+  const funcAssertJS = asserts.map(el => `// expect(${el.join('.')}).toHaveBeenCalled()`);
   const jsToRun = 
     funcType === 'set' ? `${angularType}.${funcName} = ${funcParamJS || '{}'}`: 
     funcType === 'get' ? `const ${funcName} = ${angularType}.${funcName}` : 

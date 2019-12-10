@@ -15,6 +15,7 @@ const srcFiles = [
   `${path.join('examples', 'example7.component.ts')}`,
   `${path.join('examples', 'example8.component.ts')}`,
   `${path.join('examples', 'example9.component.ts')}`,
+  `${path.join('examples', 'exampleX.component.ts')}`,
   `${path.join('examples', 'example.directive.ts')}`,
   `${path.join('examples', 'example.service.ts')}`,
   `${path.join('examples', 'example.pipe.ts')}`
