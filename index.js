@@ -168,8 +168,8 @@ function run (tsFile) {
       ejsData.accessorTests[`${setterName} SetterDeclaration`] =
         Util.indent(getFuncTest(Klass, setterName, 'set', angularType), '  ');
     });
-    testGenerator.klassGetters.forEach(better => {
-      const getterName = better.node.name.escapedText;
+    testGenerator.klassGetters.forEach(getter => {
+      const getterName = getter.node.name.escapedText;
       ejsData.accessorTests[`${getterName} GetterDeclaration`] =
         Util.indent(getFuncTest(Klass, getterName, 'get', angularType), '  ');
     });
