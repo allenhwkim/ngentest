@@ -13,7 +13,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Injectable()
 class MockTranslateService {
-  translate = jest.fn();
+  translate() {};
 }
 
 @Directive({ selector: '[oneviewPermitted]' })
@@ -71,7 +71,7 @@ describe('InteractionsComponent', () => {
   });
 
   afterEach(() => {
-    component.ngOnDestroy = jest.fn();
+    component.ngOnDestroy = function() {};
     fixture.destroy();
   });
 
@@ -79,15 +79,15 @@ describe('InteractionsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should run GetterDeclaration #currentPage', async () => {
-
-    const currentPage = component.currentPage;
-
-  });
-
   it('should run SetterDeclaration #currentPage', async () => {
 
     component.currentPage = {};
+
+  });
+
+  it('should run GetterDeclaration #currentPage', async () => {
+
+    const currentPage = component.currentPage;
 
   });
 

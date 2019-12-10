@@ -10,7 +10,6 @@ const appRoot = require('app-root-path');
 const config = require('./ngentest.config');
 const Util = require('./src/util.js');
 const FuncTestGen = require('./src/func-test-gen.js');
-const TypescriptParser = require('./src/typescript-parser.js');
 
 const ComponentTestGen = require('./src/component/component-test-gen.js');
 const DirectiveTestGen = require('./src/directive/directive-test-gen.js');
@@ -32,13 +31,15 @@ const argv = yargs.usage('Usage: $0 <tsFile> [options]')
       type: 'boolean'
     },
     'm': { alias: 'method', describe: 'Show code only for this method', type: 'string' },
-    'v': { alias: 'verbose', describe: 'log verbose debug messages', type: 'boolean' }
+    'v': { alias: 'verbose', describe: 'log verbose debug messages', type: 'boolean' },
+    'framework': { describe: 'test framework, jest or karma', type: 'string' }
   })
   .example('$0 my.component.ts', 'generate Angular unit test for my.component.ts')
   .help('h')
   .argv;
 
 Util.DEBUG = argv.verbose;
+Util.FRAMEWORK = config.framework || argv.framework;
 const tsFile = argv._[0].replace(/\.spec\.ts$/, '.ts');
 // const writeToSpec = argv.spec;
 if (!(tsFile && fs.existsSync(tsFile))) {
@@ -54,12 +55,11 @@ if (fs.existsSync(path.join(appRoot.path, 'ngentest.config.js'))) {
 }
 Util.DEBUG && console.log('  *** config ***', config);
 
-// getter/setter differntiate the same name function getter/setter
-function getFuncMockData (Klass, funcName, props) {
-  const funcTestGen = new FuncTestGen(Klass, funcName);
+function getFuncMockData (Klass, funcName, funcType) {
+  const funcTestGen = new FuncTestGen(Klass, funcName, funcType);
   const funcMockData = {
     isAsync: funcTestGen.isAsync,
-    props,
+    props: {},
     params: funcTestGen.getInitialParameters(),
     map: {},
     globals: {}
@@ -85,30 +85,24 @@ function getTestGenerator (tsPath, config) {
   return testGenerator;
 }
 
-function getFuncTest(Klass, func, angularType) {
+function getFuncTest(Klass, funcName, funcType, angularType) {
   Util.DEBUG &&
-    console.log('\x1b[36m%s\x1b[0m', `\nPROCESSING #${func.name}`);
+    console.log('\x1b[36m%s\x1b[0m', `\nPROCESSING #${funcName}`);
 
-  const type = func.constructor.name;
-  // getter/setter differntiate the same name function getter/setter
-  const funcMockData = getFuncMockData(Klass, func.name, {});
-  const allFuncMockJS = Util.getFuncMockJS(funcMockData, angularType);
+  const funcMockData = getFuncMockData(Klass, funcName, funcType);
+  const [allFuncMockJS, asserts] = Util.getFuncMockJS(funcMockData, angularType);
   const funcMockJS = [...new Set(allFuncMockJS)];
   const funcParamJS = Util.getFuncParamJS(funcMockData.params);
 
-  const assertRE = /(.*?)\s*=\s*jest\.fn\(.*/;
-  const funcAssertJS = funcMockJS
-    .filter(el => el.match(assertRE))
-    .map(el => {
-      el = el.replace(/\n/g,' ');
-      return el.replace(assertRE, (_, m1) => `// expect(${m1}).toHaveBeenCalled()`);
-    });
+  const funcAssertJS = asserts.map(el => `// expect(${el.join('.')}).toHaveBeenCalled()`);
   const jsToRun = 
-    type === 'SetterDeclaration' ? `${angularType}.${func.name} = ${funcParamJS || '{}'}`: 
-    type === 'GetterDeclaration' ? `const ${func.name} = ${angularType}.${func.name}` : 
-    `${angularType}.${func.name}(${funcParamJS})`;
-  const itBlockName = type === 'MethodDeclaration' ? 
-    `should run #${func.name}()` : `should run ${type} #${func.name}`;
+    funcType === 'set' ? `${angularType}.${funcName} = ${funcParamJS || '{}'}`: 
+    funcType === 'get' ? `const ${funcName} = ${angularType}.${funcName}` : 
+    `${angularType}.${funcName}(${funcParamJS})`;
+  const itBlockName = 
+    funcType === 'method' ? `should run #${funcName}()` : 
+    funcType === 'get' ? `should run GetterDeclaration #${funcName}` :
+    funcType === 'set' ? `should run SetterDeclaration #${funcName}` : '';
   const asyncStr = funcMockData.isAsync ? 'await ' : '';
 
   return `
@@ -120,19 +114,19 @@ function getFuncTest(Klass, func, angularType) {
     `;
 }
 
-async function run (tsFile) {
+function run (tsFile) {
   try {
     const testGenerator = getTestGenerator(tsFile, config);
-    const { klass, typescript, ejsData } = await testGenerator.getData();
+    const typescript = fs.readFileSync(path.resolve(tsFile), 'utf8');
     const angularType = Util.getAngularType(typescript).toLowerCase();
-    const tsParser = new TypescriptParser(typescript);
+    const {ejsData} = testGenerator.getData();
 
     ejsData.config = config;
-    ejsData.ctorParamJs;
-    ejsData.providerMocks;
-    ejsData.klassProviders = tsParser.getDecoratorProviders();
-    ejsData.accessorTests = {};
-    ejsData.functionTests = {};
+    // mockData is set after each statement is being analyzed from getFuncMockData
+    ejsData.ctorParamJs; // declarition only, will be set from mockData
+    ejsData.providerMocks; //  declarition only, will be set from mockData
+    ejsData.accessorTests = {}; //  declarition only, will be set from mockData
+    ejsData.functionTests = {}; //  declarition only, will be set from mockData
 
     const result = ts.transpileModule(typescript, {
       compilerOptions: {
@@ -158,38 +152,45 @@ async function run (tsFile) {
     const Klass = modjule[ejsData.className];
     Util.DEBUG &&
       console.warn('\x1b[36m%s\x1b[0m', `PROCESSING ${klass.ctor && klass.ctor.name} constructor`);
-    const ctorMockData = getFuncMockData(Klass, 'constructor', {});
+    const ctorMockData = getFuncMockData(Klass, 'constructor', 'constructor');
 
     const ctorParamJs = Util.getFuncParamJS(ctorMockData.params);
     ejsData.ctorParamJs = Util.indent(ctorParamJs, ' '.repeat(6)).trim();
-    ejsData.providerMocks = testGenerator.getProviderMocks(klass, ctorMockData.params);
-    for (var key in ejsData.providerMocks) {
-      ejsData.providerMocks[key] = Util.indent(ejsData.providerMocks[key]).replace(/\{\s+\}/gm, '{}');
-    }
+    ejsData.providerMocks = testGenerator.getProviderMocks(ctorMockData.params);
+    // for (var key in ejsData.providerMocks) {
+    //   ejsData.providerMocks[key] = Util.indent(ejsData.providerMocks[key]).replace(/\{\s+\}/gm, '{}');
+    // }
 
     const errors = [];
-    klass.accessors.forEach(accessor => {
-      const type = accessor.constructor.name === 'SetterDeclaration' ? '=' : '';
-      // getter/setter differntiate the same name function getter/setter
-      ejsData.accessorTests[accessor.name + type] =
-        Util.indent(getFuncTest(Klass, accessor, angularType), '  ');
+    testGenerator.klassSetters.forEach(setter => {
+      const setterName = setter.node.name.escapedText;
+      ejsData.accessorTests[`${setterName} SetterDeclaration`] =
+        Util.indent(getFuncTest(Klass, setterName, 'set', angularType), '  ');
+    });
+    testGenerator.klassGetters.forEach(getter => {
+      const getterName = getter.node.name.escapedText;
+      ejsData.accessorTests[`${getterName} GetterDeclaration`] =
+        Util.indent(getFuncTest(Klass, getterName, 'get', angularType), '  ');
     });
 
-
-    klass.methods.forEach(method => {
+    testGenerator.klassMethods.forEach(method => {
+      const methodName = method.node.name.escapedText;
       try {
-        ejsData.functionTests[method.name] =
-          Util.indent(getFuncTest(Klass, method, angularType), '  ');
+        ejsData.functionTests[methodName] =
+          Util.indent(getFuncTest(Klass, methodName, 'method', angularType), '  ');
       } catch (e) {
         const msg = '    // '+ e.stack;
         const itBlock = `it('should run #${method.name}()', async () => {\n` +
           `${msg.replace(/\n/g, '\n    // ')}\n` +
           `  });\n`
-        ejsData.functionTests[method.name] = itBlock;
+        ejsData.functionTests[methodName] = itBlock;
         errors.push(e);
       }
     });
 
+    // console.log('..................................................................')
+    // console.log(ejsData)
+    // console.log('..................................................................')
     const generated = testGenerator.getGenerated(ejsData, argv);
     generated && testGenerator.writeGenerated(generated, argv);
 

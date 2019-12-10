@@ -82,7 +82,7 @@ class Util {
       const objRet = obj();
       const objRet1stKey = Util.getFirstKey(objRet);
       if (!objRet1stKey) {
-        return 'jest.fn()';
+        return 'function() {}';
       } else {
         const funcRet = Util.objToJS(objRet, level + 1);
         return `function() {\n${indent}  return ${funcRet};\n${indent}}`;
@@ -141,10 +141,8 @@ class Util {
    */
   static merge (source, target) {
     const firstKey = Object.keys(source)[0];
-    if (!target[firstKey]) {
-
+    if (firstKey && !target[firstKey]) {
       target[firstKey] = source[firstKey];
-
     } else if (typeof source[firstKey] === 'function') {
       const sourceFuncRet = source[firstKey]();
 
@@ -174,10 +172,8 @@ class Util {
         target[firstKey] = function() { return sourceFuncRet; }
 
       }
-    } else if (typeof source[firstKey] !== 'function') {
-
+    } else if (firstKey && typeof source[firstKey] !== 'function') {
       Util.merge(source[firstKey], target[firstKey]);
-
     }
   }
 
@@ -482,25 +478,42 @@ class Util {
     return names.reduce((acc, val) => acc.concat(val), []);
   }
 
+  static getMockFn(keys, returns) { // e.g. x, y, z, {a:1, b:2}
+    if (Util.FRAMEWORK === 'karma') {
+      const lastVarName = keys.slice(-1);
+      const baseVarName = keys.slice(0, -1).join('.')
+      const mockFnJS = `spyOn(${baseVarName}, '${lastVarName}')`;
+      const mockReturnJS = returns ? `.and.returnValue(${returns})` : '';
+      return mockFnJS + mockReturnJS;
+    } else {
+      const mockFnJS = `${keys.join('.')} = jest.fn()`;
+      const mockReturnJS = returns ? `.mockReturnValue(${returns})` : '';
+      return mockFnJS + mockReturnJS;
+    }
+  }
+
   static getFuncMockJS (mockData, thisName = 'component') {
     const js = [];
+    const asserts = [];
 
     Object.entries(mockData.props).forEach(([key1, value]) => {
 
       if (typeof value === 'function') {
         const funcRetVal = value();
         if (typeof funcRetVal === 'string' || Object.keys(funcRetVal).length === 0) { // e.g.{}, or  myVar from `const myVar = this.foo.var();`
-          js.push(`${thisName}.${key1} = jest.fn()`);
+          js.push(Util.getMockFn([thisName, key1], null));
         } else {
-          js.push(`${thisName}.${key1} = jest.fn().mockReturnValue(${Util.objToJS(funcRetVal)})`);
+          js.push(Util.getMockFn([thisName, key1], Util.objToJS(funcRetVal)));
         }
+        asserts.push([thisName, key1]);
       } else {
         const valueFiltered = Object.entries(value).filter(([k, v]) => k !== 'undefined');
         valueFiltered.forEach(([key2, value2]) => {
 
           js.push(`${thisName}.${key1} = ${thisName}.${key1} || {}`);
           if (typeof value2 === 'function' && key2.match(/^(post|put)$/)) {
-            js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(observableOf('${key2}'))`);
+            js.push(Util.getMockFn([thisName, key1, key2], `observableOf('${key2}')`));
+            asserts.push([thisName, key1, key2]);
           } else if (key2.match(arrFuncRE)) {
             if (typeof value2[key2] === 'function') {
               const arrElValue = value2[key2]();
@@ -514,25 +527,27 @@ class Util {
             const funcRet1stKey = Util.getFirstKey(funcRetVal);
             if (typeof funcRetVal === 'object' && ['toPromise'].includes(funcRet1stKey)) {
               const retStr = Util.objToJS(funcRetVal[funcRet1stKey]());
-              js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(observableOf(${retStr}))`);
+              js.push(Util.getMockFn([thisName, key1, key2], `observableOf(${retStr})`));
             } else if (typeof funcRetVal === 'object' && ['filter'].includes(funcRet1stKey)) {
               const retStr = Util.objToJS(funcRetVal[funcRet1stKey]());
-              js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue([${retStr}])`);
+              js.push(Util.getMockFn([thisName, key1, key2], `[${retStr}]`));
             } else if (typeof funcRetVal === 'object' && funcRet1stKey) {
-              js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(${Util.objToJS(funcRetVal)})`);
+              js.push(Util.getMockFn([thisName, key1, key2], `${Util.objToJS(funcRetVal)}`));
             } else {
-              js.push(`${thisName}.${key1}.${key2} = jest.fn()`);
+              js.push(Util.getMockFn([thisName, key1, key2]));
             }
+            asserts.push([thisName, key1, key2]);
             // const funcRetValEmpty = Object.as`funcRetVal
           } else if (['length'].includes(key2)) {
             // do nothing
           } else if (typeof value2 === 'function') {
             const funcRetVal = value2();
             if (typeof funcRetVal === 'string' || Object.keys(funcRetVal).length === 0) { // e.g. myVar from `const myVar = this.foo.var();`
-              js.push(`${thisName}.${key1}.${key2} = jest.fn()`);
+              js.push(Util.getMockFn([thisName, key1, key2]));
             } else {
-              js.push(`${thisName}.${key1}.${key2} = jest.fn().mockReturnValue(${Util.objToJS(funcRetVal)})`);
+              js.push(Util.getMockFn([thisName, key1, key2], `${Util.objToJS(funcRetVal)}`));
             }
+            asserts.push([thisName, key1, key2]);
           } else if (Array.isArray(value2)) {
             // const fnValue2 = Util.objToJS(value2).replace(/\{\s+\}/gm, '{}');
             js.push(`${thisName}.${key1}.${key2} = ['gentest']`);
@@ -566,11 +581,13 @@ class Util {
     Object.entries(mockData.globals).forEach(([key1, value]) => { // window, document
       Object.entries(value).forEach(([key2, value2]) => { // location
         if (typeof value2 === 'function') {
-          js.push(`${key1}.${key2} = jest.fn()`);
+          js.push(Util.getMockFn([key1, key2]));
+          asserts.push([key1, key2]);
         } else {
           Object.entries(value2).forEach(([key3, value3]) => { // location
             if (typeof value3 === 'function') {
-              js.push(`${key1}.${key2}.${key3} = jest.fn()`);
+              js.push(Util.getMockFn([key1, key2, key3]));
+              asserts.push([key1, key2, key3]);
             } else if (value3) {
               const objValue3 = Util.objToJS(value3).replace(/\{\s+\}/gm, '{}');
               js.push(`${key1}.${key2}.${key3} = ${objValue3}`);
@@ -580,7 +597,7 @@ class Util {
       });
     });
 
-    return js;
+    return [js, asserts];
   }
 
   /**

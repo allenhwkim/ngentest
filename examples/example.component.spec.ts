@@ -31,11 +31,11 @@ class MockAuthGuardService {
 
 @Injectable()
 class MockCookieService {
-  get = jest.fn();
+  get = function() {};
   foo = function() {
     return {
       bar: {
-        baz: jest.fn()
+        baz: function() {}
       }
     };
   };
@@ -59,7 +59,7 @@ class MockRouter {
       }
     };
   };
-  navigate = jest.fn();
+  navigate() {};
 }
 
 @Injectable()
@@ -114,7 +114,7 @@ describe('ExampleComponent', () => {
   });
 
   afterEach(() => {
-    component.ngOnDestroy = jest.fn();
+    component.ngOnDestroy = function() {};
     fixture.destroy();
   });
 
@@ -133,7 +133,7 @@ describe('ExampleComponent', () => {
     });
     component.menuEl = component.menuEl || {};
     component.menuEl.nativeElement = {
-      highlightMenu: jest.fn()
+      highlightMenu: function() {}
     };
     component.ngOnInit();
 

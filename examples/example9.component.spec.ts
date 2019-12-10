@@ -16,12 +16,12 @@ import { EncryptionService } from '@rogers/oneview-components';
 
 @Injectable()
 class MockTranslateService {
-  translate = jest.fn();
+  translate() {};
 }
 
 @Injectable()
 class MockHttpClient {
-  post = jest.fn();
+  post() {};
 }
 
 @Injectable()
@@ -29,7 +29,7 @@ class MockDataManagerService {}
 
 @Injectable()
 class MockEncryptionService {
-  decrypt = jest.fn();
+  decrypt = function() {};
 }
 
 @Directive({ selector: '[oneviewPermitted]' })
@@ -84,15 +84,14 @@ describe('TotalDataDetailsComponent', () => {
       ]
     }).overrideComponent(TotalDataDetailsComponent, {
 
-      set: { providers: [{ provide: SuspendCtnService, useClass: MockSuspendCtnService }] }
-
+      set: { providers: [{ provide: SuspendCtnService, useClass: MockSuspendCtnService }] }    
     }).compileComponents();
     fixture = TestBed.createComponent(TotalDataDetailsComponent);
     component = fixture.debugElement.componentInstance;
   });
 
   afterEach(() => {
-    component.ngOnDestroy = jest.fn();
+    component.ngOnDestroy = function() {};
     fixture.destroy();
   });
 

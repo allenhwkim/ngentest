@@ -23,8 +23,8 @@ class MockBillingDataService {
   catchError = function() {
     return observableOf({});
   };
-  getBilling = jest.fn();
-  loadUserBill = jest.fn();
+  getBilling = function() {};
+  loadUserBill = function() {};
 }
 
 @Injectable()
@@ -35,7 +35,7 @@ class MockPaymentService {}
 
 @Injectable()
 class MockRouter {
-  navigate = jest.fn();
+  navigate() {};
 }
 
 @Injectable()
@@ -43,12 +43,12 @@ class MockNavigationService {}
 
 @Injectable()
 class MockTranslateService {
-  translate = jest.fn();
+  translate() {};
 }
 
 @Injectable()
 class MockBillingDateHandlerService {
-  toShowNotification = jest.fn();
+  toShowNotification = function() {};
 }
 
 @Directive({ selector: '[oneviewPermitted]' })
@@ -115,7 +115,7 @@ describe('BillingPageComponent', () => {
   });
 
   afterEach(() => {
-    component.ngOnDestroy = jest.fn();
+    component.ngOnDestroy = function() {};
     fixture.destroy();
   });
 
@@ -123,15 +123,15 @@ describe('BillingPageComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should run GetterDeclaration #billSelection', async () => {
-
-    const billSelection = component.billSelection;
-
-  });
-
   it('should run SetterDeclaration #billSelection', async () => {
 
     component.billSelection = {};
+
+  });
+
+  it('should run GetterDeclaration #billSelection', async () => {
+
+    const billSelection = component.billSelection;
 
   });
 

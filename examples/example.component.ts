@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Inject, PLATFORM_ID, ViewChild, ElementRef } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
+import * as myAlias from 'alias-npm-module';
 
 import { AuthGuardService } from './auth-guard.service';
 import { CookieService } from './cookie.service';
@@ -20,7 +21,8 @@ export class ExampleComponent implements OnInit {
   @ViewChild('menuEl') private menuEl: ElementRef;
   loggedIn: boolean = this.authGuardSvc.foo().bar.baz().isLoggedIn;
   i18n: any;
-  language: any;
+  language: string;
+  foo;
 
   constructor(
     private authGuardSvc: AuthGuardService,

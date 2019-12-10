@@ -1,9 +1,8 @@
 import { async } from '@angular/core/testing';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
-import {Component} from '@angular/core';
-import {NguiHighlightPipe} from './example.pipe';
-import {DomSanitizer} from '@angular/platform-browser';
+import { NguiHighlightPipe } from './example.pipe';
+import { DomSanitizer } from '@angular/platform-browser';
 
 describe('NguiHighlightPipe', () => {
   let pipe;

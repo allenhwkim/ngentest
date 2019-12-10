@@ -33,7 +33,7 @@ class MockProcessHupService {}
 
 @Injectable()
 class MockServiceSubTypes {
-  getServiceSubTypes = jest.fn();
+  getServiceSubTypes = function() {};
 }
 
 @Injectable()
@@ -100,7 +100,7 @@ describe('DashboardComponent', () => {
   });
 
   afterEach(() => {
-    component.ngOnDestroy = jest.fn();
+    component.ngOnDestroy = function() {};
     fixture.destroy();
   });
 
@@ -235,7 +235,7 @@ describe('DashboardComponent', () => {
   it('should run #goToIgniteTV()', async () => {
     component.el = component.el || {};
     component.el.nativeElement = {
-      dispatchEvent: jest.fn()
+      dispatchEvent: function() {}
     };
     component.goToIgniteTV({});
 

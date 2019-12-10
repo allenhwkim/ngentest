@@ -20,7 +20,7 @@ class MockCreditManagementService {}
 
 @Injectable()
 class MockTranslateService {
-  translate = jest.fn();
+  translate() {};
 }
 
 @Injectable()
@@ -31,7 +31,7 @@ class MockNavigationService {}
 
 @Injectable()
 class MockRouter {
-  navigate = jest.fn();
+  navigate() {};
 }
 
 @Directive({ selector: '[oneviewPermitted]' })
@@ -83,7 +83,7 @@ describe('CreditManagementComponent', () => {
   });
 
   afterEach(() => {
-    component.ngOnDestroy = jest.fn();
+    component.ngOnDestroy = function() {};
     fixture.destroy();
   });
 

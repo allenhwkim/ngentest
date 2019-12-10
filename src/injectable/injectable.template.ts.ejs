@@ -2,13 +2,9 @@ import { async } from '@angular/core/testing';
 import { Injectable } from '@angular/core';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
-<% for(var key in imports) { -%>
-import {<%- imports[key].map(el => `${el}`).join(', ') -%>} from '<%- key -%>';
-<% } -%>
+<%- importMocks.join('\n') -%>
 
-<% for(var klassName in providerMocks) { %>
-<%- providerMocks[klassName] -%>
-<% } -%>
+<%- providerMocks.mocks.join('\n') %>
 
 describe('<%- className %>', () => {
   let service;

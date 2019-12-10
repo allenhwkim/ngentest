@@ -1,9 +1,7 @@
 import { async } from '@angular/core/testing';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
-import {Component} from '@angular/core';
-import {AgentInfo} from './example.klass';
-
+import { AgentInfo } from './example.klass';
 describe('AgentInfo', () => {
   let obj;
 
@@ -60,7 +58,7 @@ describe('AgentInfo', () => {
     obj.i18n.acting = 'acting';
     obj.querySelector = jest.fn().mockReturnValue({
       classList: {
-        add: jest.fn()
+        add: function() {}
       }
     });
     obj.saveDealerCode = jest.fn();
@@ -106,11 +104,11 @@ describe('AgentInfo', () => {
 
   it('should run #attachListeners()', async () => {
     obj.querySelector = jest.fn().mockReturnValue({
-      setAttribute: jest.fn(),
+      setAttribute: function() {},
       classList: {
-        add: jest.fn()
+        add: function() {}
       },
-      removeAttribute: jest.fn()
+      removeAttribute: function() {}
     });
     obj.attachListeners();
     // expect(obj.querySelector).toHaveBeenCalled();
@@ -119,7 +117,7 @@ describe('AgentInfo', () => {
   it('should run #toggleChangeDealerForm()', async () => {
     obj.querySelector = jest.fn().mockReturnValue({
       classList: {
-        toggle: jest.fn()
+        toggle: function() {}
       }
     });
     obj.toggleChangeDealerForm();
@@ -148,7 +146,7 @@ describe('AgentInfo', () => {
     obj.querySelector = jest.fn().mockReturnValue({
       value: {},
       classList: {
-        add: jest.fn()
+        add: function() {}
       }
     });
     obj.agentInfo = obj.agentInfo || {};
@@ -194,7 +192,7 @@ describe('AgentInfo', () => {
     obj.querySelector = jest.fn().mockReturnValue({
       value: {},
       classList: {
-        add: jest.fn()
+        add: function() {}
       }
     });
     obj.agentInfo = obj.agentInfo || {};

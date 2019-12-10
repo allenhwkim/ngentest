@@ -1,20 +1,21 @@
 // tslint:disable
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Injectable, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, Injectable, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { By } from '@angular/platform-browser';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
-import {Component, ElementRef, Renderer2, PLATFORM_ID} from '@angular/core';
-import {MyDirective} from './example.directive';
+import { Component, ElementRef, Renderer2, PLATFORM_ID } from '@angular/core';
+import { MyDirective } from './example.directive';
 
 @Injectable()
 class MockElementRef {
   nativeElement = {};
 }
+
 @Component({
   template: `
-  <div my [options]="options" (nguiInview)="onNguiInview($event)" (nguiOutview)="onNguiOutview($event)"></div>
+  <div my [item]="options" (inview)="onNguiInview($event)" (outview)="onNguiOutview($event)"></div>
   `
 })
 class DirectiveTestComponent {
@@ -36,7 +37,7 @@ describe('MyDirective', () => {
       providers: [
         { provide: ElementRef, useClass: MockElementRef },
         Renderer2,
-        { provide: 'PLATFORM_ID', useValue: 'browser' },
+        { provide: 'PLATFORM_ID', useValue: 'browser' }
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     }).compileComponents();

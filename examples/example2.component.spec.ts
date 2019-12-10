@@ -55,7 +55,7 @@ describe('AdjustmentFormComponent', () => {
   });
 
   afterEach(() => {
-    component.ngOnDestroy = jest.fn();
+    component.ngOnDestroy = function() {};
     fixture.destroy();
   });
 
@@ -151,7 +151,7 @@ describe('AdjustmentFormComponent', () => {
   it('should run #handleDaysAffected()', async () => {
     component.adjustmentForm = component.adjustmentForm || {};
     component.adjustmentForm.get = jest.fn().mockReturnValue({
-      setValue: jest.fn(),
+      setValue: function() {},
       valueChanges: observableOf({})
     });
     component.wirelessPostpaidDetails = component.wirelessPostpaidDetails || {};
@@ -183,8 +183,8 @@ describe('AdjustmentFormComponent', () => {
   it('should run #handleSiteField()', async () => {
     component.adjustmentForm = component.adjustmentForm || {};
     component.adjustmentForm.get = jest.fn().mockReturnValue({
-      disable: jest.fn(),
-      enable: jest.fn()
+      disable: function() {},
+      enable: function() {}
     });
     component.handleSiteField({});
     // expect(component.adjustmentForm.get).toHaveBeenCalled();

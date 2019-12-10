@@ -2,21 +2,22 @@ import { async } from '@angular/core/testing';
 import { Injectable } from '@angular/core';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
-import {Component} from '@angular/core';
-import {DynamicComponentService} from './example.service';
-import {HttpClient} from '@angular/common/http';
-import {ActivatedRoute} from '@angular/router';
-import {EncryptionService} from '@rogers/oneview-components';
+import { DynamicComponentService } from './example.service';
+import { ComponentFactoryResolver } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
+import { EncryptionService } from '@rogers/oneview-components';
 
 @Injectable()
 class MockHttpClient {
-  post = jest.fn();
+  post() {};
 }
 
 @Injectable()
 class MockEncryptionService {
-  decrypt = jest.fn();
+  decrypt = function() {};
 }
+
 describe('DynamicComponentService', () => {
   let service;
 
@@ -28,14 +29,14 @@ describe('DynamicComponentService', () => {
           }
         }
       }, {
-        decrypt: jest.fn()
+        decrypt: function() {}
       });
   });
 
   it('should run #createComponent()', async () => {
     service.factoryResolver = service.factoryResolver || {};
     service.factoryResolver.resolveComponentFactory = jest.fn().mockReturnValue({
-      create: jest.fn()
+      create: function() {}
     });
     service.createComponent({}, {}, {
       parentInjector: {}
@@ -49,7 +50,7 @@ describe('DynamicComponentService', () => {
     service.insertComponent({
       location: {
         nativeElement: {
-          setAttribute: jest.fn()
+          setAttribute: function() {}
         }
       },
       instance: {

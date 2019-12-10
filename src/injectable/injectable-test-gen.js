@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 
-const Base = require('../common-test-functions.js');
+const CommonTestGen = require('../common-test-gen.js');
 
 class InjectableTestGen {
   constructor (tsPath, config) {
@@ -14,41 +14,37 @@ class InjectableTestGen {
 
     this.tsPath = tsPath;
     this.typescript = fs.readFileSync(path.resolve(tsPath), 'utf8');
+    this.template = config.templates.injectable;
 
-    this._getInputs = Base.getInputs.bind(this);
-    this._getOutputs = Base.getOutputs.bind(this);
-    // this._getItBlocks = Base.getItBlocks.bind(this);
-    this._getImports = Base.getImports.bind(this);
-    this._getProviders = Base.getProviders.bind(this);
-    this.getProviderMocks = Base.getProviderMocks.bind(this);
-    this.getGenerated = Base.getGenerated.bind(this);
-    this.writeGenerated = Base.writeGenerated.bind(this);
-    this.getKlass = Base.getKlass.bind(this);
-    this.getKlassImports = Base.getKlassImports.bind(this);
+    this.klass = CommonTestGen.getKlass.bind(this)();
+    this.imports = CommonTestGen.getImports.bind(this)();
+    this.angularType = CommonTestGen.getAngularType.bind(this)().toLowerCase();
+    this.klassProperties = CommonTestGen.getKlassProperties.bind(this)();
+    this.klassGetters = CommonTestGen.getKlassGetters.bind(this)(),
+    this.klassSetters = CommonTestGen.getKlassSetters.bind(this)(),
+    this.klassMethods = CommonTestGen.getKlassMethods.bind(this)(),
+
+    this.getProviderMocks = CommonTestGen.getProviderMocks.bind(this);
+    this.getGenerated = CommonTestGen.getGenerated.bind(this);
+    this.writeGenerated = CommonTestGen.writeGenerated.bind(this);
   }
 
-  getEjsData () {
-    const result = {};
-    this.template = fs.readFileSync(path.join(__dirname, 'injectable.template.ts.ejs'), 'utf8');
+  getData () {
+    const ejsData = {
+      className: this.klass.node.name.escapedText,
+      importMocks: CommonTestGen.getImportMocks.bind(this)(),
+      inputMocks: CommonTestGen.getInputMocks.bind(this)(),
+      outputMocks: CommonTestGen.getOutputMocks.bind(this)(),
+      componentProviderMocks: CommonTestGen.getComponentProviderMocks.bind(this)(),
+      selector: CommonTestGen.getDirectiveSelector.bind(this)(),
 
-    result.className = this.klass.name;
-    result.providers = this._getProviders(this.klass);
-    // result.functionTests = this._getItBlocks(this.klass);
-    result.imports = this._getImports(this.klass);
-    // result.parsedImports = this.imports;
+      ctorParamJs: undefined, // declarition only, will be set from mockData
+      providerMocks: undefined, //  declarition only, will be set from mockData
+      accessorTests: undefined, //  declarition only, will be set from mockData
+      functionTests: undefined //  declarition only, will be set from mockData
+    }
 
-    return result;
-  }
-
-  async getData () {
-    this.klass = await this.getKlass();
-    this.imports = await this.getKlassImports();
-
-    return {
-      klass: this.klass,
-      typescript: this.typescript,
-      ejsData: this.getEjsData()
-    };
+    return {ejsData};
   }
 
 }
