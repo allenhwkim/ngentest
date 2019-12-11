@@ -10,10 +10,6 @@ import { BillingDataService } from 'src/app/billing/billing-page/billing-data.se
 import { defer, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-/**
- * <example-url>../demo/#/billing/app-billing-header</example-url>
- */
-
 @Component({
   selector: 'app-billing-header',
   templateUrl: './billing-header.component.html',

@@ -48,10 +48,6 @@ export class MyDirective implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Fires (nguiInview) event when this element is in viewport
-   *  and fires (nguiOutview) event when this element is not in viewport
-   */
   handleIntersect(entries, observer): void {
     entries.forEach((entry: IntersectionObserverEntry) => {
       if (entry['isIntersecting']) {
