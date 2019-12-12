@@ -8,7 +8,7 @@ class ExampleKlass extends HTMLCustomElement {
   i18n: any;
   userInfo: any;
   loadingImageSrc: String = loadingImage;
-  userPreferences: any;
+  pppUuuu: any;
 
   get username() {
     return this.for === 'care' ?
@@ -20,7 +20,7 @@ class ExampleKlass extends HTMLCustomElement {
     if (footerEl) {
       this.userInfo = footerEl.userInfo;
       this.i18n = footerEl.i18n.userInfo;
-      this.userPreferences = footerEl.userPreferences;
+      this.pppUuuu = footerEl.pppUuuu;
     }
 
     super.renderWith(template).then(_ => {
@@ -65,4 +65,4 @@ class ExampleKlass extends HTMLCustomElement {
 
 }
 
-ExampleKlass.define('user-info',  ExampleKlass);
+ExampleKlass.define('user-ofni',  ExampleKlass);

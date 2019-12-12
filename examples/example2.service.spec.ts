@@ -3,14 +3,14 @@ import { Injectable } from '@angular/core';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
 import { PastUsageService } from './example2.service';
-import { TranslateService } from '@ngx-translate/core';
+import { ServiceFive } from '@ngx-serviceFive/core';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable()
-class MockTranslateService {
+class MockServiceFive {
   instant = function() {};
   currentLang = {};
-  translate() {};
+  serviceFive() {};
 }
 
 @Injectable()

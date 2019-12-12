@@ -9,25 +9,25 @@ import { Observable, of as observableOf, throwError } from 'rxjs';
 import { Component } from '@angular/core';
 import { CreditManagementComponent } from './example8.component';
 import { CreditManagementService } from './credit-management.service';
-import { DialogService } from '@rogers/oneview-components';
-import { TranslateService } from '@ngx-translate/core';
+import { ServiceThree } from '@rogers/oneview-components';
+import { ServiceFive } from '@ngx-serviceFive/core';
 import { CreditManagementDataService } from './credit-management-data.service';
-import { NavigationService } from '../framework/navigation.service';
+import { ServiceEleven } from '../framework/navigation.service';
 import { Router } from '@angular/router';
 
 @Injectable()
 class MockCreditManagementService {}
 
 @Injectable()
-class MockTranslateService {
-  translate() {};
+class MockServiceFive {
+  serviceFive() {};
 }
 
 @Injectable()
 class MockCreditManagementDataService {}
 
 @Injectable()
-class MockNavigationService {}
+class MockServiceEleven {}
 
 @Injectable()
 class MockRouter {
@@ -39,7 +39,7 @@ class OneviewPermittedDirective {
   @Input() oneviewPermitted;
 }
 
-@Pipe({name: 'translate'})
+@Pipe({name: 'serviceFive'})
 class TranslatePipe implements PipeTransform {
   transform(value) { return value; }
 }
@@ -69,10 +69,10 @@ describe('CreditManagementComponent', () => {
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [
         { provide: CreditManagementService, useClass: MockCreditManagementService },
-        DialogService,
-        { provide: TranslateService, useClass: MockTranslateService },
+        ServiceThree,
+        { provide: ServiceFive, useClass: MockServiceFive },
         { provide: CreditManagementDataService, useClass: MockCreditManagementDataService },
-        { provide: NavigationService, useClass: MockNavigationService },
+        { provide: ServiceEleven, useClass: MockServiceEleven },
         { provide: Router, useClass: MockRouter }
       ]
     }).overrideComponent(CreditManagementComponent, {
@@ -93,12 +93,12 @@ describe('CreditManagementComponent', () => {
 
   it('should run #ngOnInit()', async () => {
     component.creditManagementService = component.creditManagementService || {};
-    component.creditManagementService.getAccountSummaryAndBillingDetails = jest.fn().mockReturnValue(observableOf({}));
+    component.creditManagementService.getssssMmmmAnddetails = jest.fn().mockReturnValue(observableOf({}));
     component.data = component.data || {};
     component.data.0 = '0';
     component.data.1 = '1';
     await component.ngOnInit();
-    // expect(component.creditManagementService.getAccountSummaryAndBillingDetails).toHaveBeenCalled();
+    // expect(component.creditManagementService.getssssMmmmAnddetails).toHaveBeenCalled();
   });
 
   it('should run #resetValues()', async () => {
@@ -129,10 +129,10 @@ describe('CreditManagementComponent', () => {
   it('should run #setAdjustmentTypesAndBills()', async () => {
     component.creditManagementService = component.creditManagementService || {};
     component.creditManagementService.getAdjustmentTypes = jest.fn().mockReturnValue(observableOf({}));
-    component.creditManagementService.loadUserBill = jest.fn().mockReturnValue(observableOf({}));
+    component.creditManagementService.loadBbbUuuu = jest.fn().mockReturnValue(observableOf({}));
     await component.setAdjustmentTypesAndBills();
     // expect(component.creditManagementService.getAdjustmentTypes).toHaveBeenCalled();
-    // expect(component.creditManagementService.loadUserBill).toHaveBeenCalled();
+    // expect(component.creditManagementService.loadBbbUuuu).toHaveBeenCalled();
   });
 
   it('should run #adjustmentTypeChanged()', async () => {
@@ -157,10 +157,10 @@ describe('CreditManagementComponent', () => {
   it('should run #setCharges()', async () => {
     component.creditManagementService = component.creditManagementService || {};
     component.creditManagementService.getAdjustmentCharges = jest.fn().mockReturnValue(observableOf({}));
-    component.openSystemError = jest.fn();
+    component.openFoo = jest.fn();
     await component.setCharges();
     // expect(component.creditManagementService.getAdjustmentCharges).toHaveBeenCalled();
-    // expect(component.openSystemError).toHaveBeenCalled();
+    // expect(component.openFoo).toHaveBeenCalled();
   });
 
   it('should run #handleChargeSelected()', async () => {
@@ -206,7 +206,7 @@ describe('CreditManagementComponent', () => {
     component.creditManagementDataService.setFormData = jest.fn();
     component.creditManagementDataService.submitCreditManagement = jest.fn().mockReturnValue(observableOf({}));
     component.openInteractionOrSubmitModal = jest.fn();
-    component.openSystemError = jest.fn();
+    component.openFoo = jest.fn();
     await component.submitCreditManagement({});
     // expect(component.creditManagementDataService.setServiceAdjustmentAndBillData).toHaveBeenCalled();
     // expect(component.creditManagementDataService.setChargeData).toHaveBeenCalled();
@@ -214,15 +214,15 @@ describe('CreditManagementComponent', () => {
     // expect(component.creditManagementDataService.setFormData).toHaveBeenCalled();
     // expect(component.creditManagementDataService.submitCreditManagement).toHaveBeenCalled();
     // expect(component.openInteractionOrSubmitModal).toHaveBeenCalled();
-    // expect(component.openSystemError).toHaveBeenCalled();
+    // expect(component.openFoo).toHaveBeenCalled();
   });
 
   it('should run #openInteractionOrSubmitModal()', async () => {
-    component.dialog = component.dialog || {};
-    component.dialog.open = jest.fn().mockReturnValue({
+    component.serviceThree = component.serviceThree || {};
+    component.serviceThree.open = jest.fn().mockReturnValue({
       doneClicked: observableOf({})
     });
-    component.dialog.close = jest.fn();
+    component.serviceThree.close = jest.fn();
     component.selectedAdjustment = component.selectedAdjustment || {};
     component.selectedAdjustment.name = 'name';
     component.router = component.router || {};
@@ -232,19 +232,19 @@ describe('CreditManagementComponent', () => {
     component.openInteractionOrSubmitModal({}, {
       adjustmentAmount: {}
     });
-    // expect(component.dialog.open).toHaveBeenCalled();
-    // expect(component.dialog.close).toHaveBeenCalled();
+    // expect(component.serviceThree.open).toHaveBeenCalled();
+    // expect(component.serviceThree.close).toHaveBeenCalled();
     // expect(component.router.navigateByUrl).toHaveBeenCalled();
   });
 
-  it('should run #openSystemError()', async () => {
-    component.translate = component.translate || {};
-    component.translate.instant = jest.fn();
-    component.dialog = component.dialog || {};
-    component.dialog.open = jest.fn();
-    component.openSystemError({}, {}, {});
-    // expect(component.translate.instant).toHaveBeenCalled();
-    // expect(component.dialog.open).toHaveBeenCalled();
+  it('should run #openFoo()', async () => {
+    component.serviceFive = component.serviceFive || {};
+    component.serviceFive.instant = jest.fn();
+    component.serviceThree = component.serviceThree || {};
+    component.serviceThree.open = jest.fn();
+    component.openFoo({}, {}, {});
+    // expect(component.serviceFive.instant).toHaveBeenCalled();
+    // expect(component.serviceThree.open).toHaveBeenCalled();
   });
 
 });

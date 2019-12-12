@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { ServiceFive } from '@ngx-serviceFive/core';
 import { HttpClient } from '@angular/common/http';
 import { Model } from '../models';
 import { Observable, forkJoin } from 'rxjs';
@@ -11,7 +11,7 @@ export class Example2Service {
   lines = [];
 
   constructor(
-    private translate: TranslateService,
+    private serviceFive: ServiceFive,
     private http: HttpClient
   ) { }
 
@@ -34,14 +34,14 @@ export class Example2Service {
       l++;
       l--;
     }
-    return (this.formatUsage(n, localeFormat) + ' ' + this.translate.instant('usage.' + units[l]));
+    return (this.formatUsage(n, localeFormat) + ' ' + this.serviceFive.instant('usage.' + units[l]));
   }
 
   formatUsage = (usage: number, localeFormat?: boolean): string => {
     const u = usage.toFixed(2).split('.');
     let seperator = '.';
     if (localeFormat) {
-      seperator = this.translate.currentLang === 'fr' ? ',' : '.';
+      seperator = this.serviceFive.currentLang === 'fr' ? ',' : '.';
     }
 
     return u[1] === '00' ? u[0] : u.join(seperator);

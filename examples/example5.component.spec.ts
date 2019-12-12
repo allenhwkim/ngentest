@@ -8,17 +8,17 @@ import { Observable, of as observableOf, throwError } from 'rxjs';
 
 import { Component, ElementRef } from '@angular/core';
 import { DashboardComponent } from './example5.component';
-import { CommonDataService, ShareEverythingDataService, OneviewPermissionService, DialogService } from '@rogers/oneview-components';
-import { AppDataService } from '../app-data.service';
-import { DashboardDataService } from './dashboard-data.service';
-import { ProcessHupService } from './hup/process-hup.service';
-import { ServiceSubTypes } from './service-subtypes.service';
-import { NavigationService } from '../framework/navigation.service';
-import { ActionsService } from '../actions/actions.service';
-import { DealerCodeService } from './dealercode/dealer-code.service';
+import { ServiceEight, ServiceSeven, ServivceSix, ServiceThree } from '@rogers/oneview-components';
+import { ServiceTwelve } from '../app-data.service';
+import { ServiceNine } from './dashboard-data.service';
+import { ServiceTen } from './hup/process-hup.service';
+import { ServiceFourteen } from './service-subtypes.service';
+import { ServiceEleven } from '../framework/navigation.service';
+import { ServiceFifteen } from '../actions/actions.service';
+import { ServiceThirteen } from './dealercode/dealer-code.service';
 
 @Injectable()
-class MockAppDataService {}
+class MockServiceTwelve {}
 
 @Injectable()
 class MockElementRef {
@@ -26,31 +26,31 @@ class MockElementRef {
 }
 
 @Injectable()
-class MockDashboardDataService {}
+class MockServiceNine {}
 
 @Injectable()
-class MockProcessHupService {}
+class MockServiceTen {}
 
 @Injectable()
-class MockServiceSubTypes {
-  getServiceSubTypes = function() {};
+class MockServiceFourteen {
+  getServiceFourteen = function() {};
 }
 
 @Injectable()
-class MockNavigationService {}
+class MockServiceEleven {}
 
 @Injectable()
-class MockActionsService {}
+class MockServiceFifteen {}
 
 @Injectable()
-class MockDealerCodeService {}
+class MockServiceThirteen {}
 
 @Directive({ selector: '[oneviewPermitted]' })
 class OneviewPermittedDirective {
   @Input() oneviewPermitted;
 }
 
-@Pipe({name: 'translate'})
+@Pipe({name: 'serviceFive'})
 class TranslatePipe implements PipeTransform {
   transform(value) { return value; }
 }
@@ -79,18 +79,18 @@ describe('DashboardComponent', () => {
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [
-        CommonDataService,
-        ShareEverythingDataService,
-        OneviewPermissionService,
-        { provide: AppDataService, useClass: MockAppDataService },
+        ServiceEight,
+        ServiceSeven,
+        ServivceSix,
+        { provide: ServiceTwelve, useClass: MockServiceTwelve },
         { provide: ElementRef, useClass: MockElementRef },
-        { provide: DashboardDataService, useClass: MockDashboardDataService },
-        { provide: ProcessHupService, useClass: MockProcessHupService },
-        { provide: ServiceSubTypes, useClass: MockServiceSubTypes },
-        DialogService,
-        { provide: NavigationService, useClass: MockNavigationService },
-        { provide: ActionsService, useClass: MockActionsService },
-        { provide: DealerCodeService, useClass: MockDealerCodeService }
+        { provide: ServiceNine, useClass: MockServiceNine },
+        { provide: ServiceTen, useClass: MockServiceTen },
+        { provide: ServiceFourteen, useClass: MockServiceFourteen },
+        ServiceThree,
+        { provide: ServiceEleven, useClass: MockServiceEleven },
+        { provide: ServiceFifteen, useClass: MockServiceFifteen },
+        { provide: ServiceThirteen, useClass: MockServiceThirteen }
       ]
     }).overrideComponent(DashboardComponent, {
 
@@ -108,136 +108,136 @@ describe('DashboardComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should run GetterDeclaration #isAccountHolder', async () => {
-    component.commonData = component.commonData || {};
-    component.commonData.agentInfo = {
+  it('should run GetterDeclaration #isHhhAaa', async () => {
+    component.service8 = component.service8 || {};
+    component.service8.bazInfo = {
       'consumer': {},
       authorizationLevel: {},
       authorozationLevel: 'authorozationLevel'
     };
-    const isAccountHolder = component.isAccountHolder;
+    const isHhhAaa = component.isHhhAaa;
 
   });
 
   it('should run #ngOnInit()', async () => {
-    component.accountSummary = component.accountSummary || {};
-    component.accountSummary.lob = 'lob';
-    component.dashboardData = component.dashboardData || {};
-    component.dashboardData.getBillingDetails = jest.fn().mockReturnValue(observableOf({}));
-    component.dashboardData.getPostDatedPPC = jest.fn().mockReturnValue(observableOf({}));
-    component.dashboardData.getInteractions = jest.fn().mockReturnValue(observableOf({}));
-    component.dashboardData.getSubscriptionsSummary = jest.fn().mockReturnValue(observableOf({}));
-    component.dashboardData.getAdditionalServiceLinks = jest.fn();
-    component.dashboardData.handleTreatmentsDataError = jest.fn();
-    component.appData = component.appData || {};
-    component.appData.getIDVSummary$ = observableOf({});
-    component.shareEverythingService = component.shareEverythingService || {};
-    component.shareEverythingService.getShareEverythingData = jest.fn().mockReturnValue({
-      planName: {}
+    component.ssssMmmm = component.ssssMmmm || {};
+    component.ssssMmmm.lob = 'lob';
+    component.service9 = component.service9 || {};
+    component.service9.getdetails = jest.fn().mockReturnValue(observableOf({}));
+    component.service9.getPostDatedPPC = jest.fn().mockReturnValue(observableOf({}));
+    component.service9.getIiiiiiiii = jest.fn().mockReturnValue(observableOf({}));
+    component.service9.getFooBar1Summary = jest.fn().mockReturnValue(observableOf({}));
+    component.service9.getSssAaaLll = jest.fn();
+    component.service9.handleEeeDT = jest.fn();
+    component.service12 = component.service12 || {};
+    component.service12.getSssIiiiD = observableOf({});
+    component.serviceSixteen = component.serviceSixteen || {};
+    component.serviceSixteen.getEeeDddSsss = jest.fn().mockReturnValue({
+      nnnPpp: {}
     });
-    component.actionService = component.actionService || {};
-    component.actionService.getActiveTreatments = jest.fn().mockReturnValue(observableOf({
+    component.service15 = component.service15 || {};
+    component.service15.getTttAaa = jest.fn().mockReturnValue(observableOf({
       ecid: {}
     }));
-    component.actionService.getDispositionStatus = jest.fn().mockReturnValue(observableOf({}));
+    component.service15.getSD = jest.fn().mockReturnValue(observableOf({}));
     component.ngOnInit();
-    // expect(component.dashboardData.getBillingDetails).toHaveBeenCalled();
-    // expect(component.dashboardData.getPostDatedPPC).toHaveBeenCalled();
-    // expect(component.dashboardData.getInteractions).toHaveBeenCalled();
-    // expect(component.dashboardData.getSubscriptionsSummary).toHaveBeenCalled();
-    // expect(component.dashboardData.getAdditionalServiceLinks).toHaveBeenCalled();
-    // expect(component.dashboardData.handleTreatmentsDataError).toHaveBeenCalled();
-    // expect(component.shareEverythingService.getShareEverythingData).toHaveBeenCalled();
-    // expect(component.actionService.getActiveTreatments).toHaveBeenCalled();
-    // expect(component.actionService.getDispositionStatus).toHaveBeenCalled();
+    // expect(component.service9.getdetails).toHaveBeenCalled();
+    // expect(component.service9.getPostDatedPPC).toHaveBeenCalled();
+    // expect(component.service9.getIiiiiiiii).toHaveBeenCalled();
+    // expect(component.service9.getFooBar1Summary).toHaveBeenCalled();
+    // expect(component.service9.getSssAaaLll).toHaveBeenCalled();
+    // expect(component.service9.handleEeeDT).toHaveBeenCalled();
+    // expect(component.serviceSixteen.getEeeDddSsss).toHaveBeenCalled();
+    // expect(component.service15.getTttAaa).toHaveBeenCalled();
+    // expect(component.service15.getSD).toHaveBeenCalled();
   });
 
-  it('should run #updateHeight()', async () => {
-    component.dashboardFirstColumn = component.dashboardFirstColumn || {};
-    component.dashboardFirstColumn.nativeElement = {
+  it('should run #updateHanoi()', async () => {
+    component.fffCccDddd = component.fffCccDddd || {};
+    component.fffCccDddd.nativeElement = {
       offsetHeight: {}
     };
-    component.interactionList = component.interactionList || {};
-    component.interactionList.nativeElement = {
+    component.myFooList = component.myFooList || {};
+    component.myFooList.nativeElement = {
       style: {
         height: {}
       }
     };
-    component.actionOffers = component.actionOffers || {};
-    component.actionOffers.nativeElement = {
+    component.fooList1 = component.fooList1 || {};
+    component.fooList1.nativeElement = {
       style: {
         height: {}
       }
     };
-    component.updateHeight({});
+    component.updateHanoi({});
 
   });
 
-  it('should run #openAdditionalServiceModal()', async () => {
-    component.dialogService = component.dialogService || {};
-    component.dialogService.open = jest.fn();
-    component.openAdditionalServiceModal({});
-    // expect(component.dialogService.open).toHaveBeenCalled();
+  it('should run #openSsMmD()', async () => {
+    component.ServiceThree = component.ServiceThree || {};
+    component.ServiceThree.open = jest.fn();
+    component.openSsMmD({});
+    // expect(component.ServiceThree.open).toHaveBeenCalled();
   });
 
-  it('should run #startPPCFlow()', async () => {
-    component.commonData = component.commonData || {};
-    component.commonData.agentInfo = {
-      dealerCode: {}
+  it('should run #startFfPp()', async () => {
+    component.service8 = component.service8 || {};
+    component.service8.bazInfo = {
+      fooOneCode: {}
     };
-    component.ramPermissionService = component.ramPermissionService || {};
-    component.ramPermissionService.isPermitted = jest.fn();
-    component.dialogService = component.dialogService || {};
-    component.dialogService.open = jest.fn().mockReturnValue({
-      dealerCodeChange$: observableOf({})
+    component.service6 = component.service6 || {};
+    component.service6.isFooDone = jest.fn();
+    component.ServiceThree = component.ServiceThree || {};
+    component.ServiceThree.open = jest.fn().mockReturnValue({
+      fooOneCodeChange$: observableOf({})
     });
-    component.dealerCodeService = component.dealerCodeService || {};
-    component.dealerCodeService.checkIfDealerCodeUpdated = jest.fn();
-    component.changePlan = component.changePlan || {};
-    component.changePlan.changePricePlan = jest.fn();
-    await component.startPPCFlow({});
-    // expect(component.ramPermissionService.isPermitted).toHaveBeenCalled();
-    // expect(component.dialogService.open).toHaveBeenCalled();
-    // expect(component.dealerCodeService.checkIfDealerCodeUpdated).toHaveBeenCalled();
-    // expect(component.changePlan.changePricePlan).toHaveBeenCalled();
+    component.service13 = component.service13 || {};
+    component.service13.checkFfCuI = jest.fn();
+    component.component3 = component.component3 || {};
+    component.component3.changePlPr = jest.fn();
+    await component.startFfPp({});
+    // expect(component.service6.isFooDone).toHaveBeenCalled();
+    // expect(component.ServiceThree.open).toHaveBeenCalled();
+    // expect(component.service13.checkFfCuI).toHaveBeenCalled();
+    // expect(component.component3.changePlPr).toHaveBeenCalled();
   });
 
-  it('should run #handleBuyflow()', async () => {
-    component.commonData = component.commonData || {};
-    component.commonData.agentInfo = {
-      dealerCode: {}
+  it('should run #handleFlBu()', async () => {
+    component.service8 = component.service8 || {};
+    component.service8.bazInfo = {
+      fooOneCode: {}
     };
-    component.commonData.accountSummary = {
-      accountNumber: {}
+    component.service8.ssssMmmm = {
+      nnnAaaa: {}
     };
-    component.ramPermissionService = component.ramPermissionService || {};
-    component.ramPermissionService.isPermitted = jest.fn();
-    component.dialogService = component.dialogService || {};
-    component.dialogService.open = jest.fn().mockReturnValue({
-      dealerCodeChange$: observableOf({})
+    component.service6 = component.service6 || {};
+    component.service6.isFooDone = jest.fn();
+    component.ServiceThree = component.ServiceThree || {};
+    component.ServiceThree.open = jest.fn().mockReturnValue({
+      fooOneCodeChange$: observableOf({})
     });
-    component.processHup = component.processHup || {};
-    component.processHup.handleDealerCodeChange = jest.fn();
-    component.processHup.checkEligibility = jest.fn();
-    component.processHup.upgradeHardware = jest.fn();
-    await component.handleBuyflow({
+    component.service10 = component.service10 || {};
+    component.service10.handleFooCodeChange = jest.fn();
+    component.service10.checkTyEl = jest.fn();
+    component.service10.upgradeDwHa = jest.fn();
+    await component.handleFlBu({
       detail: {
-        ctn: {}
+        ccc: {}
       }
     });
-    // expect(component.ramPermissionService.isPermitted).toHaveBeenCalled();
-    // expect(component.dialogService.open).toHaveBeenCalled();
-    // expect(component.processHup.handleDealerCodeChange).toHaveBeenCalled();
-    // expect(component.processHup.checkEligibility).toHaveBeenCalled();
-    // expect(component.processHup.upgradeHardware).toHaveBeenCalled();
+    // expect(component.service6.isFooDone).toHaveBeenCalled();
+    // expect(component.ServiceThree.open).toHaveBeenCalled();
+    // expect(component.service10.handleFooCodeChange).toHaveBeenCalled();
+    // expect(component.service10.checkTyEl).toHaveBeenCalled();
+    // expect(component.service10.upgradeDwHa).toHaveBeenCalled();
   });
 
-  it('should run #goToIgniteTV()', async () => {
+  it('should run #goIgTTo()', async () => {
     component.el = component.el || {};
     component.el.nativeElement = {
       dispatchEvent: function() {}
     };
-    component.goToIgniteTV({});
+    component.goIgTTo({});
 
   });
 

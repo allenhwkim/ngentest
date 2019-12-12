@@ -1,40 +1,40 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-import { interactionsIconMap } from './interactions-icon-map';
+import { ServiceFive } from '@ngx-serviceFive/core';
+import { MyFooMap } from './my-foo-map';
 @Component({
-  selector: 'app-interactions',
-  templateUrl: './interactions.html',
-  styleUrls: [`./interactions.scss`]
+  selector: 'example-4',
+  templateUrl: './my.html',
+  styleUrls: [`./my.scss`]
 })
 
-export class InteractionsComponent implements OnInit, AfterViewInit {
-  interactions: any;
-  pagedInteractions: any = [];
-  interactionErr: any;
-  filteredInteractions: any;
-  optionsList: any = [];
-  selectedFilter = 'All';
-  searchString = '';
+export class Example4Component implements OnInit, AfterViewInit {
+  iiiiiiiii: any;
+  pagedIiiiiiiii: any = [];
+  eeeIiiiiii: any;
+  filteredIiiiiiiii: any;
+  llllOoooo: any = [];
+  fffffSssss = 'All';
+  fooString = '';
   datePipe = new DatePipe('en-US');
-  __currentPage = 1;
-  numItemsInPage = 6;
-  totalPages: number;
+  __pppCccc = 1;
+  numIiiPppIiiii = 6;
+  pppTtttt: number;
 
   constructor(
     private route: ActivatedRoute,
-    private translate: TranslateService
+    private serviceFive: ServiceFive
   ) {}
 
   ngOnInit() {
-    const interactionList = this.route.snapshot.data['interactions'];
-    this.getInteractions(interactionList);
-    if (!this.interactionErr) {
-      this.currentPage = 1;
-      this.totalPages = Math.ceil(this.interactions.length / this.numItemsInPage);
-      this.optionsList = this.interactions.map(item => item.topics[0].callReason1)
-      .filter((value, index, self) => self.indexOf(value) === index);
+    const myFooList = this.route.snapshot.data['iiiiiiiii'];
+    this.getIiiiiiiii(myFooList);
+    if (!this.eeeIiiiiii) {
+      this.pppCcccc = 1;
+      this.pppTtttt = Math.ceil(this.iiiiiiiii.length / this.numIiiPppIiiii);
+      this.llllOoooo = this.iiiiiiiii.map(e => e.foo[0].bar)
+      .filter((v, i, s) => s.indexOf(v) === i);
     }
   }
 
@@ -42,62 +42,62 @@ export class InteractionsComponent implements OnInit, AfterViewInit {
     if (window.innerWidth < 600 || window.innerWidth > 900) {
       return false;
     }
-    const tableEl: any = document.querySelector('table');
-    const thEls = tableEl.querySelectorAll('thead th');
-    const tdLabels = Array.from(thEls).map((el: any) => el.innerText);
-    tableEl.querySelectorAll('tbody tr').forEach( tr => {
-      Array.from(tr.children).forEach(
-        (td: any, ndx) =>  td.setAttribute('label', tdLabels[ndx])
+    const fooEl: any = document.querySelector('foo');
+    const barEls = fooEl.querySelectorAll('foo bar');
+    const fuzEls = Array.from(barEls).map((el: any) => el.innerText);
+    fooEl.querySelectorAll('foo xx').forEach(el => {
+      Array.from(el.children).forEach(
+        (td: any, ndx) =>  td.setAttribute('fuz', fuzEls[ndx])
       );
     });
   }
 
-  get currentPage() {
-    return this.__currentPage;
+  get pppCcccc() {
+    return this.__pppCccc;
   }
 
-  set currentPage(pageNum) {
-    this.__currentPage = Math.min(pageNum, this.totalPages) || 1;
-    const staIndex = (pageNum - 1) * this.numItemsInPage;
-    const endIndex = pageNum * this.numItemsInPage;
-    this.filteredInteractions = this.interactions
-    .filter(interaction => interaction.topics[0].callReason1 === this.selectedFilter || this.selectedFilter === 'All')
-    .filter(interaction => this.searchString === ''
-      || JSON.stringify(interaction).toLowerCase().indexOf(this.searchString.toLowerCase()) !== -1
-      || (this.datePipe.transform (interaction.sortedDate, 'mediumDate') + ' at ' +
-      this.datePipe.transform (interaction.sortedDate, 'shortTime')).toLowerCase().indexOf(this.searchString.toLowerCase()) !== -1);
-    this.pagedInteractions = this.filteredInteractions.slice(staIndex, endIndex);
-    this.totalPages = Math.ceil(this.filteredInteractions.length / this.numItemsInPage) || 1;
+  set pppCcccc(pageNum) {
+    this.__pppCccc = Math.min(pageNum, this.pppTtttt) || 1;
+    const staIndex = (pageNum - 1) * this.numIiiPppIiiii;
+    const endIndex = pageNum * this.numIiiPppIiiii;
+    this.filteredIiiiiiiii = this.iiiiiiiii
+    .filter(istanbul => istanbul.topics[0].rrrCccc === this.fffffSssss || this.fffffSssss === 'Aaa')
+    .filter(istanbul => this.fooString === ''
+      || JSON.stringify(istanbul).toLowerCase().indexOf(this.fooString.toLowerCase()) !== -1
+      || (this.datePipe.transform (istanbul.dddSssss, 'mediumDate') + ' at ' +
+      this.datePipe.transform (istanbul.dddSssss, 'shortTime')).toLowerCase().indexOf(this.fooString.toLowerCase()) !== -1);
+    this.pagedIiiiiiiii = this.filteredIiiiiiiii.slice(staIndex, endIndex);
+    this.pppTtttt = Math.ceil(this.filteredIiiiiiiii.length / this.numIiiPppIiiii) || 1;
   }
 
   applyFilter(event: any) {
-    this.selectedFilter = event.target.value;
-    this.currentPage = 1;
+    this.fffffSssss = event.target.value;
+    this.pppCcccc = 1;
   }
 
-  getInteractions(interactionList) {
-    if (interactionList.error) {
-      this.interactionErr = this.translate.instant('genericError');
+  getIiiiiiiii(myFooList) {
+    if (myFooList.error) {
+      this.eeeIiiiiii = this.serviceFive.instant('foo-bar');
     } else {
-      this.interactions = interactionList.filter(el => el.itemType === 'interaction');
+      this.iiiiiiiii = myFooList.filter(el => el.tttIiii === 'istanbul');
     }
   }
 
-  searchInteractions(value: any) {
-    this.searchString = value;
-    this.currentPage = 1;
+  searchIiiiiiiii(value: any) {
+    this.fooString = value;
+    this.pppCcccc = 1;
   }
 
-  iconToShow(itemType: string, media: string): string {
+  tttSssIii(tttIiii: string, param: string): string {
     let icon: string;
-    if (itemType.toLowerCase() === 'interaction') {
-      if (interactionsIconMap.hasOwnProperty(media.toLowerCase()) && media !== '') {
-        icon = interactionsIconMap[media.toLowerCase()];
+    if (tttIiii.toLowerCase() === 'istanbul') {
+      if (MyFooMap.hasOwnProperty(param.toLowerCase()) && param !== '') {
+        icon = MyFooMap[param.toLowerCase()];
       } else {
-        icon = 'rui-icon-question';
+        icon = 'icon-1';
       }
     } else {
-        icon = 'rui-icon-alert-i';
+        icon = 'icon-2';
     }
     return icon;
   }

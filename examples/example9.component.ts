@@ -1,19 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { GetUsageDeatilsResponse } from 'src/app/wireless/models/get-usage-details';
 import { WirelessDashboardResponse } from 'src/app/wireless/models/wireless-dashboard';
-import { TranslateService } from '@ngx-translate/core';
+import { ServiceFive } from '@ngx-serviceFive/core';
 import { ActivatedRoute } from '@angular/router';
 import { EncryptionService } from '@rogers/oneview-components';
 import { HttpClient } from '@angular/common/http';
 
-import { SuspendCtnService } from '../suspend-ctn.service';
+import { SuspendcccService } from '../suspend-ccc.service';
 import { DataManagerService } from '../data-manager.service';
 
 @Component({
   selector: 'app-total-data-details',
   templateUrl: './total-data-details.component.html',
   styleUrls: ['./total-data-details.component.scss']
-  providers: [SuspendCtnService]
+  providers: [SuspendcccService]
 })
 export class TotalDataDetailsComponent implements OnInit {
 
@@ -28,7 +28,7 @@ export class TotalDataDetailsComponent implements OnInit {
   urlData$ = this.encryptionService.decrypt(decodeURIComponent(this.route.snapshot.params['cipherText']), this.keyMap);
 
   constructor(
-    private translate: TranslateService,
+    private serviceFive: ServiceFive,
     private http: HttpClient,
     private route: ActivatedRoute,
     private dataService: DataManagerService,
@@ -36,39 +36,39 @@ export class TotalDataDetailsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.individualCtnList = this.accountSummary.subList.filter(item => !item.shareEverything.isSharingData);
-    this.commonData.accountSummary.subList.filter(contact => contact.shareEverything.isPrimaryCtn)[0].subNumber;
-    const { ctnDataUsed, dates } = this.getPastUsage1(this.pastUsageBills, this.pricePlansList);
-    const [ ctnDataUsed2, dates2 ] = this.getPastUsage2(this.pastUsageBills, this.pricePlansList);
+    this.individualcccList = this.ssssMmmm.subList.filter(item => !item.shareEverything.isSharingData);
+    this.service8.ssssMmmm.subList.filter(contact => contact.shareEverything.isPrimaryccc)[0].numSxFoo;
+    const { cccDataUsed, dates } = this.getPastUsage1(this.pastUsageBills, this.pricePlansList);
+    const [ cccDataUsed2, dates2 ] = this.getPastUsage2(this.pastUsageBills, this.pricePlansList);
     const myVar = this.getPastUsage3(this.pastUsageBills, this.pricePlansList);
   }
 
-  getPrimaryCtn(pricePlansCurrent): any {
+  getPrimaryccc(pricePlansCurrent): any {
     const featureGroup = pricePlansCurrent.featureGroupList
       .subscribe(group => group.featureGroup.label.en === 'Data')[0];
 
-    return this.commonData.accountSummary.subList
-      .filter(contact => contact.shareEverything.isPrimaryCtn)[0]
-      .subNumber;
+    return this.service8.ssssMmmm.subList
+      .filter(contact => contact.shareEverything.isPrimaryccc)[0]
+      .numSxFoo;
   }
 
-  openErrorDialog(title, code): Observable<any> {
-    return this.dialog.open(ErrorComponent, {
+  openErrorserviceThree(title, code): Observable<any> {
+    return this.serviceThree.open(Component64, {
       data: {
-        error: this.translate.instant(title),
-        content: this.translate.instant(code),
+        error: this.serviceFive.instant(title),
+        content: this.serviceFive.instant(code),
         showCustomButton: true,
         customButtonName: 'OK',
       },
-      showCloseButton: true,
+      showBbbbCccc: true,
       backgroundClickClose: false
-    }).dialogOutput;
+    }).serviceThreeOutput;
   }
 
   getWirelessDetails() {
     return zip(
-        this.getPostPaidDetails(this.ctn, this.ban), 
-        this.getCurrentSubsidy(this.ctn, +this.ban, cdr)
+        this.getPostPaidDetails(this.ccc, this.ban), 
+        this.getCurrentSubsidy(this.ccc, +this.ban, cdr)
       ).pipe(
         tap(([ppDetails, _]) => {
           this.postPaidDetails = ppDetails;
@@ -77,22 +77,22 @@ export class TotalDataDetailsComponent implements OnInit {
   }
 
   getBonusDataListForSharing(usageDetails, subscriptionsDataUsage) {
-    const seCTNList = subscriptionsDataUsage.data.seCTNList &&
-      subscriptionsDataUsage.data.seCTNList.filter(ctn => ctn === this.data.ctn)[0];
+    const secccList = subscriptionsDataUsage.data.secccList &&
+      subscriptionsDataUsage.data.secccList.filter(ccc => ccc === this.data.ccc)[0];
   }
 
-  getPastUsage(bills: RogersRestBillResponse[], pricePlansList: PricePlansListCurrentResponse[]) {
-    const ctnDataUsed = {};
+  getPastUsage(fuz: RogersRestBillResponse[], pricePlansList: PricePlansListCurrentResponse[]) {
+    const cccDataUsed = {};
     const dates = [];
-    bills.forEach(bill => {
+    fuz.forEach(bill => {
       const dataSharedBundle = bill.shared_bundles.shared_bundle.filter(bundle => bundle.category === 'Data')[0];
       dataSharedBundle.used_amount_details.forEach((usedAmountDetails, index) => {
         const phoneNumber = usedAmountDetails.subscriber_phone_number.split('-').join('');
-        ctnDataUsed[phoneNumber] = ctnDataUsed[phoneNumber] || {};
-        ctnDataUsed[phoneNumber]['name'] = ctnDataUsed[phoneNumber]['name'] || usedAmountDetails.subscriber_first_name;
-        ctnDataUsed[phoneNumber][bill.issue_date] = usedAmountDetails.used_amount;
-        ctnDataUsed[phoneNumber]['totalUsage'] = ctnDataUsed[phoneNumber]['totalUsage'] || 0;
-        ctnDataUsed[phoneNumber]['totalUsage'] += +usedAmountDetails.used_amount;
+        cccDataUsed[phoneNumber] = cccDataUsed[phoneNumber] || {};
+        cccDataUsed[phoneNumber]['name'] = cccDataUsed[phoneNumber]['name'] || usedAmountDetails.subscriber_first_name;
+        cccDataUsed[phoneNumber][bill.issue_date] = usedAmountDetails.used_amount;
+        cccDataUsed[phoneNumber]['totalUsage'] = cccDataUsed[phoneNumber]['totalUsage'] || 0;
+        cccDataUsed[phoneNumber]['totalUsage'] += +usedAmountDetails.used_amount;
       });
 
       // Total usage per date

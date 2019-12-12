@@ -15,7 +15,7 @@ class OneviewPermittedDirective {
   @Input() oneviewPermitted;
 }
 
-@Pipe({name: 'translate'})
+@Pipe({name: 'serviceFive'})
 class TranslatePipe implements PipeTransform {
   transform(value) { return value; }
 }

@@ -14,7 +14,7 @@ class OneviewPermittedDirective {
   @Input() oneviewPermitted;
 }
 
-@Pipe({name: 'translate'})
+@Pipe({name: 'serviceFive'})
 class TranslatePipe implements PipeTransform {
   transform(value) { return value; }
 }
@@ -86,8 +86,8 @@ describe('TotalDataDetailsComponent', () => {
         };
       }
     };
-    component.dialogService = component.dialogService || {};
-    component.dialogService.open = jest.fn().mockReturnValue({
+    component.ServiceThree = component.ServiceThree || {};
+    component.ServiceThree.open = jest.fn().mockReturnValue({
       userAction: observableOf({})
     });
     component.dates = component.dates || {};
@@ -104,27 +104,27 @@ describe('TotalDataDetailsComponent', () => {
       }
     });
     // expect(component.dataService.getDataDetailsForSharing).toHaveBeenCalled();
-    // expect(component.dialogService.open).toHaveBeenCalled();
+    // expect(component.ServiceThree.open).toHaveBeenCalled();
   });
 
-  it('should run #setCreditCardDetails()', async () => {
-    component.billingDetails = component.billingDetails || {};
-    component.billingDetails.methodOfPayment = {
-      creditCardDetails: {
+  it('should run #setFooDddCcc()', async () => {
+    component.details = component.details || {};
+    component.details.OooPppMmm = {
+      fooCardDetails: {
         ccType: {},
-        ccExpiry: {}
+        fooBaz: {}
       }
     };
-    component.billingHeader = component.billingHeader || {};
-    component.billingHeader.getLocalDate = jest.fn();
-    component.billingHeader.formatDate = jest.fn();
-    component.billingHeader.isCreditCardExpired = jest.fn();
-    component.billingHeader.isCreditCardExpiring = jest.fn();
-    component.setCreditCardDetails();
-    // expect(component.billingHeader.getLocalDate).toHaveBeenCalled();
-    // expect(component.billingHeader.formatDate).toHaveBeenCalled();
-    // expect(component.billingHeader.isCreditCardExpired).toHaveBeenCalled();
-    // expect(component.billingHeader.isCreditCardExpiring).toHaveBeenCalled();
+    component.bbbHhh = component.bbbHhh || {};
+    component.bbbHhh.getLocalDate = jest.fn();
+    component.bbbHhh.formatDate = jest.fn();
+    component.bbbHhh.isFooDddCcc = jest.fn();
+    component.bbbHhh.isFooEeeCcc = jest.fn();
+    component.setFooDddCcc();
+    // expect(component.bbbHhh.getLocalDate).toHaveBeenCalled();
+    // expect(component.bbbHhh.formatDate).toHaveBeenCalled();
+    // expect(component.bbbHhh.isFooDddCcc).toHaveBeenCalled();
+    // expect(component.bbbHhh.isFooEeeCcc).toHaveBeenCalled();
   });
 
 });

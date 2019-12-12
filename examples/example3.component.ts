@@ -2,197 +2,187 @@ import { Component, Input, OnInit, Inject, LOCALE_ID, ElementRef } from '@angula
 import { ActivatedRoute } from '@angular/router';
 import { lastDayOfMonth, differenceInCalendarDays, isWithinInterval, isSameDay } from 'date-fns';
 
-import { ChangePaymentMethodComponent } from '../../payment';
-import { PaymentService } from '../payment.service';
-import { BillingHeaderService } from './billing-header.service';
-import { DialogService } from '../../oneview-common/dialog/dialog.service';
-import { BillingDataService } from 'src/app/billing/billing-page/billing-data.service';
+import { ComponentOne } from '../../payment';
+import { ServiceOne } from '../payment.service';
+import { ServiceTwo } from './billing-header.service';
+import { ServiceThree } from '../../oneview-common/serviceThree/serviceThree.service';
+import { ServiceFour } from 'src/app/billing/billing-page/billing-data.service';
 import { defer, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-billing-header',
-  templateUrl: './billing-header.component.html',
-  styleUrls: ['./billing-header.component.scss']
+  selector: 'app-header',
+  templateUrl: './my.html',
+  styleUrls: ['./my.scss']
 })
-export class BillingHeaderComponent implements OnInit {
-  @Input() billingDetails;
-  @Input() billingNotificationConfig;
-  @Input() accountSummary;
+export class Example3Component implements OnInit {
+  @Input() details;
+  @Input() myConfig;
+  @Input() ssssMmmm;
   @Input() links = {
-    payment: '/payment',
-    automaticPayment: '/payment/automaticpayment',
-    paymentHistory: '/payment/history',
-    creditManagement: '/credit-management'
+    link1: '/link',
+    link2: '/link/link2',
+    link3: '/link/link3',
+    link4: '/link4'
   };
-  @Input() ptpInstallmentsErr = false;
-  @Input() set ptpInstallments(data) {
+  @Input() myError = false;
+  @Input() set iiiiPppp(data) {
     data = data || {};
     if (data) {
-      this.ptpInstallmentsCount = data.count;
-      this.upcomingInstallmentDate = data.upcomingInstallmentDate;
-      this.upcomingAmount = data.upcomingAmount;
+      this.myCount = data.count;
+      this.upcomingDate = data.upcomingDate;
+      this.myAmount = data.myAmount;
     }
   }
-  @Input() notificationInfo$: Observable<{ billType: string; startDate: Date; endDate: Date }>;
+  @Input() myInfo$: Observable<{ myType: string; startDate: Date; endDate: Date }>;
 
-  notificationMessage$ = defer(() => this.notificationInfo$).pipe(
-    map(notificationInfo => {
-      if (notificationInfo.billType && notificationInfo.startDate && notificationInfo.endDate) {
-        return this.shouldShowNotification(notificationInfo.billType, notificationInfo.startDate, notificationInfo.endDate);
+  myMessage$ = defer(() => this.myInfo$).pipe(
+    map(myInfo => {
+      if (myInfo.myType && myInfo.startDate && myInfo.endDate) {
+        return this.processThisDate(myInfo.myType, myInfo.startDate, myInfo.endDate);
       } else {
         return '';
       }
     })
   );
 
-  ptpInstallmentsCount: any;
-  upcomingInstallmentDate: any;
-  upcomingAmount: any;
+  myCount: any;
+  upcomingDate: any;
+  myAmount: any;
 
-  _mop: string;
-  debitCardNumber: string;
+  _foo: string;
+  fooNumber: string;
 
-  creditCard: any;
-  debitCard: any;
-  ccImg = '';
+  fooCard: any;
+  barCard: any;
+  fooImg = '';
 
-  ccExpiry: Date;
-  ccExpiryDate: string;
-  isCreditCardExpired: boolean;
-  isCreditCardExpiring = false;
-  daysTillExpired: number;
+  fooBaz: Date;
+  fooBazDate: string;
+  isFooDddCcc: boolean;
+  isFooEeeCcc = false;
+  numDaysDone: number;
 
-  isNotManual: boolean;
-  isSuspended: boolean;
+  isNotFoo: boolean;
+  isXxxYyy: boolean;
 
-  showCCWarning: boolean;
-  showNotification = false;
+  showFooXxx: boolean;
+  showBarXxx = false;
   currentLanguage: any;
 
-  careNotificationMessage: any;
+  cccNnnMsg: any;
 
-  creditLimitExceeded = false;
-  almostAtCreditLimit = false;
-  nearingCreditLimit = false;
-  creditUsed: any;
-  creditLimitWarningExists = false;
+  cccLllEee = false;
+  aaaAaCccLll = false;
+  NnnCcclll = false;
+  cccUuu: any;
+  cccLllWwwEee = false;
 
   constructor(
     private route: ActivatedRoute,
     private el: ElementRef,
-    private dialog: DialogService,
-    private billingHeader: BillingHeaderService,
-    private paymentService: PaymentService,
-    private billingService: BillingDataService,
+    private serviceThree: ServiceThree,
+    private bbbHhh: ServiceTwo,
+    private serviceOne: ServiceOne,
+    private serviceFour: ServiceFour,
     @Inject(LOCALE_ID) private language: string) {}
 
   ngOnInit() {
-    const ctn = this.route.snapshot.params['ctn'];
+    const ccc = this.route.snapshot.params['ccc'];
     this.currentLanguage = this.language ? this.language : 'en';
-    this.isSuspended = this.accountSummary.accountStatus.toUpperCase() === 'SUSPENDED';
-    this.setNotificationMessage();
-    this._mop = this.billingDetails.methodOfPayment.mopType.toUpperCase();
-    this.isNotManual = this._mop !== 'R';
+    this.isXxxYyy = this.ssssMmmm.accountStatus.toUpperCase() === 'FOO';
+    this.setNnnMmm();
+    this._foo = this.details.OooPppMmm.tttMmm.toUpperCase();
+    this.isNotFoo = this._foo !== 'R';
 
-    if (this._mop === 'D') {
-      this.setDebitCardDetails();
-    } else if (this._mop === 'C') {
-      this.setCreditCardDetails();
+    if (this._foo === 'D') {
+      this.setCccDddBbb();
+    } else if (this._foo === 'C') {
+      this.setFooDddCcc();
     }
 
-    this.creditUsed = this.getCreditUsed() || 0;
-    this.creditLimitWarningExists = this.isInCreditLimitWarningStatus();
-    this.paymentService.getCreditCardConfig().subscribe(config => (this.config = config));
-    this.billingService
-      .getBilling()
-      .pipe(map((billing: any) => billing.methodOfPayment.mopType))
-      .subscribe(mopType => (this.methodOfPayment = mopType));
+    this.cccUuu = this.getcccUuu() || 0;
+    this.cccLllWwwEee = this.isCccLllWwwSssIiii();
+    this.serviceOne.getfooCardConfig().subscribe(config => (this.config = config));
+    this.serviceFour
+      .getFooing()
+      .pipe(map((billing: any) => billing.OooPppMmm.tttMmm))
+      .subscribe(tttMmm => (this.OooPppMmm = tttMmm));
   }
 
-  setDebitCardDetails() {
-    this.debitCard = this.billingDetails.methodOfPayment.chequingDetails;
-    this.debitCardNumber = this.debitCard.accountNumber;
+  setCccDddBbb() {
+    this.barCard = this.details.OooPppMmm.chequingDetails;
+    this.fooNumber = this.barCard.nnnAaaa;
   }
 
-  setCreditCardDetails() {
+  setFooDddCcc() {
     const cardImg = {
       visa: 'assets/visa.png',
       master: 'assets/master.png',
       amex: 'assets/amex.png'
     };
-    this.creditCard = this.billingDetails.methodOfPayment.creditCardDetails;
-    if (this.creditCard && this.creditCard.ccType) {
-      this.ccImg = cardImg[this.creditCard.ccType.toLowerCase()];
+    this.fooCard = this.details.OooPppMmm.fooCardDetails;
+    if (this.fooCard && this.fooCard.ccType) {
+      this.fooImg = cardImg[this.fooCard.ccType.toLowerCase()];
     }
-    this.ccExpiry = lastDayOfMonth(this.billingHeader.getLocalDate(this.creditCard.ccExpiry));
-    this.ccExpiryDate = this.billingHeader.formatDate(this.ccExpiry, this.language);
-    this.isCreditCardExpired = this.billingHeader.isCreditCardExpired(this.ccExpiry);
-    this.isCreditCardExpiring = !this.isCreditCardExpired && this.billingHeader.isCreditCardExpiring(this.ccExpiry);
-    this.showCCWarning = this.isCreditCardExpired || this.isCreditCardExpiring;
-    this.daysTillExpired = this.isCreditCardExpiring && differenceInCalendarDays(this.ccExpiry, new Date());
+    this.fooBaz = lastDayOfMonth(this.bbbHhh.getLocalDate(this.fooCard.fooBaz));
+    this.fooBazDate = this.bbbHhh.formatDate(this.fooBaz, this.language);
+    this.isFooDddCcc = this.bbbHhh.isFooDddCcc(this.fooBaz);
+    this.isFooEeeCcc = !this.isFooDddCcc && this.bbbHhh.isFooEeeCcc(this.fooBaz);
+    this.showFooXxx = this.isFooDddCcc || this.isFooEeeCcc;
+    this.numDaysDone = this.isFooEeeCcc && differenceInCalendarDays(this.fooBaz, new Date());
   }
 
-  openChangePayment(type) {
+  openPpppCccc(type) {
     const date =
-      this.billingDetails && this.billingDetails.billDueDate
-        ? this.billingHeader.formatDate(new Date(('' + this.billingDetails.billDueDate).replace('-', '/')), this.language)
+      this.details && this.details.dddDddBbb
+        ? this.bbbHhh.formatDate(new Date(('' + this.details.dddDddBbb).replace('-', '/')), this.language)
         : null;
 
-    const dialogComponent = this.dialog.open(ChangePaymentMethodComponent, {
-      data: { accountSummary: this.accountSummary, type, date }
+    const serviceThreeComponent = this.serviceThree.open(ComponentOne, {
+      data: { ssssMmmm: this.ssssMmmm, type, date }
     });
-    dialogComponent.$changedToManual.subscribe(res => res && (this.isNotManual = false));
+    serviceThreeComponent.$tttCccMmmCcc.subscribe(res => res && (this.isNotFoo = false));
   }
 
-  openSchedulePTP(event) {
+  openPppSss(event) {
     event.stopPropagation();
-    this.el.nativeElement.dispatchEvent(new CustomEvent('schedule-ptp', {
+    this.el.nativeElement.dispatchEvent(new CustomEvent('my-event1', {
       detail: {},
       bubbles: true
     }));
   }
 
-  openSchedulePTPHistory(event) {
+  openPppSssHistory(event) {
     event.stopPropagation();
-    this.el.nativeElement.dispatchEvent(new CustomEvent('schedule-ptp-history', {
+    this.el.nativeElement.dispatchEvent(new CustomEvent('my-event2', {
       detail: {},
       bubbles: true
     }));
   }
 
-  // PCR 24 - Prompt/Promote Online Billing & Auto Pay
-  shouldShowNotification(billType, startDate, endDate): string {
+  processThisDate(myType, startDate, endDate): string {
     const currentDate = new Date();
-    // if the date is in between the config dates or if the start date is the config start date
-    // we should show the notification as long as the criteria below is met
-    this.showNotification =
+    this.showBarXxx =
       isWithinInterval(currentDate, {
         start: startDate,
         end: endDate
       }) || isSameDay(currentDate, startDate);
 
-    if (this.showNotification) {
-      // Payment method is NOT PAP and Billing Method is NOT OLB
-      if (!this.isNotManual && billType !== 'E_BILL') {
+    if (this.showBarXxx) {
+      if (!this.isNotFoo && myType !== 'E_BILL') {
         return 'Set up Online Billing and Auto Pay';
-      } else if (this.isNotManual && billType !== 'E_BILL') {
-        // if Payment method is PAP and Billing Method is NOT OLB
-        return 'Set up Online Billing for customer';
-      } else if (!this.isNotManual && billType === 'E_BILL') {
-        // if Payment method is NOT PAP and Billing Method is OLB
-        return 'Set up Auto pay for customer';
       }
     } else {
       return '';
     }
   }
 
-  setNotificationMessage() { // utilizing retail logic for care
-    if (this.billingNotificationConfig) {
-      const { startDate, endDate } = this.getStartEndDates(this.billingNotificationConfig);
-      const billType = this.billingDetails.billType ? this.billingDetails.billType : 'error';
-      this.careNotificationMessage = this.shouldShowNotification(billType, startDate, endDate);
+  setNnnMmm() { // utilizing retail logic for care
+    if (this.myConfig) {
+      const { startDate, endDate } = this.getStartEndDates(this.myConfig);
+      const myType = this.details.myType ? this.details.myType : 'error';
+      this.cccNnnMsg = this.processThisDate(myType, startDate, endDate);
     }
   }
 
@@ -207,32 +197,29 @@ export class BillingHeaderComponent implements OnInit {
     return {startDate: config.startDate, endDate: config.endDate};
   }
 
-  getCreditUsed() {
-    if (this.billingDetails) {
-      const creditLimit = this.billingDetails.creditLimit || 0;
-      const availCredit = this.billingDetails.availableCreditAmount || 0;
-      return creditLimit - availCredit;
+  getcccUuu() {
+    if (this.details) {
+      const llllCccc = this.details.llllCccc || 0;
+      const CcccAaa = this.details.ccccAaaAaaa || 0;
+      return llllCccc - CcccAaa;
     }
   }
 
-  getCLMPercentage() {
-    const used: number = this.getCreditUsed() || 0;
-    const creditLimit: number = this.billingDetails.creditLimit || 0;
-    const percentage: number = (used / creditLimit) * 100;
+  getPpppCcc() {
+    const used: number = this.getcccUuu() || 0;
+    const llllCccc: number = this.details.llllCccc || 0;
+    const percentage: number = (used / llllCccc) * 100;
     return percentage ? percentage : 0;
   }
 
-  isInCreditLimitWarningStatus() {
-      if (this.billingDetails.creditLimit <= 0) { return false; }
-      const clmPercentage = this.getCLMPercentage();
-      if (clmPercentage >= 100) {
-        this.creditLimitExceeded = true;
+  isCccLllWwwSssIiii() {
+      if (this.details.llllCccc <= 0) { return false; }
+      const component3 = this.getPpppCcc();
+      if (component3 >= 100) {
+        this.cccLllEee = true;
         return true;
-      } else if ((clmPercentage < 100) && (clmPercentage >= 75)) {
-        this.almostAtCreditLimit = true;
-        return true;
-      } else if ((clmPercentage < 75) && (clmPercentage >= 60)) {
-        this.nearingCreditLimit = true;
+      } else if ((component3 < 75) && (component3 >= 60)) {
+        this.NnnCcclll = true;
         return true;
       }
   }

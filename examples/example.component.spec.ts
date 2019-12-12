@@ -70,7 +70,7 @@ class OneviewPermittedDirective {
   @Input() oneviewPermitted;
 }
 
-@Pipe({name: 'translate'})
+@Pipe({name: 'serviceFive'})
 class TranslatePipe implements PipeTransform {
   transform(value) { return value; }
 }
@@ -161,10 +161,10 @@ describe('ExampleComponent', () => {
     // expect(window.scrollTo).toHaveBeenCalled();
   });
 
-  it('should run #changeRoute()', async () => {
+  it('should run #changeR()', async () => {
     component.router = component.router || {};
     component.router.navigate = jest.fn();
-    component.changeRoute({
+    component.changeR({
       detail: 'detail'
     });
     // expect(component.router.navigate).toHaveBeenCalled();

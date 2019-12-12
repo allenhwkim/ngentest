@@ -10,23 +10,23 @@ describe('AgentInfo', () => {
   });
 
   it('should run GetterDeclaration #username', async () => {
-    obj.agentInfo = obj.agentInfo || {};
-    obj.agentInfo.lanId = 'lanId';
-    obj.agentInfo.cfaFirstName = 'cfaFirstName';
-    obj.agentInfo.cfaLastName = 'cfaLastName';
+    obj.bazInfo = obj.bazInfo || {};
+    obj.bazInfo.lanId = 'lanId';
+    obj.bazInfo.cfaFirstName = 'cfaFirstName';
+    obj.bazInfo.cfaLastName = 'cfaLastName';
     const username = obj.username;
 
   });
 
   it('should run #connectedCallback()', async () => {
     obj.closest = jest.fn().mockReturnValue({
-      enableChangeDealerCode: {},
-      userPreferences: {},
+      enableChangeFooCode: {},
+      pppUuuu: {},
       ramPermission: {},
       i18n: {
-        agentInfo: {}
+        bazInfo: {}
       },
-      agentInfo: {}
+      bazInfo: {}
     });
     obj.renderWith = jest.fn().mockReturnValue({
       then: function() {
@@ -51,8 +51,8 @@ describe('AgentInfo', () => {
     // expect(obj.classList.remove).toHaveBeenCalled();
   });
 
-  it('should run #applyDealerCode()', async () => {
-    obj.setDealerCode = jest.fn();
+  it('should run #applyFooCode()', async () => {
+    obj.setFooCode = jest.fn();
     obj.i18n = obj.i18n || {};
     obj.i18n.noCode = 'noCode';
     obj.i18n.acting = 'acting';
@@ -61,36 +61,36 @@ describe('AgentInfo', () => {
         add: function() {}
       }
     });
-    obj.saveDealerCode = jest.fn();
-    obj.applyDealerCode({
-      dealerCode: {},
+    obj.saveFooCode = jest.fn();
+    obj.applyFooCode({
+      fooOneCode: {},
       consumer: {
-        accountNumber: {}
+        nnnAaaa: {}
       }
     }, {
       userPreference: [{
         name: {}
       }]
     });
-    // expect(obj.setDealerCode).toHaveBeenCalled();
+    // expect(obj.setFooCode).toHaveBeenCalled();
     // expect(obj.querySelector).toHaveBeenCalled();
-    // expect(obj.saveDealerCode).toHaveBeenCalled();
+    // expect(obj.saveFooCode).toHaveBeenCalled();
   });
 
   it('should run #renderForCare()', async () => {
-    obj.applyDealerCode = jest.fn();
+    obj.applyFooCode = jest.fn();
     obj.querySelectorAll = jest.fn();
     obj.renderForCare();
-    // expect(obj.applyDealerCode).toHaveBeenCalled();
+    // expect(obj.applyFooCode).toHaveBeenCalled();
     // expect(obj.querySelectorAll).toHaveBeenCalled();
   });
 
-  it('should run #setDealerCode()', async () => {
+  it('should run #setFooCode()', async () => {
     obj.querySelectorAll = jest.fn();
     obj.querySelector = jest.fn().mockReturnValue({
       innerHTML: {}
     });
-    obj.setDealerCode({});
+    obj.setFooCode({});
     // expect(obj.querySelectorAll).toHaveBeenCalled();
     // expect(obj.querySelector).toHaveBeenCalled();
   });
@@ -124,9 +124,9 @@ describe('AgentInfo', () => {
     // expect(obj.querySelector).toHaveBeenCalled();
   });
 
-  it('should run #validateDealerCode()', async () => {
+  it('should run #validateFooCode()', async () => {
 
-    obj.validateDealerCode({});
+    obj.validateFooCode({});
 
   });
 
@@ -136,9 +136,9 @@ describe('AgentInfo', () => {
 
   });
 
-  it('should run #saveDealerCode()', async () => {
+  it('should run #saveFooCode()', async () => {
 
-    obj.saveDealerCode({});
+    obj.saveFooCode({});
 
   });
 
@@ -149,12 +149,12 @@ describe('AgentInfo', () => {
         add: function() {}
       }
     });
-    obj.agentInfo = obj.agentInfo || {};
-    obj.agentInfo.consumer = {
-      accountNumber: {}
+    obj.bazInfo = obj.bazInfo || {};
+    obj.bazInfo.consumer = {
+      nnnAaaa: {}
     };
-    obj.agentInfo.lanId = 'lanId';
-    obj.validateDealerCode = jest.fn().mockReturnValue({
+    obj.bazInfo.lanId = 'lanId';
+    obj.validateFooCode = jest.fn().mockReturnValue({
       then: function() {
         return {
           then: function() {
@@ -174,17 +174,17 @@ describe('AgentInfo', () => {
       }
     });
     obj.updateSession = jest.fn();
-    obj.saveDealerCode = jest.fn();
+    obj.saveFooCode = jest.fn();
     obj.toggleChangeDealerForm = jest.fn();
-    obj.setDealerCode = jest.fn();
+    obj.setFooCode = jest.fn();
     obj.toggleChangeDealer = jest.fn();
     obj.updateDealer({});
     // expect(obj.querySelector).toHaveBeenCalled();
-    // expect(obj.validateDealerCode).toHaveBeenCalled();
+    // expect(obj.validateFooCode).toHaveBeenCalled();
     // expect(obj.updateSession).toHaveBeenCalled();
-    // expect(obj.saveDealerCode).toHaveBeenCalled();
+    // expect(obj.saveFooCode).toHaveBeenCalled();
     // expect(obj.toggleChangeDealerForm).toHaveBeenCalled();
-    // expect(obj.setDealerCode).toHaveBeenCalled();
+    // expect(obj.setFooCode).toHaveBeenCalled();
     // expect(obj.toggleChangeDealer).toHaveBeenCalled();
   });
 
@@ -195,11 +195,11 @@ describe('AgentInfo', () => {
         add: function() {}
       }
     });
-    obj.agentInfo = obj.agentInfo || {};
-    obj.agentInfo.consumer = {
-      accountNumber: {}
+    obj.bazInfo = obj.bazInfo || {};
+    obj.bazInfo.consumer = {
+      nnnAaaa: {}
     };
-    obj.validateDealerCode = jest.fn().mockReturnValue({
+    obj.validateFooCode = jest.fn().mockReturnValue({
       then: function() {
         return {
           then: function() {
@@ -214,16 +214,16 @@ describe('AgentInfo', () => {
         };
       }
     });
-    obj.saveDealerCode = jest.fn();
-    obj.setDealerCode = jest.fn();
+    obj.saveFooCode = jest.fn();
+    obj.setFooCode = jest.fn();
     obj.i18n = obj.i18n || {};
     obj.i18n.acting = 'acting';
     obj.toggleChangeDealer = jest.fn();
     obj.impersonate({});
     // expect(obj.querySelector).toHaveBeenCalled();
-    // expect(obj.validateDealerCode).toHaveBeenCalled();
-    // expect(obj.saveDealerCode).toHaveBeenCalled();
-    // expect(obj.setDealerCode).toHaveBeenCalled();
+    // expect(obj.validateFooCode).toHaveBeenCalled();
+    // expect(obj.saveFooCode).toHaveBeenCalled();
+    // expect(obj.setFooCode).toHaveBeenCalled();
     // expect(obj.toggleChangeDealer).toHaveBeenCalled();
   });
 

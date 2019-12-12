@@ -7,12 +7,12 @@ import { By } from '@angular/platform-browser';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
 import { Component, ElementRef, LOCALE_ID } from '@angular/core';
-import { BillingHeaderComponent } from './example3.component';
+import { Example3Component } from './example3.component';
 import { ActivatedRoute } from '@angular/router';
-import { DialogService } from '../../oneview-common/dialog/dialog.service';
-import { BillingHeaderService } from './billing-header.service';
-import { PaymentService } from '../payment.service';
-import { BillingDataService } from 'src/app/billing/billing-page/billing-data.service';
+import { ServiceThree } from '../../oneview-common/serviceThree/serviceThree.service';
+import { bbbHhhService } from './billing-header.service';
+import { serviceOne } from '../payment.service';
+import { ServiceFour } from 'src/app/billing/billing-page/billing-data.service';
 
 @Injectable()
 class MockElementRef {
@@ -20,23 +20,23 @@ class MockElementRef {
 }
 
 @Injectable()
-class MockDialogService {}
+class MockServiceThree {}
 
 @Injectable()
-class MockBillingHeaderService {}
+class MockbbbHhhService {}
 
 @Injectable()
-class MockPaymentService {}
+class MockserviceOne {}
 
 @Injectable()
-class MockBillingDataService {}
+class MockServiceFour {}
 
 @Directive({ selector: '[oneviewPermitted]' })
 class OneviewPermittedDirective {
   @Input() oneviewPermitted;
 }
 
-@Pipe({name: 'translate'})
+@Pipe({name: 'serviceFive'})
 class TranslatePipe implements PipeTransform {
   transform(value) { return value; }
 }
@@ -51,7 +51,7 @@ class SafeHtmlPipe implements PipeTransform {
   transform(value) { return value; }
 }
 
-describe('BillingHeaderComponent', () => {
+describe('Example3Component', () => {
   let fixture;
   let component;
 
@@ -59,7 +59,7 @@ describe('BillingHeaderComponent', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, ReactiveFormsModule ],
       declarations: [
-        BillingHeaderComponent,
+        Example3Component,
         TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
         OneviewPermittedDirective
       ],
@@ -77,16 +77,16 @@ describe('BillingHeaderComponent', () => {
           }
         },
         { provide: ElementRef, useClass: MockElementRef },
-        { provide: DialogService, useClass: MockDialogService },
-        { provide: BillingHeaderService, useClass: MockBillingHeaderService },
-        { provide: PaymentService, useClass: MockPaymentService },
-        { provide: BillingDataService, useClass: MockBillingDataService },
+        { provide: ServiceThree, useClass: MockServiceThree },
+        { provide: bbbHhhService, useClass: MockbbbHhhService },
+        { provide: serviceOne, useClass: MockserviceOne },
+        { provide: ServiceFour, useClass: MockServiceFour },
         { provide: 'LOCALE_ID', useValue: 'en' }
       ]
-    }).overrideComponent(BillingHeaderComponent, {
+    }).overrideComponent(Example3Component, {
 
     }).compileComponents();
-    fixture = TestBed.createComponent(BillingHeaderComponent);
+    fixture = TestBed.createComponent(Example3Component);
     component = fixture.debugElement.componentInstance;
   });
 
@@ -99,12 +99,12 @@ describe('BillingHeaderComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should run SetterDeclaration #ptpInstallments', async () => {
+  it('should run SetterDeclaration #iiiiPppp', async () => {
 
-    component.ptpInstallments = {
+    component.iiiiPppp = {
       count: {},
-      upcomingInstallmentDate: {},
-      upcomingAmount: {}
+      upcomingDate: {},
+      myAmount: {}
     };
 
   });
@@ -113,118 +113,118 @@ describe('BillingHeaderComponent', () => {
     component.route = component.route || {};
     component.route.snapshot = {
       params: {
-        'ctn': {}
+        'ccc': {}
       }
     };
-    component.accountSummary = component.accountSummary || {};
-    component.accountSummary.accountStatus = 'accountStatus';
-    component.setNotificationMessage = jest.fn();
-    component.billingDetails = component.billingDetails || {};
-    component.billingDetails.methodOfPayment = {
-      mopType: 'mopType'
+    component.ssssMmmm = component.ssssMmmm || {};
+    component.ssssMmmm.fooStatus = 'fooStatus';
+    component.setNnnMmm = jest.fn();
+    component.details = component.details || {};
+    component.details.OooPppMmm = {
+      tttMmm: 'tttMmm'
     };
-    component.setDebitCardDetails = jest.fn();
-    component.setCreditCardDetails = jest.fn();
-    component.getCreditUsed = jest.fn();
-    component.isInCreditLimitWarningStatus = jest.fn();
-    component.paymentService = component.paymentService || {};
-    component.paymentService.getCreditCardConfig = jest.fn().mockReturnValue(observableOf({}));
-    component.billingService = component.billingService || {};
-    component.billingService.getBilling = jest.fn().mockReturnValue(observableOf({}));
+    component.setCccDddBbb = jest.fn();
+    component.setFooDddCcc = jest.fn();
+    component.getcccUuu = jest.fn();
+    component.isCccLllWwwSssIiii = jest.fn();
+    component.serviceOne = component.serviceOne || {};
+    component.serviceOne.getfooCardConfig = jest.fn().mockReturnValue(observableOf({}));
+    component.serviceFour = component.serviceFour || {};
+    component.serviceFour.getFooing = jest.fn().mockReturnValue(observableOf({}));
     component.ngOnInit();
-    // expect(component.setNotificationMessage).toHaveBeenCalled();
-    // expect(component.setDebitCardDetails).toHaveBeenCalled();
-    // expect(component.setCreditCardDetails).toHaveBeenCalled();
-    // expect(component.getCreditUsed).toHaveBeenCalled();
-    // expect(component.isInCreditLimitWarningStatus).toHaveBeenCalled();
-    // expect(component.paymentService.getCreditCardConfig).toHaveBeenCalled();
-    // expect(component.billingService.getBilling).toHaveBeenCalled();
+    // expect(component.setNnnMmm).toHaveBeenCalled();
+    // expect(component.setCccDddBbb).toHaveBeenCalled();
+    // expect(component.setFooDddCcc).toHaveBeenCalled();
+    // expect(component.getcccUuu).toHaveBeenCalled();
+    // expect(component.isCccLllWwwSssIiii).toHaveBeenCalled();
+    // expect(component.serviceOne.getfooCardConfig).toHaveBeenCalled();
+    // expect(component.serviceFour.getFooing).toHaveBeenCalled();
   });
 
-  it('should run #setDebitCardDetails()', async () => {
-    component.billingDetails = component.billingDetails || {};
-    component.billingDetails.methodOfPayment = {
+  it('should run #setCccDddBbb()', async () => {
+    component.details = component.details || {};
+    component.details.OooPppMmm = {
       chequingDetails: {
-        accountNumber: {}
+        nnnAaaa: {}
       }
     };
-    component.setDebitCardDetails();
+    component.setCccDddBbb();
 
   });
 
-  it('should run #setCreditCardDetails()', async () => {
-    component.billingDetails = component.billingDetails || {};
-    component.billingDetails.methodOfPayment = {
-      creditCardDetails: {
+  it('should run #setFooDddCcc()', async () => {
+    component.details = component.details || {};
+    component.details.OooPppMmm = {
+      fooCardDetails: {
         ccType: {},
-        ccExpiry: {}
+        fooBaz: {}
       }
     };
-    component.billingHeader = component.billingHeader || {};
-    component.billingHeader.getLocalDate = jest.fn();
-    component.billingHeader.formatDate = jest.fn();
-    component.billingHeader.isCreditCardExpired = jest.fn();
-    component.billingHeader.isCreditCardExpiring = jest.fn();
-    component.setCreditCardDetails();
-    // expect(component.billingHeader.getLocalDate).toHaveBeenCalled();
-    // expect(component.billingHeader.formatDate).toHaveBeenCalled();
-    // expect(component.billingHeader.isCreditCardExpired).toHaveBeenCalled();
-    // expect(component.billingHeader.isCreditCardExpiring).toHaveBeenCalled();
+    component.bbbHhh = component.bbbHhh || {};
+    component.bbbHhh.getLocalDate = jest.fn();
+    component.bbbHhh.formatDate = jest.fn();
+    component.bbbHhh.isFooDddCcc = jest.fn();
+    component.bbbHhh.isFooEeeCcc = jest.fn();
+    component.setFooDddCcc();
+    // expect(component.bbbHhh.getLocalDate).toHaveBeenCalled();
+    // expect(component.bbbHhh.formatDate).toHaveBeenCalled();
+    // expect(component.bbbHhh.isFooDddCcc).toHaveBeenCalled();
+    // expect(component.bbbHhh.isFooEeeCcc).toHaveBeenCalled();
   });
 
-  it('should run #openChangePayment()', async () => {
-    component.billingDetails = component.billingDetails || {};
-    component.billingDetails.billDueDate = 'billDueDate';
-    component.billingHeader = component.billingHeader || {};
-    component.billingHeader.formatDate = jest.fn();
-    component.dialog = component.dialog || {};
-    component.dialog.open = jest.fn().mockReturnValue({
-      $changedToManual: observableOf({})
+  it('should run #openPpppCccc()', async () => {
+    component.details = component.details || {};
+    component.details.dddDddBbb = 'dddDddBbb';
+    component.bbbHhh = component.bbbHhh || {};
+    component.bbbHhh.formatDate = jest.fn();
+    component.serviceThree = component.serviceThree || {};
+    component.serviceThree.open = jest.fn().mockReturnValue({
+      $tttCccMmmCcc: observableOf({})
     });
-    component.openChangePayment({});
-    // expect(component.billingHeader.formatDate).toHaveBeenCalled();
-    // expect(component.dialog.open).toHaveBeenCalled();
+    component.openPpppCccc({});
+    // expect(component.bbbHhh.formatDate).toHaveBeenCalled();
+    // expect(component.serviceThree.open).toHaveBeenCalled();
   });
 
-  it('should run #openSchedulePTP()', async () => {
+  it('should run #openPppSss()', async () => {
     component.el = component.el || {};
     component.el.nativeElement = {
       dispatchEvent: function() {}
     };
-    component.openSchedulePTP({
+    component.openPppSss({
       stopPropagation: function() {}
     });
 
   });
 
-  it('should run #openSchedulePTPHistory()', async () => {
+  it('should run #openPppSssHistory()', async () => {
     component.el = component.el || {};
     component.el.nativeElement = {
       dispatchEvent: function() {}
     };
-    component.openSchedulePTPHistory({
+    component.openPppSssHistory({
       stopPropagation: function() {}
     });
 
   });
 
-  it('should run #shouldShowNotification()', async () => {
+  it('should run #processThisDate()', async () => {
 
-    component.shouldShowNotification({}, {}, {});
+    component.processThisDate({}, {}, {});
 
   });
 
-  it('should run #setNotificationMessage()', async () => {
+  it('should run #setNnnMmm()', async () => {
     component.getStartEndDates = jest.fn().mockReturnValue({
       startDate: {},
       endDate: {}
     });
-    component.billingDetails = component.billingDetails || {};
-    component.billingDetails.billType = 'billType';
-    component.shouldShowNotification = jest.fn();
-    component.setNotificationMessage();
+    component.details = component.details || {};
+    component.details.myType = 'myType';
+    component.processThisDate = jest.fn();
+    component.setNnnMmm();
     // expect(component.getStartEndDates).toHaveBeenCalled();
-    // expect(component.shouldShowNotification).toHaveBeenCalled();
+    // expect(component.processThisDate).toHaveBeenCalled();
   });
 
   it('should run #getStartEndDates()', async () => {
@@ -236,28 +236,28 @@ describe('BillingHeaderComponent', () => {
 
   });
 
-  it('should run #getCreditUsed()', async () => {
-    component.billingDetails = component.billingDetails || {};
-    component.billingDetails.creditLimit = 'creditLimit';
-    component.billingDetails.availableCreditAmount = 'availableCreditAmount';
-    component.getCreditUsed();
+  it('should run #getcccUuu()', async () => {
+    component.details = component.details || {};
+    component.details.llllCccc = 'llllCccc';
+    component.details.ccccAaaAaaa = 'ccccAaaAaaa';
+    component.getcccUuu();
 
   });
 
-  it('should run #getCLMPercentage()', async () => {
-    component.getCreditUsed = jest.fn();
-    component.billingDetails = component.billingDetails || {};
-    component.billingDetails.creditLimit = 'creditLimit';
-    component.getCLMPercentage();
-    // expect(component.getCreditUsed).toHaveBeenCalled();
+  it('should run #getPpppCcc()', async () => {
+    component.getcccUuu = jest.fn();
+    component.details = component.details || {};
+    component.details.llllCccc = 'llllCccc';
+    component.getPpppCcc();
+    // expect(component.getcccUuu).toHaveBeenCalled();
   });
 
-  it('should run #isInCreditLimitWarningStatus()', async () => {
-    component.billingDetails = component.billingDetails || {};
-    component.billingDetails.creditLimit = 'creditLimit';
-    component.getCLMPercentage = jest.fn();
-    component.isInCreditLimitWarningStatus();
-    // expect(component.getCLMPercentage).toHaveBeenCalled();
+  it('should run #isCccLllWwwSssIiii()', async () => {
+    component.details = component.details || {};
+    component.details.llllCccc = 'llllCccc';
+    component.getPpppCcc = jest.fn();
+    component.isCccLllWwwSssIiii();
+    // expect(component.getPpppCcc).toHaveBeenCalled();
   });
 
 });
