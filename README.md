@@ -88,7 +88,7 @@ Import info. from parsed typescript-parser. e.g.,
 ```
   {
     ElementRef: {
-      mport: {
+      import: {
         libraryName: '@angular/core',
         alias: 'foo'
       },
