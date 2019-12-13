@@ -7,15 +7,15 @@ import { By } from '@angular/platform-browser';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
 import { Component, ElementRef } from '@angular/core';
-import { DashboardComponent } from './example5.component';
+import { Example5Component } from './example5.component';
 import { ServiceEight, ServiceSeven, ServivceSix, ServiceThree } from '@rogers/oneview-components';
-import { ServiceTwelve } from '../app-data.service';
-import { ServiceNine } from './dashboard-data.service';
-import { ServiceTen } from './hup/process-hup.service';
-import { ServiceFourteen } from './service-subtypes.service';
-import { ServiceEleven } from '../framework/navigation.service';
-import { ServiceFifteen } from '../actions/actions.service';
-import { ServiceThirteen } from './dealercode/dealer-code.service';
+import { ServiceTwelve } from '../twelve.service';
+import { ServiceNine } from './nine.service';
+import { ServiceTen } from './ten.service';
+import { ServiceFourteen } from './fourteen.service';
+import { ServiceEleven } from '../eleven.service';
+import { ServiceFifteen } from '../fifteen.service';
+import { ServiceThirteen } from './thirteen.service';
 
 @Injectable()
 class MockServiceTwelve {}
@@ -50,7 +50,7 @@ class OneviewPermittedDirective {
   @Input() oneviewPermitted;
 }
 
-@Pipe({name: 'serviceFive'})
+@Pipe({name: 'translate'})
 class TranslatePipe implements PipeTransform {
   transform(value) { return value; }
 }
@@ -65,7 +65,7 @@ class SafeHtmlPipe implements PipeTransform {
   transform(value) { return value; }
 }
 
-describe('DashboardComponent', () => {
+describe('Example5Component', () => {
   let fixture;
   let component;
 
@@ -73,7 +73,7 @@ describe('DashboardComponent', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, ReactiveFormsModule ],
       declarations: [
-        DashboardComponent,
+        Example5Component,
         TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
         OneviewPermittedDirective
       ],
@@ -92,10 +92,10 @@ describe('DashboardComponent', () => {
         { provide: ServiceFifteen, useClass: MockServiceFifteen },
         { provide: ServiceThirteen, useClass: MockServiceThirteen }
       ]
-    }).overrideComponent(DashboardComponent, {
+    }).overrideComponent(Example5Component, {
 
     }).compileComponents();
-    fixture = TestBed.createComponent(DashboardComponent);
+    fixture = TestBed.createComponent(Example5Component);
     component = fixture.debugElement.componentInstance;
   });
 

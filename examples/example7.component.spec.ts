@@ -7,10 +7,13 @@ import { By } from '@angular/platform-browser';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
 import { Component } from '@angular/core';
-import { ComponentThree } from './example7.component';
-import { ServiceThree } from '@rogers/oneview-components';
-import { Service71 } from './change-plan-data.service';
-import { ServiceEleven } from './../../framework/navigation.service';
+import { Example7Componet } from './example7.component';
+import { ServiceThree } from './my-components';
+import { Service71 } from './one.service';
+import { ServiceEleven } from './eleven.service';
+
+@Injectable()
+class MockServiceThree {}
 
 @Injectable()
 class MockService71 {}
@@ -23,7 +26,7 @@ class OneviewPermittedDirective {
   @Input() oneviewPermitted;
 }
 
-@Pipe({name: 'serviceFive'})
+@Pipe({name: 'translate'})
 class TranslatePipe implements PipeTransform {
   transform(value) { return value; }
 }
@@ -38,7 +41,7 @@ class SafeHtmlPipe implements PipeTransform {
   transform(value) { return value; }
 }
 
-describe('ComponentThree', () => {
+describe('Example7Componet', () => {
   let fixture;
   let component;
 
@@ -46,20 +49,20 @@ describe('ComponentThree', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, ReactiveFormsModule ],
       declarations: [
-        ComponentThree,
+        Example7Componet,
         TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
         OneviewPermittedDirective
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [
-        ServiceThree,
+        { provide: ServiceThree, useClass: MockServiceThree },
         { provide: Service71, useClass: MockService71 },
         { provide: ServiceEleven, useClass: MockServiceEleven }
       ]
-    }).overrideComponent(ComponentThree, {
+    }).overrideComponent(Example7Componet, {
 
     }).compileComponents();
-    fixture = TestBed.createComponent(ComponentThree);
+    fixture = TestBed.createComponent(Example7Componet);
     component = fixture.debugElement.componentInstance;
   });
 
@@ -77,7 +80,7 @@ describe('ComponentThree', () => {
     component.component3Data.getPx1 = jest.fn();
     component.component3Data.getPpSFuz = jest.fn().mockReturnValue(observableOf({}));
     component.component3Data.checkIfMOS = jest.fn();
-    component.component3Data.getActiveSubs = jest.fn();
+    component.component3Data.getFuz = jest.fn();
     component.component3Data.getBarStatus = jest.fn();
     component.component3Data.hasFooAaSubs = jest.fn();
     component.component3Data.getMainSub = jest.fn().mockReturnValue({
@@ -97,7 +100,7 @@ describe('ComponentThree', () => {
     // expect(component.component3Data.getPx1).toHaveBeenCalled();
     // expect(component.component3Data.getPpSFuz).toHaveBeenCalled();
     // expect(component.component3Data.checkIfMOS).toHaveBeenCalled();
-    // expect(component.component3Data.getActiveSubs).toHaveBeenCalled();
+    // expect(component.component3Data.getFuz).toHaveBeenCalled();
     // expect(component.component3Data.getBarStatus).toHaveBeenCalled();
     // expect(component.component3Data.hasFooAaSubs).toHaveBeenCalled();
     // expect(component.component3Data.getMainSub).toHaveBeenCalled();
@@ -187,10 +190,11 @@ describe('ComponentThree', () => {
     component.fooData = component.fooData || {};
     component.fooData.x = 'x';
     component.setFooBarFuzData({
-      numSxFoo: {},
-      typeFxFoo: {},
-      fo: {},
-      aaaSssSelected: {}
+      x: {},
+      y: {},
+      z: {},
+      a: {},
+      b: {}
     });
 
   });

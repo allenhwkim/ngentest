@@ -15,11 +15,6 @@ import { DataManagerService } from '../data-manager.service';
 import { EncryptionService } from '@rogers/oneview-components';
 
 @Injectable()
-class MockServiceFive {
-  serviceFive() {};
-}
-
-@Injectable()
 class MockHttpClient {
   post() {};
 }
@@ -37,7 +32,7 @@ class OneviewPermittedDirective {
   @Input() oneviewPermitted;
 }
 
-@Pipe({name: 'serviceFive'})
+@Pipe({name: 'translate'})
 class TranslatePipe implements PipeTransform {
   transform(value) { return value; }
 }
@@ -66,7 +61,7 @@ describe('TotalDataDetailsComponent', () => {
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [
-        { provide: ServiceFive, useClass: MockServiceFive },
+        ServiceFive,
         { provide: HttpClient, useClass: MockHttpClient },
         {
           provide: ActivatedRoute,

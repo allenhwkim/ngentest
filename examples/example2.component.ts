@@ -44,7 +44,7 @@ export class Example2Component implements OnInit {
   }
 
   createForm(controls) {
-    const controls = this.isFlow2 ? this.getControls() : this.getFormControls();
+    controls = this.isFlow2 ? this.getControls() : this.getFormControls();
     this.createForm(controls);
     this.myForm = this.formBuilder.group(controls);
     if (!this.isFlow2) {

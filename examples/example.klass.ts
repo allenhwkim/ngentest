@@ -3,7 +3,7 @@ import {HTMLCustomElement} from 'html-custom-element';
 import * as template from './my.html';
 import { loadingImage } from './loading';
 
-class ExampleKlass extends HTMLCustomElement {
+export class ExampleKlass extends HTMLCustomElement {
   for: any;
   i18n: any;
   userInfo: any;

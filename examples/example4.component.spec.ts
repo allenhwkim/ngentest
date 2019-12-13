@@ -11,17 +11,12 @@ import { Example4Component } from './example4.component';
 import { ActivatedRoute } from '@angular/router';
 import { ServiceFive } from '@ngx-serviceFive/core';
 
-@Injectable()
-class MockServiceFive {
-  serviceFive() {};
-}
-
 @Directive({ selector: '[oneviewPermitted]' })
 class OneviewPermittedDirective {
   @Input() oneviewPermitted;
 }
 
-@Pipe({name: 'serviceFive'})
+@Pipe({name: 'translate'})
 class TranslatePipe implements PipeTransform {
   transform(value) { return value; }
 }
@@ -61,7 +56,7 @@ describe('Example4Component', () => {
             data: observableOf({})
           }
         },
-        { provide: ServiceFive, useClass: MockServiceFive }
+        ServiceFive
       ]
     }).overrideComponent(Example4Component, {
 
@@ -145,7 +140,7 @@ describe('Example4Component', () => {
 
   it('should run #tttSssIii()', async () => {
 
-    component.tttSssIii('tttIiii', 'media');
+    component.tttSssIii('tttIiii', 'param');
 
   });
 

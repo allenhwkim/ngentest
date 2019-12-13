@@ -7,7 +7,7 @@ import { By } from '@angular/platform-browser';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
 import { Component, LOCALE_ID } from '@angular/core';
-import { AdjustmentFormComponent } from './example2.component';
+import { Example2Component } from './example2.component';
 import { FormBuilder } from '@angular/forms';
 
 @Directive({ selector: '[oneviewPermitted]' })
@@ -15,7 +15,7 @@ class OneviewPermittedDirective {
   @Input() oneviewPermitted;
 }
 
-@Pipe({name: 'serviceFive'})
+@Pipe({name: 'translate'})
 class TranslatePipe implements PipeTransform {
   transform(value) { return value; }
 }
@@ -30,7 +30,7 @@ class SafeHtmlPipe implements PipeTransform {
   transform(value) { return value; }
 }
 
-describe('AdjustmentFormComponent', () => {
+describe('Example2Component', () => {
   let fixture;
   let component;
 
@@ -38,7 +38,7 @@ describe('AdjustmentFormComponent', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, ReactiveFormsModule ],
       declarations: [
-        AdjustmentFormComponent,
+        Example2Component,
         TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
         OneviewPermittedDirective
       ],
@@ -47,10 +47,10 @@ describe('AdjustmentFormComponent', () => {
         FormBuilder,
         { provide: 'LOCALE_ID', useValue: 'en' }
       ]
-    }).overrideComponent(AdjustmentFormComponent, {
+    }).overrideComponent(Example2Component, {
 
     }).compileComponents();
-    fixture = TestBed.createComponent(AdjustmentFormComponent);
+    fixture = TestBed.createComponent(Example2Component);
     component = fixture.debugElement.componentInstance;
   });
 
@@ -63,64 +63,54 @@ describe('AdjustmentFormComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should run SetterDeclaration #showAutomaticAdjustmentFlow', async () => {
+  it('should run SetterDeclaration #showFlow', async () => {
     component.getControlsAndCreateForm = jest.fn();
-    component.showAutomaticAdjustmentFlow = {};
+    component.showFlow = {};
     // expect(component.getControlsAndCreateForm).toHaveBeenCalled();
   });
 
-  it('should run GetterDeclaration #toolTipDescAndSites', async () => {
-    component.adjustmentsDetailsCms = component.adjustmentsDetailsCms || {};
-    component.adjustmentsDetailsCms.tooltip = {
+  it('should run GetterDeclaration #myData', async () => {
+    component.data = component.data || {};
+    component.data.tooltip = {
       amount: 'amount',
       site: 'site'
     };
-    component.adjustmentsDetailsCms.location = {
+    component.data.location = {
       threshold: {},
       sites: {}
     };
-    const toolTipDescAndSites = component.toolTipDescAndSites;
+    const myData = component.myData;
 
   });
 
   it('should run #ngOnInit()', async () => {
-    component.getControlsAndCreateForm = jest.fn();
-    component.ngOnInit();
-    // expect(component.getControlsAndCreateForm).toHaveBeenCalled();
-  });
-
-  it('should run #getControlsAndCreateForm()', async () => {
-    component.getAutomaticFlowFormControls = jest.fn();
-    component.getSpecificFormControls = jest.fn();
     component.createForm = jest.fn();
-    component.getControlsAndCreateForm();
-    // expect(component.getAutomaticFlowFormControls).toHaveBeenCalled();
-    // expect(component.getSpecificFormControls).toHaveBeenCalled();
+    component.ngOnInit();
     // expect(component.createForm).toHaveBeenCalled();
   });
 
   it('should run #createForm()', async () => {
+    component.getControls = jest.fn();
+    component.getFormControls = jest.fn();
+    component.createForm = jest.fn();
     component.formBuilder = component.formBuilder || {};
     component.formBuilder.group = jest.fn();
-    component.handleDaysAffected = jest.fn();
-    component.handleAdjustmentValueChange = jest.fn();
+    component.handleFoo = jest.fn();
+    component.handleBar = jest.fn();
     component.createForm({});
-    // expect(component.formBuilder.group).toHaveBeenCalled();
-    // expect(component.handleDaysAffected).toHaveBeenCalled();
-    // expect(component.handleAdjustmentValueChange).toHaveBeenCalled();
-  });
-
-  it('should run #getAutomaticFlowFormControls()', async () => {
-    component.getControls = jest.fn();
-    component.getAutomaticFlowFormControls();
     // expect(component.getControls).toHaveBeenCalled();
+    // expect(component.getFormControls).toHaveBeenCalled();
+    // expect(component.createForm).toHaveBeenCalled();
+    // expect(component.formBuilder.group).toHaveBeenCalled();
+    // expect(component.handleFoo).toHaveBeenCalled();
+    // expect(component.handleBar).toHaveBeenCalled();
   });
 
-  it('should run #getSpecificFormControls()', async () => {
-    component.selectedAdjustmentType = component.selectedAdjustmentType || {};
-    component.selectedAdjustmentType.code = 'code';
+  it('should run #getFormControls()', async () => {
+    component.selectedType = component.selectedType || {};
+    component.selectedType.code = 'code';
     component.getControls = jest.fn();
-    component.getSpecificFormControls();
+    component.getFormControls();
     // expect(component.getControls).toHaveBeenCalled();
   });
 
@@ -131,63 +121,51 @@ describe('AdjustmentFormComponent', () => {
 
   });
 
-  it('should run #handleAdjustmentValueChange()', async () => {
-    component.adjustmentsDetailsCms = component.adjustmentsDetailsCms || {};
-    component.adjustmentsDetailsCms.location = {
+  it('should run #handleBar()', async () => {
+    component.data = component.data || {};
+    component.data.location = {
       threshold: {}
     };
-    component.adjustmentForm = component.adjustmentForm || {};
-    component.adjustmentForm.get = jest.fn().mockReturnValue({
+    component.myForm = component.myForm || {};
+    component.myForm.get = jest.fn().mockReturnValue({
       valueChanges: observableOf({})
     });
-    component.adjustmentFieldInValidation = jest.fn();
-    component.handleSiteField = jest.fn();
-    component.handleAdjustmentValueChange();
-    // expect(component.adjustmentForm.get).toHaveBeenCalled();
-    // expect(component.adjustmentFieldInValidation).toHaveBeenCalled();
-    // expect(component.handleSiteField).toHaveBeenCalled();
+    component.isValid = jest.fn();
+    component.handleFoo = jest.fn();
+    component.handleBar();
+    // expect(component.myForm.get).toHaveBeenCalled();
+    // expect(component.isValid).toHaveBeenCalled();
+    // expect(component.handleFoo).toHaveBeenCalled();
   });
 
-  it('should run #handleDaysAffected()', async () => {
-    component.adjustmentForm = component.adjustmentForm || {};
-    component.adjustmentForm.get = jest.fn().mockReturnValue({
+  it('should run #handleFoo()', async () => {
+    component.myForm = component.myForm || {};
+    component.myForm.get = jest.fn().mockReturnValue({
       setValue: function() {},
       valueChanges: observableOf({})
     });
-    component.wirelessPostpaidDetails = component.wirelessPostpaidDetails || {};
-    component.wirelessPostpaidDetails.content = {
-      postPaidPhoneDetails: {
-        planMSF: {}
+    component.details = component.details || {};
+    component.details.content = {
+      moreDetails: {
+        plan: {}
       }
     };
-    component.handleDaysAffected();
-    // expect(component.adjustmentForm.get).toHaveBeenCalled();
+    component.handleFoo();
+    // expect(component.myForm.get).toHaveBeenCalled();
   });
 
-  it('should run #getValidationAndSetSpecificErrorsForAmount()', async () => {
-    component.adjustmentsDetailsCms = component.adjustmentsDetailsCms || {};
-    component.adjustmentsDetailsCms.nextBillMaxAmount = 'nextBillMaxAmount';
-    component.adjustmentsDetailsCms.adjustmentMaxAmount = 'adjustmentMaxAmount';
-    component.selectedBill = component.selectedBill || {};
-    component.selectedBill.content_id = 'content_id';
-    component.selectedCharge = component.selectedCharge || {};
-    component.selectedCharge.adjustableAmount = 'adjustableAmount';
-    component.adjustmentForm = component.adjustmentForm || {};
-    component.adjustmentForm.get = jest.fn().mockReturnValue({
+  it('should run #getAmount()', async () => {
+    component.data = component.data || {};
+    component.data.amount = 'amount';
+    component.data.amount2 = 'amount2';
+    component.selected = component.selected || {};
+    component.selected.id = 'id';
+    component.myForm = component.myForm || {};
+    component.myForm.get = jest.fn().mockReturnValue({
       valid: {}
     });
-    component.getValidationAndSetSpecificErrorsForAmount();
-    // expect(component.adjustmentForm.get).toHaveBeenCalled();
-  });
-
-  it('should run #handleSiteField()', async () => {
-    component.adjustmentForm = component.adjustmentForm || {};
-    component.adjustmentForm.get = jest.fn().mockReturnValue({
-      disable: function() {},
-      enable: function() {}
-    });
-    component.handleSiteField({});
-    // expect(component.adjustmentForm.get).toHaveBeenCalled();
+    component.getAmount();
+    // expect(component.myForm.get).toHaveBeenCalled();
   });
 
   it('should run #isFieldValid()', async () => {
@@ -199,17 +177,17 @@ describe('AdjustmentFormComponent', () => {
 
   });
 
-  it('should run #adjustmentFieldInValidation()', async () => {
-    component.getValidationAndSetSpecificErrorsForAmount = jest.fn();
-    component.adjustmentFieldInValidation();
-    // expect(component.getValidationAndSetSpecificErrorsForAmount).toHaveBeenCalled();
+  it('should run #isValid()', async () => {
+    component.getAmount = jest.fn();
+    component.isValid();
+    // expect(component.getAmount).toHaveBeenCalled();
   });
 
   it('should run #submit()', async () => {
     component.formSubmitted = component.formSubmitted || {};
     component.formSubmitted.emit = jest.fn();
-    component.adjustmentForm = component.adjustmentForm || {};
-    component.adjustmentForm.value = 'value';
+    component.myForm = component.myForm || {};
+    component.myForm.value = 'value';
     component.submit();
     // expect(component.formSubmitted.emit).toHaveBeenCalled();
   });

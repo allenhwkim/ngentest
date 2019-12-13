@@ -3,7 +3,7 @@ import {Router} from '@angular/router';
 
 import {Service81} from './one.service';
 import {Service82} from './two.service';
-import {ServiceThree, Component64, Component81} from '@components';
+import {ServiceThree, Component64, Component81} from './my-components';
 import {ServiceFive} from '@ngx-serviceFive/core';
 import {ServiceEleven} from '../framework/navigation.service';
 

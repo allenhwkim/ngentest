@@ -7,16 +7,22 @@ import { By } from '@angular/platform-browser';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
 import { Component } from '@angular/core';
-import { BillingPageComponent } from './example6.component';
-import { ServiceThree, ServiceEight } from '@rogers/oneview-components';
+import { Example6Component } from './example6.component';
+import { ServiceThree, ServiceEight } from './my-components';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ServiceFour } from './billing-data.service';
-import { Service61 } from '../schedule-ptp/schedule-ptp-data.service';
-import { serviceOne } from '../../payment/payment.service';
+import { ServiceFour } from './four.service';
+import { Service61 } from '../sixty-one.service';
+import { serviceOne } from '../one.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { ServiceEleven } from '../../framework/navigation.service';
-import { ServiceFive } from '@ngx-serviceFive/core';
-import { Service62 } from './billing-date-handler.service';
+import { ServiceEleven } from '../../evleven.service';
+import { ServiceFive } from '@ngx-tranalste/core';
+import { Service62 } from './sixty-two.service';
+
+@Injectable()
+class MockServiceThree {
+  open = function() {};
+  close = function() {};
+}
 
 @Injectable()
 class MockServiceFour {
@@ -34,17 +40,18 @@ class MockService61 {}
 class MockserviceOne {}
 
 @Injectable()
+class MockServiceEight {
+  language = {};
+  ssssMmmm = {};
+}
+
+@Injectable()
 class MockRouter {
   navigate() {};
 }
 
 @Injectable()
 class MockServiceEleven {}
-
-@Injectable()
-class MockServiceFive {
-  serviceFive() {};
-}
 
 @Injectable()
 class MockService62 {
@@ -56,7 +63,7 @@ class OneviewPermittedDirective {
   @Input() oneviewPermitted;
 }
 
-@Pipe({name: 'serviceFive'})
+@Pipe({name: 'translate'})
 class TranslatePipe implements PipeTransform {
   transform(value) { return value; }
 }
@@ -71,7 +78,7 @@ class SafeHtmlPipe implements PipeTransform {
   transform(value) { return value; }
 }
 
-describe('BillingPageComponent', () => {
+describe('Example6Component', () => {
   let fixture;
   let component;
 
@@ -79,18 +86,18 @@ describe('BillingPageComponent', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, ReactiveFormsModule ],
       declarations: [
-        BillingPageComponent,
+        Example6Component,
         TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
         OneviewPermittedDirective
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [
-        ServiceThree,
+        { provide: ServiceThree, useClass: MockServiceThree },
         DomSanitizer,
         { provide: ServiceFour, useClass: MockServiceFour },
         { provide: Service61, useClass: MockService61 },
         { provide: serviceOne, useClass: MockserviceOne },
-        ServiceEight,
+        { provide: ServiceEight, useClass: MockServiceEight },
         { provide: Router, useClass: MockRouter },
         {
           provide: ActivatedRoute,
@@ -104,13 +111,13 @@ describe('BillingPageComponent', () => {
           }
         },
         { provide: ServiceEleven, useClass: MockServiceEleven },
-        { provide: ServiceFive, useClass: MockServiceFive },
+        ServiceFive,
         { provide: Service62, useClass: MockService62 }
       ]
-    }).overrideComponent(BillingPageComponent, {
+    }).overrideComponent(Example6Component, {
 
     }).compileComponents();
-    fixture = TestBed.createComponent(BillingPageComponent);
+    fixture = TestBed.createComponent(Example6Component);
     component = fixture.debugElement.componentInstance;
   });
 
@@ -136,12 +143,6 @@ describe('BillingPageComponent', () => {
   });
 
   it('should run #ngOnInit()', async () => {
-    component.route = component.route || {};
-    component.route.snapshot = {
-      queryParams: {
-        'defaultTab': {}
-      }
-    };
     component.serviceEleven = component.serviceEleven || {};
     component.serviceEleven.isFffPppRrrr = 'isFffPppRrrr';
     component.router = component.router || {};
@@ -221,17 +222,17 @@ describe('BillingPageComponent', () => {
     component.serviceFour = component.serviceFour || {};
     component.serviceFour.betSssEeeMee = jest.fn().mockReturnValue(observableOf({}));
     component.serviceFour.fetchBar = jest.fn().mockReturnValue(observableOf({}));
-    component.serviceFour.downloadFile = jest.fn();
+    component.serviceFour.doFoo = jest.fn();
     component.mySelection = component.mySelection || {};
-    component.mySelection.content_id = 'content_id';
-    component.mySelection.issue_date = 'issue_date';
+    component.mySelection.id = 'id';
+    component.mySelection.date = 'date';
     component.serviceThree = component.serviceThree || {};
     component.serviceThree.close = jest.fn();
     component.serviceThree.open = jest.fn();
     component.fetchMee({});
     // expect(component.serviceFour.betSssEeeMee).toHaveBeenCalled();
     // expect(component.serviceFour.fetchBar).toHaveBeenCalled();
-    // expect(component.serviceFour.downloadFile).toHaveBeenCalled();
+    // expect(component.serviceFour.doFoo).toHaveBeenCalled();
     // expect(component.serviceThree.close).toHaveBeenCalled();
     // expect(component.serviceThree.open).toHaveBeenCalled();
   });
@@ -299,11 +300,10 @@ describe('BillingPageComponent', () => {
   it('should run #barSelected()', async () => {
     component.service64 = component.service64 || {};
     component.service64.checkFoo = jest.fn().mockReturnValue(observableOf({
-      ptpPaymentInfo: {},
-      ptpPendingIndicator: {}
+      x: {}
     }));
     component.details = component.details || {};
-    component.details.balanceAmount = 'balanceAmount';
+    component.details.x = 'x';
     component.serviceThree = component.serviceThree || {};
     component.serviceThree.open = jest.fn();
     component.checkTyEl = jest.fn();
@@ -318,11 +318,10 @@ describe('BillingPageComponent', () => {
   it('should run #checkTyEl()', async () => {
     component.service64 = component.service64 || {};
     component.service64.checkEeePppMe1 = jest.fn().mockReturnValue(observableOf({
-      inEligibleReasonCodes: {},
-      isPTPEligible: {}
+      x: {}
     }));
     component.details = component.details || {};
-    component.details.balanceAmount = 'balanceAmount';
+    component.details.x = 'x';
     component.showBar1 = jest.fn();
     component.serviceThree = component.serviceThree || {};
     component.serviceThree.open = jest.fn();
@@ -337,7 +336,7 @@ describe('BillingPageComponent', () => {
   it('should run #showBar1()', async () => {
     component.service64 = component.service64 || {};
     component.service64.getFooLink = jest.fn().mockReturnValue(observableOf({
-      ptp: {
+      x: {
         fr: {},
         en: {}
       }
@@ -346,10 +345,10 @@ describe('BillingPageComponent', () => {
     component.service8.language = 'language';
     component.serviceThree = component.serviceThree || {};
     component.serviceThree.open = jest.fn().mockReturnValue({
-      submitPTP$: observableOf({})
+      foo$: observableOf({})
     });
     component.details = component.details || {};
-    component.details.balanceAmount = 'balanceAmount';
+    component.details.x = 'x';
     component.saveFuz = jest.fn();
     component.openFoo = jest.fn();
     component.showBar1();

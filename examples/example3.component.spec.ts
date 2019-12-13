@@ -10,8 +10,8 @@ import { Component, ElementRef, LOCALE_ID } from '@angular/core';
 import { Example3Component } from './example3.component';
 import { ActivatedRoute } from '@angular/router';
 import { ServiceThree } from '../../oneview-common/serviceThree/serviceThree.service';
-import { bbbHhhService } from './billing-header.service';
-import { serviceOne } from '../payment.service';
+import { ServiceTwo } from './billing-header.service';
+import { ServiceOne } from '../payment.service';
 import { ServiceFour } from 'src/app/billing/billing-page/billing-data.service';
 
 @Injectable()
@@ -23,10 +23,10 @@ class MockElementRef {
 class MockServiceThree {}
 
 @Injectable()
-class MockbbbHhhService {}
+class MockServiceTwo {}
 
 @Injectable()
-class MockserviceOne {}
+class MockServiceOne {}
 
 @Injectable()
 class MockServiceFour {}
@@ -36,7 +36,7 @@ class OneviewPermittedDirective {
   @Input() oneviewPermitted;
 }
 
-@Pipe({name: 'serviceFive'})
+@Pipe({name: 'translate'})
 class TranslatePipe implements PipeTransform {
   transform(value) { return value; }
 }
@@ -78,8 +78,8 @@ describe('Example3Component', () => {
         },
         { provide: ElementRef, useClass: MockElementRef },
         { provide: ServiceThree, useClass: MockServiceThree },
-        { provide: bbbHhhService, useClass: MockbbbHhhService },
-        { provide: serviceOne, useClass: MockserviceOne },
+        { provide: ServiceTwo, useClass: MockServiceTwo },
+        { provide: ServiceOne, useClass: MockServiceOne },
         { provide: ServiceFour, useClass: MockServiceFour },
         { provide: 'LOCALE_ID', useValue: 'en' }
       ]
@@ -117,7 +117,7 @@ describe('Example3Component', () => {
       }
     };
     component.ssssMmmm = component.ssssMmmm || {};
-    component.ssssMmmm.fooStatus = 'fooStatus';
+    component.ssssMmmm.accountStatus = 'accountStatus';
     component.setNnnMmm = jest.fn();
     component.details = component.details || {};
     component.details.OooPppMmm = {

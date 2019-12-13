@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ServiceThree } from '@rogers/oneview-components';
+import { ServiceThree } from './my-components';
 
 import { Component71 } from './one.component';
 import { Component72 } from './two.component';

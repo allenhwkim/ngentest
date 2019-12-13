@@ -10,9 +10,7 @@ import { Component, PLATFORM_ID } from '@angular/core';
 import { ExampleComponent } from './example.component';
 import { AuthGuardService } from './auth-guard.service';
 import { CookieService } from './cookie.service';
-import { AppLoadService } from './app-load.service';
 import { Router } from '@angular/router';
-import { CommonUtilsService } from './common-utils.service';
 
 @Injectable()
 class MockAuthGuardService {
@@ -42,13 +40,6 @@ class MockCookieService {
 }
 
 @Injectable()
-class MockAppLoadService {
-  i18n = {
-    customElement: {}
-  };
-}
-
-@Injectable()
 class MockRouter {
   route = function() {
     return {
@@ -62,15 +53,12 @@ class MockRouter {
   navigate() {};
 }
 
-@Injectable()
-class MockCommonUtilsService {}
-
 @Directive({ selector: '[oneviewPermitted]' })
 class OneviewPermittedDirective {
   @Input() oneviewPermitted;
 }
 
-@Pipe({name: 'serviceFive'})
+@Pipe({name: 'translate'})
 class TranslatePipe implements PipeTransform {
   transform(value) { return value; }
 }
@@ -101,10 +89,8 @@ describe('ExampleComponent', () => {
       providers: [
         { provide: AuthGuardService, useClass: MockAuthGuardService },
         { provide: CookieService, useClass: MockCookieService },
-        { provide: AppLoadService, useClass: MockAppLoadService },
         { provide: 'PLATFORM_ID', useValue: 'browser' },
-        { provide: Router, useClass: MockRouter },
-        { provide: CommonUtilsService, useClass: MockCommonUtilsService }
+        { provide: Router, useClass: MockRouter }
       ]
     }).overrideComponent(ExampleComponent, {
 
@@ -159,22 +145,6 @@ describe('ExampleComponent', () => {
     window.scrollTo = jest.fn();
     component.onDeactivate();
     // expect(window.scrollTo).toHaveBeenCalled();
-  });
-
-  it('should run #changeR()', async () => {
-    component.router = component.router || {};
-    component.router.navigate = jest.fn();
-    component.changeR({
-      detail: 'detail'
-    });
-    // expect(component.router.navigate).toHaveBeenCalled();
-  });
-
-  it('should run #reportIssue()', async () => {
-    component.commonUtilsSvc = component.commonUtilsSvc || {};
-    component.commonUtilsSvc.reportIssue = jest.fn();
-    component.reportIssue({});
-    // expect(component.commonUtilsSvc.reportIssue).toHaveBeenCalled();
   });
 
 });

@@ -2,27 +2,20 @@ import { async } from '@angular/core/testing';
 import { Injectable } from '@angular/core';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
-import { PastUsageService } from './example2.service';
+import { Example2Service } from './example2.service';
 import { ServiceFive } from '@ngx-serviceFive/core';
 import { HttpClient } from '@angular/common/http';
-
-@Injectable()
-class MockServiceFive {
-  instant = function() {};
-  currentLang = {};
-  serviceFive() {};
-}
 
 @Injectable()
 class MockHttpClient {
   post() {};
 }
 
-describe('PastUsageService', () => {
+describe('Example2Service', () => {
   let service;
 
   beforeEach(() => {
-    service = new PastUsageService({
+    service = new Example2Service({
         instant: function() {},
         currentLang: {}
       }, {});

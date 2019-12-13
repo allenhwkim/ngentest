@@ -9,11 +9,11 @@ import { fr } from 'date-fns/locale';
 import { combineLatest, defer, of } from 'rxjs';
 import { catchError, take, filter, map, mergeMap, shareReplay, tap } from 'rxjs/operators';
 
-import { LoadingComponent, ServiceEight, Component61 } from '@my-components';
+import { LoadingComponent, ServiceEight, Component61 } from './my-components';
 import { Component62 } from '../comp62.component';
 import { Component63 } from '../comp63.component'
-import { serviceThreeOptions, ServiceThree, Component64, Component65 } from '@my-components';
-import { Component66, Component67 } from '@my-components';
+import { serviceThreeOptions, ServiceThree, Component64, Component65 } from './my-components';
+import { Component66, Component67 } from './my-components';
 import { ServiceFour } from './four.service';
 import { serviceOne } from '../one.service';
 import { Service61 } from '../sixty-one.service';

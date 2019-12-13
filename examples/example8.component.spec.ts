@@ -7,24 +7,22 @@ import { By } from '@angular/platform-browser';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
 import { Component } from '@angular/core';
-import { CreditManagementComponent } from './example8.component';
-import { CreditManagementService } from './credit-management.service';
-import { ServiceThree } from '@rogers/oneview-components';
+import { Example8Component } from './example8.component';
+import { Service81 } from './one.service';
+import { ServiceThree } from './my-components';
 import { ServiceFive } from '@ngx-serviceFive/core';
-import { CreditManagementDataService } from './credit-management-data.service';
+import { Service82 } from './two.service';
 import { ServiceEleven } from '../framework/navigation.service';
 import { Router } from '@angular/router';
 
 @Injectable()
-class MockCreditManagementService {}
+class MockService81 {}
 
 @Injectable()
-class MockServiceFive {
-  serviceFive() {};
-}
+class MockServiceThree {}
 
 @Injectable()
-class MockCreditManagementDataService {}
+class MockService82 {}
 
 @Injectable()
 class MockServiceEleven {}
@@ -39,7 +37,7 @@ class OneviewPermittedDirective {
   @Input() oneviewPermitted;
 }
 
-@Pipe({name: 'serviceFive'})
+@Pipe({name: 'translate'})
 class TranslatePipe implements PipeTransform {
   transform(value) { return value; }
 }
@@ -54,7 +52,7 @@ class SafeHtmlPipe implements PipeTransform {
   transform(value) { return value; }
 }
 
-describe('CreditManagementComponent', () => {
+describe('Example8Component', () => {
   let fixture;
   let component;
 
@@ -62,23 +60,23 @@ describe('CreditManagementComponent', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, ReactiveFormsModule ],
       declarations: [
-        CreditManagementComponent,
+        Example8Component,
         TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
         OneviewPermittedDirective
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [
-        { provide: CreditManagementService, useClass: MockCreditManagementService },
-        ServiceThree,
-        { provide: ServiceFive, useClass: MockServiceFive },
-        { provide: CreditManagementDataService, useClass: MockCreditManagementDataService },
+        { provide: Service81, useClass: MockService81 },
+        { provide: ServiceThree, useClass: MockServiceThree },
+        ServiceFive,
+        { provide: Service82, useClass: MockService82 },
         { provide: ServiceEleven, useClass: MockServiceEleven },
         { provide: Router, useClass: MockRouter }
       ]
-    }).overrideComponent(CreditManagementComponent, {
+    }).overrideComponent(Example8Component, {
 
     }).compileComponents();
-    fixture = TestBed.createComponent(CreditManagementComponent);
+    fixture = TestBed.createComponent(Example8Component);
     component = fixture.debugElement.componentInstance;
   });
 
@@ -92,149 +90,149 @@ describe('CreditManagementComponent', () => {
   });
 
   it('should run #ngOnInit()', async () => {
-    component.creditManagementService = component.creditManagementService || {};
-    component.creditManagementService.getssssMmmmAnddetails = jest.fn().mockReturnValue(observableOf({}));
+    component.service81 = component.service81 || {};
+    component.service81.getSmade = jest.fn().mockReturnValue(observableOf({}));
     component.data = component.data || {};
     component.data.0 = '0';
     component.data.1 = '1';
     await component.ngOnInit();
-    // expect(component.creditManagementService.getssssMmmmAnddetails).toHaveBeenCalled();
+    // expect(component.service81.getSmade).toHaveBeenCalled();
   });
 
-  it('should run #resetValues()', async () => {
+  it('should run #resetVa()', async () => {
 
-    component.resetValues({});
+    component.resetVa({});
 
   });
 
-  it('should run #resetAllFields()', async () => {
-    component.resetValues = jest.fn();
-    component.resetAllFields();
-    // expect(component.resetValues).toHaveBeenCalled();
+  it('should run #realfis()', async () => {
+    component.resetVa = jest.fn();
+    component.realfis();
+    // expect(component.resetVa).toHaveBeenCalled();
   });
 
-  it('should run #servicePlanChanged()', async () => {
-    component.resetAllFields = jest.fn();
-    component.creditManagementService = component.creditManagementService || {};
-    component.creditManagementService.getWireLessPostpaidDetails = jest.fn().mockReturnValue(observableOf({}));
-    component.creditManagementService.getRecentAdjustments = jest.fn().mockReturnValue(observableOf({}));
-    component.setAdjustmentTypesAndBills = jest.fn();
-    await component.servicePlanChanged({});
-    // expect(component.resetAllFields).toHaveBeenCalled();
-    // expect(component.creditManagementService.getWireLessPostpaidDetails).toHaveBeenCalled();
-    // expect(component.creditManagementService.getRecentAdjustments).toHaveBeenCalled();
-    // expect(component.setAdjustmentTypesAndBills).toHaveBeenCalled();
+  it('should run #seplch()', async () => {
+    component.realfis = jest.fn();
+    component.service81 = component.service81 || {};
+    component.service81.getWipode = jest.fn().mockReturnValue(observableOf({}));
+    component.service81.getReads = jest.fn().mockReturnValue(observableOf({}));
+    component.setAdtynbis = jest.fn();
+    await component.seplch({});
+    // expect(component.realfis).toHaveBeenCalled();
+    // expect(component.service81.getWipode).toHaveBeenCalled();
+    // expect(component.service81.getReads).toHaveBeenCalled();
+    // expect(component.setAdtynbis).toHaveBeenCalled();
   });
 
-  it('should run #setAdjustmentTypesAndBills()', async () => {
-    component.creditManagementService = component.creditManagementService || {};
-    component.creditManagementService.getAdjustmentTypes = jest.fn().mockReturnValue(observableOf({}));
-    component.creditManagementService.loadBbbUuuu = jest.fn().mockReturnValue(observableOf({}));
-    await component.setAdjustmentTypesAndBills();
-    // expect(component.creditManagementService.getAdjustmentTypes).toHaveBeenCalled();
-    // expect(component.creditManagementService.loadBbbUuuu).toHaveBeenCalled();
+  it('should run #setAdtynbis()', async () => {
+    component.service81 = component.service81 || {};
+    component.service81.getAdTys = jest.fn().mockReturnValue(observableOf({}));
+    component.service81.loadBbbUuuu = jest.fn().mockReturnValue(observableOf({}));
+    await component.setAdtynbis();
+    // expect(component.service81.getAdTys).toHaveBeenCalled();
+    // expect(component.service81.loadBbbUuuu).toHaveBeenCalled();
   });
 
-  it('should run #adjustmentTypeChanged()', async () => {
-    component.resetValues = jest.fn();
-    component.adjustmentTypeChanged({
+  it('should run #adTyChd()', async () => {
+    component.resetVa = jest.fn();
+    component.adTyChd({
       code: {}
     });
-    // expect(component.resetValues).toHaveBeenCalled();
+    // expect(component.resetVa).toHaveBeenCalled();
   });
 
-  it('should run #billingCycleChanged()', async () => {
-    component.resetValues = jest.fn();
-    component.setCharges = jest.fn();
-    component.creditManagementService = component.creditManagementService || {};
-    component.creditManagementService.getAdjustmentCmsDetails = jest.fn().mockReturnValue(observableOf({}));
-    await component.billingCycleChanged({});
-    // expect(component.resetValues).toHaveBeenCalled();
-    // expect(component.setCharges).toHaveBeenCalled();
-    // expect(component.creditManagementService.getAdjustmentCmsDetails).toHaveBeenCalled();
+  it('should run #biCyCh()', async () => {
+    component.resetVa = jest.fn();
+    component.setCh = jest.fn();
+    component.service81 = component.service81 || {};
+    component.service81.getAdsDeCmDes = jest.fn().mockReturnValue(observableOf({}));
+    await component.biCyCh({});
+    // expect(component.resetVa).toHaveBeenCalled();
+    // expect(component.setCh).toHaveBeenCalled();
+    // expect(component.service81.getAdsDeCmDes).toHaveBeenCalled();
   });
 
-  it('should run #setCharges()', async () => {
-    component.creditManagementService = component.creditManagementService || {};
-    component.creditManagementService.getAdjustmentCharges = jest.fn().mockReturnValue(observableOf({}));
+  it('should run #setCh()', async () => {
+    component.service81 = component.service81 || {};
+    component.service81.getAdsChs = jest.fn().mockReturnValue(observableOf({}));
     component.openFoo = jest.fn();
-    await component.setCharges();
-    // expect(component.creditManagementService.getAdjustmentCharges).toHaveBeenCalled();
+    await component.setCh();
+    // expect(component.service81.getAdsChs).toHaveBeenCalled();
     // expect(component.openFoo).toHaveBeenCalled();
   });
 
-  it('should run #handleChargeSelected()', async () => {
+  it('should run #handleChSe()', async () => {
 
-    await component.handleChargeSelected({});
+    await component.handleChSe({});
 
   });
 
-  it('should run #handleIssueChanged()', async () => {
+  it('should run #handleIsCh()', async () => {
 
-    await component.handleIssueChanged({
-      issueSelected: {
-        autoAdjustment: {}
+    await component.handleIsCh({
+      isSed: {
+        auAd: {}
       },
-      newInputEntered: {},
-      isOpenOrClosed: {}
+      newInEnd: {},
+      isOpOrCld: {}
     });
 
   });
 
-  it('should run #showAdjustmentForm()', async () => {
+  it('should run #showAdFo()', async () => {
 
-    component.showAdjustmentForm();
+    component.showAdFo();
 
   });
 
-  it('should run #formSubmitted()', async () => {
-    component.creditManagementDataService = component.creditManagementDataService || {};
-    component.creditManagementDataService.setDataAndCreateInteraction = jest.fn().mockReturnValue(observableOf({}));
-    component.openInteractionOrSubmitModal = jest.fn();
-    component.submitCreditManagement = jest.fn();
-    await component.formSubmitted({});
-    // expect(component.creditManagementDataService.setDataAndCreateInteraction).toHaveBeenCalled();
-    // expect(component.openInteractionOrSubmitModal).toHaveBeenCalled();
-    // expect(component.submitCreditManagement).toHaveBeenCalled();
+  it('should run #foSu()', async () => {
+    component.service82 = component.service82 || {};
+    component.service82.setDaNCrIn = jest.fn().mockReturnValue(observableOf({}));
+    component.opInRSuMo = jest.fn();
+    component.submitCrMg = jest.fn();
+    await component.foSu({});
+    // expect(component.service82.setDaNCrIn).toHaveBeenCalled();
+    // expect(component.opInRSuMo).toHaveBeenCalled();
+    // expect(component.submitCrMg).toHaveBeenCalled();
   });
 
-  it('should run #submitCreditManagement()', async () => {
-    component.creditManagementDataService = component.creditManagementDataService || {};
-    component.creditManagementDataService.setServiceAdjustmentAndBillData = jest.fn();
-    component.creditManagementDataService.setChargeData = jest.fn();
-    component.creditManagementDataService.setIssueData = jest.fn();
-    component.creditManagementDataService.setFormData = jest.fn();
-    component.creditManagementDataService.submitCreditManagement = jest.fn().mockReturnValue(observableOf({}));
-    component.openInteractionOrSubmitModal = jest.fn();
+  it('should run #submitCrMg()', async () => {
+    component.service82 = component.service82 || {};
+    component.service82.setSeAdNBiDt = jest.fn();
+    component.service82.setChDt = jest.fn();
+    component.service82.setIsDt = jest.fn();
+    component.service82.setFrDt = jest.fn();
+    component.service82.submitCrMg = jest.fn().mockReturnValue(observableOf({}));
+    component.opInRSuMo = jest.fn();
     component.openFoo = jest.fn();
-    await component.submitCreditManagement({});
-    // expect(component.creditManagementDataService.setServiceAdjustmentAndBillData).toHaveBeenCalled();
-    // expect(component.creditManagementDataService.setChargeData).toHaveBeenCalled();
-    // expect(component.creditManagementDataService.setIssueData).toHaveBeenCalled();
-    // expect(component.creditManagementDataService.setFormData).toHaveBeenCalled();
-    // expect(component.creditManagementDataService.submitCreditManagement).toHaveBeenCalled();
-    // expect(component.openInteractionOrSubmitModal).toHaveBeenCalled();
+    await component.submitCrMg({});
+    // expect(component.service82.setSeAdNBiDt).toHaveBeenCalled();
+    // expect(component.service82.setChDt).toHaveBeenCalled();
+    // expect(component.service82.setIsDt).toHaveBeenCalled();
+    // expect(component.service82.setFrDt).toHaveBeenCalled();
+    // expect(component.service82.submitCrMg).toHaveBeenCalled();
+    // expect(component.opInRSuMo).toHaveBeenCalled();
     // expect(component.openFoo).toHaveBeenCalled();
   });
 
-  it('should run #openInteractionOrSubmitModal()', async () => {
+  it('should run #opInRSuMo()', async () => {
     component.serviceThree = component.serviceThree || {};
     component.serviceThree.open = jest.fn().mockReturnValue({
-      doneClicked: observableOf({})
+      dnCld: observableOf({})
     });
     component.serviceThree.close = jest.fn();
-    component.selectedAdjustment = component.selectedAdjustment || {};
-    component.selectedAdjustment.name = 'name';
+    component.sead = component.sead || {};
+    component.sead.name = 'name';
     component.router = component.router || {};
-    component.router.navigateByUrl = jest.fn();
+    component.router.nvByUr = jest.fn();
     component.navigation = component.navigation || {};
-    component.navigation.previousUrl = 'previousUrl';
-    component.openInteractionOrSubmitModal({}, {
-      adjustmentAmount: {}
+    component.navigation.pvUr = 'pvUr';
+    component.opInRSuMo({}, {
+      adAm: {}
     });
     // expect(component.serviceThree.open).toHaveBeenCalled();
     // expect(component.serviceThree.close).toHaveBeenCalled();
-    // expect(component.router.navigateByUrl).toHaveBeenCalled();
+    // expect(component.router.nvByUr).toHaveBeenCalled();
   });
 
   it('should run #openFoo()', async () => {
