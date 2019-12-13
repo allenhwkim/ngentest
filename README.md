@@ -80,18 +80,18 @@ You can override configuration by creating a file named as `ngentest.config.js` 
 
 1. Parse a Typescript file and find these info.
 
-  * imports: imports statements info.
-  * inputs: @Input statements info.
-  * outputs: @Output statements info.
-  * component provider: providers info used in @Component decorator.
-  * selector: selector info used in @Component or @Directove decorator.
+    * imports: imports statements info.
+    * inputs: @Input statements info.
+    * outputs: @Output statements info.
+    * component provider: providers info used in @Component decorator.
+    * selector: selector info used in @Component or @Directove decorator.
 
 2. Compile Typescript to Javascript, then get the following info.
 
-  * constructor param data
-  * provider mock data
-  * accessor tests
-  * function tests
+    * constructor param data
+    * provider mock data
+    * accessor tests
+    * function tests
 
 3. build ejs data from #1 and #2, and generate test code.
 
