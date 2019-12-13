@@ -13,9 +13,9 @@ To see the source file and generated examples, please take a look at examples di
 ## Config
 You can override configuration by creating a file named as `ngentest.config.js` in your application directory.
 
-  * framework: `jest` or `karma`. The default is `jest`. This value determines how function mock and assert is to be done.
+  * **framework**: `jest` or `karma`. The default is `jest`. This value determines how function mock and assert is to be done.
 
-  * templates: template string for each type. Please specify your own template if you want to override
+  * **templates**: template string for each type. Please specify your own template if you want to override
     the default template. There are five types;
     * klass: An ES6 class without angular decorator
     * component: A class with @Component decorato
@@ -34,17 +34,17 @@ You can override configuration by creating a file named as `ngentest.config.js` 
     }
     ```
 
-  * directives: Array of diretive names used for a component test. e.g., 
+  * **directives**: Array of diretive names used for a component test. e.g., 
     ```
     directives: ['myDirective']
     ```
 
-  * pipes: Array of pipe names used for a component test. e.g. 
+  * **pipes**: Array of pipe names used for a component test. e.g. 
     ```
     pipes: ['translate', 'phoneNumber', 'safeHtml']
     ```
 
-  * replacements: There are some codes, which causes error without proper environment. You need to replace these codes.
+  * **replacements**: There are some codes, which causes error without proper environment. You need to replace these codes.
     You can specify `from` value with regular expression and `to` value with string.
     e.g. 
     ```
@@ -53,7 +53,7 @@ You can override configuration by creating a file named as `ngentest.config.js` 
     ]
     ```
 
-  * providerMocks: When the following class is used in a constructor, create a mock class with the given statements.
+  * **providerMocks**: When the following class is used in a constructor, create a mock class with the given statements.
     e.g.
     ```
     providerMocks: {
@@ -66,12 +66,12 @@ You can override configuration by creating a file named as `ngentest.config.js` 
     }
     ```
 
-  * includeMatch: When ngentest runs with a directory, include only these files. e.g.,
+  * **includeMatch**: When ngentest runs with a directory, include only these files. e.g.,
     ```
     includeMatch: [/(component|directive|pipe|service).ts/],
     ````
   
-  * excludeMatch: When ngentest runs with a directory, exclude these files. e.g., 
+  * **excludeMatch**: When ngentest runs with a directory, exclude these files. e.g., 
     ```
     excludeMatch: [/.*module.ts$/]
     ```
@@ -79,6 +79,7 @@ You can override configuration by creating a file named as `ngentest.config.js` 
 ## How It works
 
 1. Parse a Typescript file and find these info.
+
   * imports: imports statements info.
   * inputs: @Input statements info.
   * outputs: @Output statements info.
@@ -86,6 +87,7 @@ You can override configuration by creating a file named as `ngentest.config.js` 
   * selector: selector info used in @Component or @Directove decorator.
 
 2. Compile Typescript to Javascript, then get the following info.
+
   * constructor param data
   * provider mock data
   * accessor tests
