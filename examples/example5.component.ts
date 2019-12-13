@@ -1,176 +1,176 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
-import { OneviewPermissionService } from '@rogers/oneview-components';
+import { ServivceSix } from '@rogers/oneview-components';
 
-import { ShareEverythingDataService } from '@rogers/oneview-components';
-import { CommonDataService } from '@rogers/oneview-components';
-import { DialogService } from '@rogers/oneview-components';
+import { ServiceSeven } from '@rogers/oneview-components';
+import { ServiceEight } from '@rogers/oneview-components';
+import { ServiceThree } from '@rogers/oneview-components';
 
-import { DashboardDataService } from './dashboard-data.service';
-import { ProcessHupService } from './hup/process-hup.service';
-import { NavigationService } from '../framework/navigation.service';
-import { AppDataService } from '../app-data.service';
-import { ServiceSubTypes } from './service-subtypes.service';
-import { AdditionalServicesDialogComponent } from './additional-services-dialog.component';
-import { DealerCodeDialogComponent } from './dealercode/dealer-code-dialog.component';
-import { DealerCodeService } from './dealercode/dealer-code.service';
-import { ActionsService } from '../actions/actions.service';
-import { ChangePlanComponent } from './app-change-plan/change-plan.component';
+import { ServiceNine } from './nine.service';
+import { ServiceTen } from './ten.service';
+import { ServiceEleven } from '../eleven.service';
+import { ServiceTwelve } from '../twelve.service';
+import { ServiceFourteen } from './fourteen.service';
+import { ComponentOne } from './one.component';
+import { ComponentTwo } from './two.component';
+import { ServiceThirteen } from './thirteen.service';
+import { ServiceFifteen } from '../fifteen.service';
+import { ComponentThree } from './three.component';
 
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.html',
-  styleUrls: [`./dashboard.scss`]
+  selector: 'example-5',
+  templateUrl: './my.html',
+  styleUrls: [`./my.scss`]
 })
-export class DashboardComponent implements OnInit {
-  accountNumber: any;
-  accountSummary: any;
-  serviceSubTypes: any;
-  idvSummary = { info: {}, caseID: 5 };
-  userPreferences: any;
-  subscriptionSummary: any = { subscriptionDetails: [{ pricePlanDetails: {} }] };
-  @ViewChild('dashboardFirstColumn', {read: ElementRef}) dashboardFirstColumn: ElementRef;
-  @ViewChild('interactionList', {read: ElementRef}) interactionList: ElementRef;
-  @ViewChild('actionOffers', {read: ElementRef}) actionOffers: ElementRef;
-  @ViewChild('additionalServicesModal', {read: ElementRef}) additionalServicesModal: ElementRef;
-  @ViewChild(ChangePlanComponent) changePlan: ChangePlanComponent;
+export class Example5Component implements OnInit {
+  nnnAaaa: any;
+  ssssMmmm: any;
+  sssTttSsss: any;
+  sssIiiiiii = { ofni: {}, iiiCccc: 5 };
+  pppUuuu: any;
+  fooBarSummary: any = { dddSssFoo: [{ pppDddFooPpp: {} }] };
+  @ViewChild('fffCccDddd', {read: ElementRef}) fffCccDddd: ElementRef;
+  @ViewChild('myFooList', {read: ElementRef}) myFooList: ElementRef;
+  @ViewChild('fooList1', {read: ElementRef}) fooList1: ElementRef;
+  @ViewChild('mmmSssAaa', {read: ElementRef}) mmmSssAaa: ElementRef;
+  @ViewChild(ComponentThree) component3: ComponentThree;
 
   constructor(
-    private commonData: CommonDataService,
-    private shareEverythingService: ShareEverythingDataService,
-    private ramPermissionService: OneviewPermissionService,
-    private appData: AppDataService,
+    private service8: ServiceEight,
+    private serviceSixteen: ServiceSeven,
+    private service6: ServivceSix,
+    private service12: ServiceTwelve,
     private el: ElementRef,
-    private dashboardData: DashboardDataService,
-    private processHup: ProcessHupService,
-    private svcSubTypes: ServiceSubTypes,
-    private dialogService: DialogService,
-    public navigationService: NavigationService,
-    private actionService: ActionsService,
-    private dealerCodeService: DealerCodeService
+    private service9: ServiceNine,
+    private service10: ServiceTen,
+    private service14: ServiceFourteen,
+    private ServiceThree: ServiceThree,
+    public serviceEleven: ServiceEleven,
+    private service15: ServiceFifteen,
+    private service13: ServiceThirteen
   ) {
-    this.accountNumber = commonData.accountNumber;  // Patch fix to send account number in Preapproval & Subscription/summary request
-    this.accountSummary = commonData.accountSummary;
-    this.serviceSubTypes = svcSubTypes.getServiceSubTypes();
+    this.nnnAaaa = service8.nnnAaaa;  // Patch fix to send account number in Preapproval & Subscription/summary request
+    this.ssssMmmm = service8.ssssMmmm;
+    this.sssTttSsss = service14.getServiceFourteen();
   }
 
-  hasShareEverything: boolean;
-  isCableOnly: boolean;
-  preApproved: boolean;
-  shareEverythingData: any;
-  interactionsDetails: any;
-  dispositionErr: any;
-  dispositionStatus: any;
-  postDatedPPC: any;
-  postDatedPPCErr: boolean;
-  treatmentErr: any;
-  activeTreatments: any;
-  interactionErr: boolean;
-  billingDetails: any;
-  viewHeight: any;
-  showAdditionalServiceLink: any = {internet: true, tv: true, homePhone: true, shm: true, ignite: true};
+  HasEeeSss: boolean;
+  isOooCcc: boolean;
+  AaaPppFoo: boolean;
+  EeeDddSssss: any;
+  iiiiiiiiiDetails: any;
+  ErrDdddd: any;
+  sssDddd: any;
+  FooDdddPppp: any;
+  FooDdddPpppErr: boolean;
+  fooBarErr: any;
+  tttAaaaaa: any;
+  eeeIiiiiii: boolean;
+  details: any;
+  vh: any;
+  sassFoo: any = {i: true, t: true, h: true, s: true, i: true};
 
-  get isAccountHolder(): boolean {
-    return this.commonData.agentInfo['consumer'] &&
-      this.commonData.agentInfo.authorizationLevel &&
-      this.commonData.agentInfo.authorozationLevel.toUpperCase() === 'ACCOUNT_HOLDER';
+  get isHhhAaa(): boolean {
+    return this.service8.bazInfo['consumer'] &&
+      this.service8.bazInfo.authorizationLevel &&
+      this.service8.bazInfo.authorozationLevel.toUpperCase() === 'ACCOUNT_HOLDER';
   }
 
   ngOnInit() {
-    this.isCableOnly = this.accountSummary.lob === 'C';
-    this.dashboardData.getBillingDetails()
+    this.isOooCcc = this.ssssMmmm.lob === 'C';
+    this.service9.getdetails()
       .subscribe (
-        resp => this.billingDetails = resp
+        resp => this.details = resp
       );
-    this.dashboardData.getPostDatedPPC()
+    this.service9.getPostDatedPPC()
       .subscribe(
-        resp =>  this.postDatedPPC = resp,
-        error => this.postDatedPPCErr = true
+        resp =>  this.FooDdddPppp = resp,
+        error => this.FooDdddPpppErr = true
       );
-    this.appData.getIDVSummary$.subscribe(resp => this.idvSummary = resp);
+    this.service12.getSssIiiiD.subscribe(resp => this.sssIiiiiii = resp);
     // show shareverything section first before we get subscription summary
-    this.shareEverythingData =
-    this.shareEverythingService.getShareEverythingData(this.accountSummary, this.subscriptionSummary);
-    this.dashboardData.getInteractions()
+    this.EeeDddSssss =
+    this.serviceSixteen.getEeeDddSsss(this.ssssMmmm, this.fooBarSummary);
+    this.service9.getIiiiiiiii()
       .subscribe(
-        resp => this.interactionsDetails = resp,
-        error => this.interactionErr = true
+        resp => this.iiiiiiiiiDetails = resp,
+        error => this.eeeIiiiiii = true
       );
-    this.dashboardData.getSubscriptionsSummary(this.accountNumber, 'UTERogersCare')
+    this.service9.getFooBar1Summary(this.nnnAaaa, 'foo')
       .subscribe(resp => {
-        this.subscriptionSummary = resp;
-        this.shareEverythingData = this.shareEverythingService.getShareEverythingData(this.accountSummary, resp);
-        this.hasShareEverything = !!this.shareEverythingData.planName;
+        this.fooBarSummary = resp;
+        this.EeeDddSssss = this.serviceSixteen.getEeeDddSsss(this.ssssMmmm, resp);
+        this.HasEeeSss = !!this.EeeDddSssss.nnnPpp;
       });
 
-    this.showAdditionalServiceLink = this.dashboardData.getAdditionalServiceLinks();
+    this.sassFoo = this.service9.getSssAaaLll();
 
-    this.actionService.getActiveTreatments().subscribe(
-      activeTreatments => {
-        this.activeTreatments = activeTreatments;
-        this.actionService.getDispositionStatus(this.activeTreatments.ecid).subscribe(
-          resp => this.dispositionStatus = resp,
-          error => this.dispositionErr = true
+    this.service15.getTttAaa().subscribe(
+      tttAaaaaa => {
+        this.tttAaaaaa = tttAaaaaa;
+        this.service15.getSD(this.tttAaaaaa.ecid).subscribe(
+          resp => this.sssDddd = resp,
+          error => this.ErrDdddd = true
         );
       },
-      error => this.treatmentErr = this.dashboardData.handleTreatmentsDataError(error)
+      error => this.fooBarErr = this.service9.handleEeeDT(error)
     );
 
   }
 
-  updateHeight(event) {
+  updateHanoi(event) {
     setTimeout(() => {
-      this.viewHeight = this.dashboardFirstColumn.nativeElement.offsetHeight;
-      this.interactionList.nativeElement.style.height = this.viewHeight + 'px';
-      this.actionOffers.nativeElement.style.height = this.viewHeight + 'px';
+      this.vh = this.fffCccDddd.nativeElement.offsetHeight;
+      this.myFooList.nativeElement.style.height = this.vh + 'px';
+      this.fooList1.nativeElement.style.height = this.vh + 'px';
     }, 500);
   }
 
-  openAdditionalServiceModal(dialogType) {
-    this.dialogService.open(AdditionalServicesDialogComponent, {data: dialogType});
+  openSsMmD(serviceThreeType) {
+    this.ServiceThree.open(ComponentOne, {data: serviceThreeType});
   }
 
-  async startPPCFlow(event) {
-    const dealerCode = this.commonData.agentInfo.dealerCode;
-    const allowedDCAccess = this.ramPermissionService.isPermitted('DealerCode', 'update');
+  async startFfPp(event) {
+    const fooOneCode = this.service8.bazInfo.fooOneCode;
+    const allowedAcDc = this.service6.isFooDone('FooCode', 'update');
 
-    if (allowedDCAccess && !dealerCode) {
-      const dialog = this.dialogService.open(DealerCodeDialogComponent, {
-        data: {state: 'success'}
+    if (allowedAcDc && !fooOneCode) {
+      const serviceThree = this.ServiceThree.open(ComponentTwo, {
+        data: {state: 'sss'}
       });
-      dialog.dealerCodeChange$.subscribe(async newDealerCode => {
-        const isDealerCodeUpdated = await this.dealerCodeService.checkIfDealerCodeUpdated(newDealerCode);
-        if (isDealerCodeUpdated) {
-          this.changePlan.changePricePlan();
+      serviceThree.fooOneCodeChange$.subscribe(async newFooCode => {
+        const isFooCodeUpdated = await this.service13.checkFfCuI(newFooCode);
+        if (isFooCodeUpdated) {
+          this.component3.changePlPr();
         }
       }
       );
     } else {
-      this.changePlan.changePricePlan();
+      this.component3.changePlPr();
     }
   }
 
-  async handleBuyflow(event) {
-    const dealerCode = this.commonData.agentInfo.dealerCode;
-    const selectedCtn = event.detail.ctn;
-    const accountNumber = this.commonData.accountSummary.accountNumber;
-    const allowedDCAccess = this.ramPermissionService.isPermitted('DealerCode', 'update');
+  async handleFlBu(event) {
+    const fooOneCode = this.service8.bazInfo.fooOneCode;
+    const selectedccc = event.detail.ccc;
+    const nnnAaaa = this.service8.ssssMmmm.nnnAaaa;
+    const allowedAcDc = this.service6.isFooDone('FooCode', 'update');
 
-    if (allowedDCAccess && !dealerCode) {
-      const dialog = this.dialogService.open(DealerCodeDialogComponent, {
+    if (allowedAcDc && !fooOneCode) {
+      const serviceThree = this.ServiceThree.open(ComponentTwo, {
         data: {state: 'success'}
       });
-      dialog.dealerCodeChange$.subscribe(newDealerCode =>
-        this.processHup.handleDealerCodeChange(newDealerCode, accountNumber, selectedCtn) //
+      serviceThree.fooOneCodeChange$.subscribe(newFooCode =>
+        this.service10.handleFooCodeChange(newFooCode, nnnAaaa, selectedccc) //
       );
     } else {
-      const isEligible = await this.processHup.checkEligibility(accountNumber, selectedCtn);
-      isEligible && this.processHup.upgradeHardware(accountNumber, selectedCtn);
+      const isGood = await this.service10.checkTyEl(nnnAaaa, selectedccc);
+      isGood && this.service10.upgradeDwHa(nnnAaaa, selectedccc);
     }
   }
 
-  goToIgniteTV(event) {
-    this.el.nativeElement.dispatchEvent(new CustomEvent('navigate-to', {
-      detail: 'getIgniteTv',
+  goIgTTo(event) {
+    this.el.nativeElement.dispatchEvent(new CustomEvent('n-to', {
+      detail: 'getTTig',
       bubbles: true
     }));
   }

@@ -1,87 +1,63 @@
 import {Component, EventEmitter, Inject, Input, LOCALE_ID, OnInit, Output} from '@angular/core';
 import {FormGroup, FormControl, FormBuilder, Validators} from '@angular/forms';
 
-
 @Component({
-  selector: 'app-adjustment-form',
+  selector: 'app-example2',
   template: '',
   styleUrls: ['']
 })
-
-export class AdjustmentFormComponent implements OnInit {
+export class Example2Component implements OnInit {
   @Input('item') options: any = {};
-  @Input('showAutomaticAdjustmentFlow')
-  set showAutomaticAdjustmentFlow(isAutomatic) {
-    this.isAutomaticFlow = isAutomatic;
+  @Input('showFlow') set showFlow(show) {
+    this.isFlow2 = show;
     this.getControlsAndCreateForm();
   }
   @Output() formSubmitted = new EventEmitter();
   @Output('inview') nguiInview: EventEmitter<any> = new EventEmitter();
   @Output('outview') nguiOutview: EventEmitter<any> = new EventEmitter();
 
-  adjustmentForm: FormGroup;
+  myForm: FormGroup;
   formControlsKeys: string[];
-  adjustmentAmountVal = 0;
-  adjustmentAmountErrorMsg = 'Please enter an amount';
-  currentLanguage: string;
-  showSiteField = false;
-  recommendedAmount: number;
-  isAdjustmentFieldInValid: boolean;
-  isAutomaticFlow: boolean;
+  amount: number;
+  amountVal = 0;
+  error = 'error';
+  isValid: boolean;
+  isFlow2: boolean;
 
-  constructor(private formBuilder: FormBuilder, @Inject(LOCALE_ID) private language) {
+  get myData() {
+    let amount = this.data.tooltip.amount[this.language];
+    const threshold = this.data.location.threshold;
+    amount = amount ? amount.replace(/\[XXX]/gi, `$${threshold}.00`) : '';
+    let tooltip = this.data.tooltip.site[this.language];
+    tooltip = tooltip ? tooltip.replace(/\[XXX]/gi, `$${threshold}.00`) : '';
+    const sites = this.data.location.sites;
+    return { amount, siteToolTip, sites };
   }
 
-  get toolTipDescAndSites() {
-    let amountToolTip = this.adjustmentsDetailsCms.tooltip.amount[this.currentLanguage];
-    const threshold = this.adjustmentsDetailsCms.location.threshold;
-    amountToolTip = amountToolTip ? amountToolTip.replace(/\[XXX]/gi, `$${threshold}.00`) : '';
-    let siteToolTip = this.adjustmentsDetailsCms.tooltip.site[this.currentLanguage];
-    siteToolTip = siteToolTip ? siteToolTip.replace(/\[XXX]/gi, `$${threshold}.00`) : '';
-    const sites = this.adjustmentsDetailsCms.location.sites;
-    return {
-      amountToolTip, siteToolTip, sites
-    };
-  }
+  constructor(
+    private formBuilder: FormBuilder,
+    @Inject(LOCALE_ID) private language
+  ) {}
 
   ngOnInit() {
-    this.currentLanguage = this.language ? this.language : 'en';
-    // Added below line in case showAutomaticAdjustmentFlow input is not passed, then by default non automatic flow will be shown
-    typeof this.isAutomaticFlow !== 'boolean' ? this.getControlsAndCreateForm() : null;
-  }
-
-  getControlsAndCreateForm() {
-    const controls = this.isAutomaticFlow ? this.getAutomaticFlowFormControls() : this.getSpecificFormControls();
-    this.createForm(controls);
+    typeof this.isFlow2 !== 'boolean' ? this.createForm() : null;
   }
 
   createForm(controls) {
-    this.adjustmentForm = this.formBuilder.group(controls);
-    if (!this.isAutomaticFlow) {
-      this.handleDaysAffected();
-      this.handleAdjustmentValueChange();
+    controls = this.isFlow2 ? this.getControls() : this.getFormControls();
+    this.createForm(controls);
+    this.myForm = this.formBuilder.group(controls);
+    if (!this.isFlow2) {
+      this.handleFoo();
+      this.handleBar();
     }
   }
 
-  getAutomaticFlowFormControls() {
-    this.formControlsKeys = ['notes'];
-    return this.getControls();
-  }
-
-  getSpecificFormControls() {
-    const defaultControlKeys = ['adjustmentAmount', 'adjustmentReason', 'siteLocation'];
-    switch (this.selectedAdjustmentType.code) {
-      case 'policyadjustment': // can be removed, keeping it in case some more dynamic case is there
-        this.formControlsKeys = defaultControlKeys;
-        break;
-      case 'servicenetworkissue':
-        this.formControlsKeys = [...defaultControlKeys, 'daysAffected'];
-        break;
-      case 'systemerrors': // can be removed, keeping it in case some more dynamic case is there
-        this.formControlsKeys = defaultControlKeys;
-        break;
-      case 'documentederrororpromise':
-        this.formControlsKeys = [...defaultControlKeys, 'interactionId', 'employeeId'];
+  getFormControls() {
+    const defaultControlKeys = ['foo', 'bar', 'baz'];
+    switch (this.selectedType.code) {
+      case 'foo':
+        this.formControlsKeys = [...defaultControlKeys, 'foo', 'bar'];
         break;
       default:
         this.formControlsKeys = defaultControlKeys;
@@ -91,7 +67,7 @@ export class AdjustmentFormComponent implements OnInit {
 
   getControls() {
     const allControls = {};
-    const notRequiredFields = ['daysAffected', 'notes'];
+    const notRequiredFields = ['fuz', 'baz'];
     this.formControlsKeys.forEach(key => {
       const validations = !notRequiredFields.includes(key) ? Validators.required : '';
       allControls[key] = ['', validations];
@@ -99,60 +75,57 @@ export class AdjustmentFormComponent implements OnInit {
     return allControls;
   }
 
-  handleAdjustmentValueChange() {
-    const thresholdAmount = Number(this.adjustmentsDetailsCms.location.threshold);
-    this.adjustmentForm.get('adjustmentAmount').valueChanges.subscribe(adjustmentAmountVal => {
-      this.adjustmentAmountVal = Number(adjustmentAmountVal);
-      this.isAdjustmentFieldInValid = this.adjustmentFieldInValidation();
-      this.handleSiteField(thresholdAmount);
+  handleBar() {
+    const thresholdAmount = Number(this.data.location.threshold);
+    this.myForm.get('amount').valueChanges.subscribe(amount => {
+      this.amount = Number(amount);
+      this.valid = this.isValid();
+      this.handleFoo(thresholdAmount);
     });
   }
 
-  handleDaysAffected() {
-    const daysAffectedFormControl = this.adjustmentForm.get('daysAffected');
-    if (daysAffectedFormControl) {
-      this.adjustmentForm.get('daysAffected').valueChanges.subscribe(daysAffectedValue => {
-        const monthlyServiceFee = this.wirelessPostpaidDetails.content.postPaidPhoneDetails.planMSF;
-        this.recommendedAmount = daysAffectedValue * (monthlyServiceFee / 30);
-        this.adjustmentForm.get('adjustmentAmount').setValue(this.recommendedAmount, {onlySelf: true});
+  handleFoo() {
+    const fooControl = this.myForm.get('foo');
+    if (fooControl) {
+      this.myForm.get('foo').valueChanges.subscribe(fooValue => {
+        const fee = this.details.content.moreDetails.plan;
+        this.amount = fooValue * (fee / 99);
+        this.myForm.get('foo').setValue(this.amount, {only: true});
       });
     }
   }
 
-  getValidationAndSetSpecificErrorsForAmount() {
-    if (this.adjustmentAmountVal > Number(this.adjustmentsDetailsCms.nextBillMaxAmount) && !this.selectedBill.content_id) {
-      this.adjustmentAmountErrorMsg = 'Amount cannot exceed $50';
+  getAmount() {
+    if (this.amountVal > Number(this.data.amount) && !this.selected.id) {
+      this.error = '1';
       return false;
-    } else if (this.adjustmentAmountVal > Number(this.adjustmentsDetailsCms.adjustmentMaxAmount)) {
-      this.adjustmentAmountErrorMsg = 'Amount exceeds authorized limit. Please see team manager to apply.';
+    } else if (this.foo && this.amountVal > this.data.amount2) {
+      this.error = '2';
       return false;
-    } else if (this.selectedCharge && this.adjustmentAmountVal > this.selectedCharge.adjustableAmount) {
-      this.adjustmentAmountErrorMsg = 'Amount exceeds authorized limit. Please see team manager to apply.';
-      return false;
-    } else if (!this.adjustmentForm.get('adjustmentAmount').valid) {
-      this.adjustmentAmountErrorMsg = 'Please enter an amount';
+    } else if (!this.myForm.get('amount').valid) {
+      this.error = '3';
       return false;
     }
     return true;
   }
 
-  handleSiteField(thresholdAmount) {
-    this.showSiteField = this.adjustmentAmountVal > thresholdAmount && !this.isAdjustmentFieldInValid;
-    this.showSiteField ? this.adjustmentForm.get('siteLocation').enable() : this.adjustmentForm.get('siteLocation').disable();
+  handleFoo(amount) {
+    this.showFoo = this.amountVal > amount && !this.isValid;
+    this.showFoo ? this.myForm.get('foo').enable() : this.myForm.get('foo').disable();
   }
 
   isFieldValid(formControl) {
     return formControl.touched && !formControl.valid;
   }
 
-  adjustmentFieldInValidation() {
-    if (!this.isAutomaticFlow) {
-      return !this.getValidationAndSetSpecificErrorsForAmount();
+  isValid() {
+    if (!this.isFlow2) {
+      return !this.getAmount();
     }
   }
 
   submit() {
-    this.formSubmitted.emit(this.adjustmentForm.value);
+    this.formSubmitted.emit(this.myForm.value);
   }
 
 }

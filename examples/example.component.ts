@@ -7,10 +7,6 @@ import * as myAlias from 'alias-npm-module';
 import { AuthGuardService } from './auth-guard.service';
 import { CookieService } from './cookie.service';
 import { AppLoadService } from './app-load.service';
-import { CommonUtilsService } from './common-utils.service';
-
-const foo = 1; // to make it sure component is picked for test, not this
-const bar = 2; // to make it sure component is picked for test, not this
 
 @Component({
   selector: 'app-root',
@@ -20,21 +16,17 @@ const bar = 2; // to make it sure component is picked for test, not this
 export class ExampleComponent implements OnInit {
   @ViewChild('menuEl') private menuEl: ElementRef;
   loggedIn: boolean = this.authGuardSvc.foo().bar.baz().isLoggedIn;
-  i18n: any;
   language: string;
   foo;
 
   constructor(
     private authGuardSvc: AuthGuardService,
     private cookie: CookieService,
-    private appInit: AppLoadService,
     @Inject(PLATFORM_ID) private platformId: Object,
     private router: Router,
-    private commonUtilsSvc: CommonUtilsService
   ) {
     // console.log('this is comments')
     this.language = cookie.get('language') || 'en'; // AssignmentExpression
-    this.i18n = appInit.i18n.customElement; // AssignmentExpression
 
     this.router.route().foo().bar;  // for test
     // this.language.foo().bar;        // for test
@@ -73,13 +65,5 @@ export class ExampleComponent implements OnInit {
     window.scrollTo(0, 0); // go to top when route changes
   }
 
-  changeRoute(event) {
-    const routeName = event.detail.replace(/-([0-9]+)$/, (_, num) => '/' + num);
-    this.router.navigate([routeName]);
-  }
-
-  reportIssue(event) {
-    this.commonUtilsSvc.reportIssue(navigator.userAgent);
-  }
 }
 

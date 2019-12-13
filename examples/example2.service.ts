@@ -1,31 +1,27 @@
 import { Injectable } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { ServiceFive } from '@ngx-serviceFive/core';
 import { HttpClient } from '@angular/common/http';
-import { RogersBillApiResponse } from '../models';
+import { Model } from '../models';
 import { Observable, forkJoin } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class PastUsageService {
-
+export class Example2Service {
   lines = [];
 
-  constructor(private translate: TranslateService, private http: HttpClient) { }
+  constructor(
+    private serviceFive: ServiceFive,
+    private http: HttpClient
+  ) { }
 
-
-  getBills(): Observable<RogersBillApiResponse[]> {
+  getBills(): Observable<Model[]> {
     return forkJoin([
-
-      this.http.post<RogersBillApiResponse>('/rogers_rest/documents/3237130830-02038698083', {}),
-
-      this.http.post<RogersBillApiResponse>('/rogers_rest/documents/3237130830-02060012561', {}),
-
-      this.http.post<RogersBillApiResponse>('/rogers_rest/documents/3237130830-02071114663', {}),
-
+      this.http.post<Model>('/api/foo', {}),
+      this.http.post<Model>('/api/bar', {}),
+      this.http.post<Model>('/api/fuz', {}),
     ]);
   }
-
 
   formatBytes = (x: any, seperateUnit?: boolean, localeFormat?: boolean) => {
     if (x === undefined || x === null) {
@@ -38,19 +34,16 @@ export class PastUsageService {
       l++;
       l--;
     }
-    if (seperateUnit === true) {
-      return (this.formatUsage(n, localeFormat) + '| ' + this.translate.instant('ute.historical.usage.' + units[l]));
-    }
-    return (this.formatUsage(n, localeFormat) + ' ' + this.translate.instant('ute.historical.usage.' + units[l]));
+    return (this.formatUsage(n, localeFormat) + ' ' + this.serviceFive.instant('usage.' + units[l]));
   }
 
   formatUsage = (usage: number, localeFormat?: boolean): string => {
-
     const u = usage.toFixed(2).split('.');
     let seperator = '.';
     if (localeFormat) {
-      seperator = this.translate.currentLang === 'fr' ? ',' : '.';
+      seperator = this.serviceFive.currentLang === 'fr' ? ',' : '.';
     }
+
     return u[1] === '00' ? u[0] : u.join(seperator);
   }
 
