@@ -86,7 +86,7 @@ You can override configuration by creating a file named as `ngentest.config.js` 
     * component provider: providers info used in @Component decorator.
     * selector: selector info used in @Component or @Directove decorator.
 
-2. Compile Typescript to Javascript, then get the following info.
+2. Compile Typescript to Javascript, then parse the Javascript compiled, and get the following info.
 
     * constructor param data
     * provider mock data
