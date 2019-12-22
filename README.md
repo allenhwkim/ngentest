@@ -2,7 +2,7 @@
 Angular5,6,7,8+ Unit Test Generator For Components, Directive, Services, and Pipes
 
 ## Install & Run
-```
+```bash
 $ npm install ngentest -g # to run this command anywhere
 $ ngentest my.component.ts 
 $ ngentest my.directive.ts -s # write unit test to my.directive.spec.ts
@@ -24,7 +24,7 @@ You can override configuration by creating a file named as `ngentest.config.js` 
     * pipe: A class with @Pipe decoratorr
 
     e.g., 
-    ```
+    ```javascript
     templates: {
       klass: myKlassTemplate,
       component: myComponentTemplate,
@@ -35,19 +35,19 @@ You can override configuration by creating a file named as `ngentest.config.js` 
     ```
 
   * **directives**: Array of diretive names used for a component test. e.g., 
-    ```
+    ```javascript
     directives: ['myDirective']
     ```
 
   * **pipes**: Array of pipe names used for a component test. e.g. 
-    ```
+    ```javascript
     pipes: ['translate', 'phoneNumber', 'safeHtml']
     ```
 
   * **replacements**: There are some codes, which causes error without proper environment. You need to replace these codes.
     You can specify `from` value with regular expression and `to` value with string.
     e.g. 
-    ```
+    ```javascript
     replacements: [
       { from: '^\\S+\\.define\\(.*\\);', to: ''}`
     ]
@@ -55,7 +55,7 @@ You can override configuration by creating a file named as `ngentest.config.js` 
 
   * **providerMocks**: When the following class is used in a constructor, create a mock class with the given statements.
     e.g.
-    ```
+    ```javascript
     providerMocks: {
       ElementRef: ['nativeElement = {};'],
       Router: ['navigate() {};'],
@@ -67,16 +67,16 @@ You can override configuration by creating a file named as `ngentest.config.js` 
     ```
 
   * **includeMatch**: When ngentest runs with a directory, include only these files. e.g.,
-    ```
+    ```javascript
     includeMatch: [/(component|directive|pipe|service).ts/],
     ````
   
   * **excludeMatch**: When ngentest runs with a directory, exclude these files. e.g., 
-    ```
+    ```javascript
     excludeMatch: [/.*module.ts$/]
     ```
   ### Full Example (https://github.com/allenhwkim/ngentest/blob/master/ngentest.config.js)
-  ```
+  ```javascript
   module.exports = {
     framework: 'karma', // or 'jest'
     templates: {
@@ -138,7 +138,7 @@ You can override configuration by creating a file named as `ngentest.config.js` 
 ## For Developers: To make it sure it does not break any feature
 
 Genearate spec files for all examples and compare if there is any difference.
-```
+```bash
 $ sh tools/all-examples.sh
 $ git diff
 ```
