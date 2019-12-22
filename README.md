@@ -9,6 +9,7 @@ $ ngentest my.directive.ts -s # write unit test to my.directive.spec.ts
 ```
 
 To see the source file and generated examples, please take a look at examples directory.
+https://github.com/allenhwkim/ngentest/tree/master/examples
 
 ## Config
 You can override configuration by creating a file named as `ngentest.config.js` in your application directory.
