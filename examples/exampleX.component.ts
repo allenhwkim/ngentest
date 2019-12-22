@@ -1,18 +1,17 @@
 import { Component } from '@angular/core';
 
 @Component({})
-export class TotalDataDetailsComponent {
+export class ExampleXComponent {
 
   doMore(param) {
-    // TODO, this.dataDetails needs to be mocked FROM this.dataService
-    this.dataDetails = this.dataService.getDataDetailsForSharing(this.usageDetails);
-    this.totalRemainingPercentage = (this.dataDetails.remainingData / this.dataDetails.totalData) * 100;
+    this.dtDts = this.dtSv.getDtDts4Sh(this.usDts);
+    this.ttRmPc = (this.dtDts.rmDt / this.dtDts.ttDt) * 100;
 
-    let deviceDetail;
-    deviceDetail = this.deviceDetails[deviceDetailsNumber];
+    let dvDt;
+    dvDt = this.dvDts[dvDtsNumber];
     const title = {
-      en: deviceDetail ? deviceDetail.EN.productTitle : '',
-      fr: deviceDetail ? deviceDetail.FR.productTitle : ''
+      en: dvDt ? dvDt.EN.pdTt : '',
+      fr: dvDt ? dvDt.FR.pdTt : ''
     };
 
     const x = param.x.y.z;
@@ -21,23 +20,23 @@ export class TotalDataDetailsComponent {
     const thisVar = this.foo.bar.baz();
     thisVar.a.boc = '123';
 
-    const dialogComponent = this.dialogService.open(HupErrorComponent, { data: { result, reasonCode } });
-    dialogComponent.userAction.subscribe(ret => ret);
+    const sv3Cmp = this.serviceThree.open(Component64, { data: { result, reasonCode } });
+    sv3Cmp.usAc.subscribe(ret => ret);
 
-    this.totalAverageUsageAmongBills = this.dates.reduce((acc, val) => acc + +val.totalUsageThisDate, 0) / this.dates.length;
+    this.ttAvUsAmBls = this.dates.reduce((acc, val) => acc + +val.ttUsThDt, 0) / this.dates.length;
   }
 
-  setCreditCardDetails() {
-    this.creditCard = this.billingDetails.methodOfPayment.creditCardDetails;
-    if (this.creditCard && this.creditCard.ccType) {
-      this.ccImg = cardImg[this.creditCard.ccType.toLowerCase()];
+  setFooDddCcc() {
+    this.fooCd = this.details.OooPppMmm.fooCdDetails;
+    if (this.fooCd && this.fooCd.ccType) {
+      this.fooImg = cardImg[this.fooCd.ccType.toLowerCase()];
     }
-    this.ccExpiry = lastDayOfMonth(this.billingHeader.getLocalDate(this.creditCard.ccExpiry));
-    this.ccExpiryDate = this.billingHeader.formatDate(this.ccExpiry, this.language);
-    this.isCreditCardExpired = this.billingHeader.isCreditCardExpired(this.ccExpiry);
-    this.isCreditCardExpiring = !this.isCreditCardExpired && this.billingHeader.isCreditCardExpiring(this.ccExpiry);
-    this.showCCWarning = this.isCreditCardExpired || this.isCreditCardExpiring;
-    this.daysTillExpired = this.isCreditCardExpiring && differenceInCalendarDays(this.ccExpiry, new Date());
+    this.fooBaz = lastDayOfMonth(this.bbbHhh.getLcDt(this.fooCd.fooBaz));
+    this.fooBazDate = this.bbbHhh.formatDate(this.fooBaz, this.language);
+    this.isFooDddCcc = this.bbbHhh.isFooDddCcc(this.fooBaz);
+    this.isFooEeeCcc = !this.isFooDddCcc && this.bbbHhh.isFooEeeCcc(this.fooBaz);
+    this.showFooXxx = this.isFooDddCcc || this.isFooEeeCcc;
+    this.numDaysDone = this.isFooEeeCcc && differenceInCalendarDays(this.fooBaz, new Date());
   }
 
 }

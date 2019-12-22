@@ -3,27 +3,27 @@ import { Router, NavigationStart, ActivatedRoute } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 import { trigger, transition, style, animate } from '@angular/animations';
 
-import { TranslateService } from '@ngx-translate/core';
+import { ServiceFive } from '@ngx-tranalste/core';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { combineLatest, defer, of } from 'rxjs';
 import { catchError, take, filter, map, mergeMap, shareReplay, tap } from 'rxjs/operators';
 
-import { LoadingComponent, CommonDataService, ProfileErrorComponent } from '@rogers/oneview-components';
-import { SchedulePtpDialogComponent } from '../schedule-ptp/schedule-ptp-dialog.component';
-import { SchedulePtpFailureDialogComponent } from '../schedule-ptp/schedule-ptp-failure-dialog.component';
-import { DialogOptions, DialogService, ErrorComponent, SuccessComponent } from '@rogers/oneview-components';
-import { BillingDownloadFailureComponent, BillingDownloadSuccessComponent } from '@rogers/oneview-components';
-import { BillingDataService } from './billing-data.service';
-import { PaymentService } from '../../payment/payment.service';
-import { SchedulePtpDataService } from '../schedule-ptp/schedule-ptp-data.service';
-import { BillingDateHandlerService } from './billing-date-handler.service';
-import { NavigationService } from '../../framework/navigation.service';
+import { LoadingComponent, ServiceEight, Component61 } from './my-components';
+import { Component62 } from '../comp62.component';
+import { Component63 } from '../comp63.component'
+import { serviceThreeOptions, ServiceThree, Component64, Component65 } from './my-components';
+import { Component66, Component67 } from './my-components';
+import { ServiceFour } from './four.service';
+import { serviceOne } from '../one.service';
+import { Service61 } from '../sixty-one.service';
+import { Service62 } from './sixty-two.service';
+import { ServiceEleven } from '../../evleven.service';
 
 @Component({
-  selector: 'app-billing-page',
-  templateUrl: './billing-page.component.html',
-  styleUrls: ['./billing-page.component.scss'],
+  selector: 'my-page',
+  templateUrl: './my.html',
+  styleUrls: ['./my.scss'],
   animations: [
     trigger('slideIn', [
       transition(':enter', [
@@ -34,142 +34,142 @@ import { NavigationService } from '../../framework/navigation.service';
   ]
 })
 
-export class BillingPageComponent implements OnInit {
+export class Example6Component implements OnInit {
 
-  get billSelection() {
-    return this.__billSelection;
+  get mySelection() {
+    return this.__mySelection;
   }
 
-  set billSelection(bill) {
-    this.__billSelection = bill;
-    const url = `/web/totes/viewInvoiceDetail.html?` + `accountNumber=${this.accountNumber}&link=${bill.link}`;
-    this.iframeSrc = this.sanitize.bypassSecurityTrustResourceUrl(url); // needed for NG context
+  set mySelection(param) {
+    this.__mySelection = param;
+    const url = `/my.html?` + `nnnAaaa=${this.nnnAaaa}&link=${param.link}`;
+    this.srcIiii = this.sanitize.bypassSecurityTrustResourceUrl(url); // needed for NG context
   }
 
   constructor(
-    private dialog: DialogService,
+    private serviceThree: ServiceThree,
     private sanitize: DomSanitizer,
-    private billingService: BillingDataService,
-    private ptpService: SchedulePtpDataService,
-    private paymentService:  PaymentService,
-    private commonData: CommonDataService,
+    private serviceFour: ServiceFour,
+    private service64: Service61,
+    private serviceOne:  serviceOne,
+    private service8: ServiceEight,
     private router: Router,
     private route: ActivatedRoute,
-    private navigationService: NavigationService,
-    private translate: TranslateService,
-    private dateHandler: BillingDateHandlerService
+    private serviceEleven: ServiceEleven,
+    private serviceFive: ServiceFive,
+    private service62: Service62
   ) {
-    this.language = commonData.language;
-    this.accountSummary = commonData.accountSummary;
-    this.iframeSrc = this.sanitize.bypassSecurityTrustResourceUrl('about:blank'); // needed for NG context
-    this.printPDFSrc = this.sanitize.bypassSecurityTrustResourceUrl('about:blank'); // needed for NG context
+    this.language = service8.language;
+    this.ssssMmmm = service8.ssssMmmm;
+    this.srcIiii = this.sanitize.bypassSecurityTrustResourceUrl('about:blank'); // needed for NG context
+    this.printFooSrc = this.sanitize.bypassSecurityTrustResourceUrl('about:blank'); // needed for NG context
   }
-  accountNumber;
-  accountSummary: any;
-  billingDetails: any;
-  showSuccessPayment = false;
-  paymentHistory: any;
-  allPtpInfo: any;
-  allPtpInfoErr = false;
-  noHistoryMessage = false;
-  ptpInstallmentsHeader: any;
-  ptpInstallmentsHeaderErr = false;
-  ptpInstallments: any;
-  ptpInstallmentsErr = false;
-  billingNotificationConfig: any;
-  billingNotificationConfigErr = false;
+  nnnAaaa;
+  ssssMmmm: any;
+  details: any;
+  showPppSss = false;
+  hhhPppp: any;
+  iiiPppAaa: any;
+  iiiPppAaaErr = false;
+  hhhMMmNnn = false;
+  iiiHhhhhppppp: any;
+  iiiHhhhhpppppErr = false;
+  iiiiPppp: any;
+  myError = false;
+  myConfig: any;
+  myConfigErr = false;
 
   @ViewChildren('iFrameBill', { read: ElementRef }) iFrameBill: QueryList<any>;
 
   today = new Date();
   language;
-  defaultTab = 'bill';
+  defaultTab = 'my-tab';
 
-  billCycleEndDate;
-  billMessage;
+  dateCccBbb;
+  msgBbbb;
 
-  iframeSrc: any;
-  printPDFSrc: any;
+  srcIiii: any;
+  printFooSrc: any;
 
-  overlayStatus; // ERROR (OR) INFO
+  statusOooo; // ERROR (OR) INFO
 
-  dialogOptionsError: DialogOptions = {
-    showCloseButton: false
+  serviceThreeOptionsError: serviceThreeOptions = {
+    showBbbbCccc: false
   };
 
-  __billSelection;
+  __mySelection;
 
-  encryptAPIError$ = this.billingService.catchError().pipe(
+  errorAaaEeee$ = this.serviceFour.catchError().pipe(
     tap(e => this.handleError(e)),
     map(e => !!e)
   );
 
-  bill$ = defer(() => {
-    this.dialog.open(LoadingComponent, this.dialogOptionsError);
-    return this.billingService.getBilling();
+  foo$ = defer(() => {
+    this.serviceThree.open(LoadingComponent, this.serviceThreeOptionsError);
+    return this.serviceFour.getFooing();
   }).pipe(
-    tap(bill => {
-      this.billingDetails = bill;
-      this.billCycleEndDate = (<any>bill).billCycleEndDate;
+    tap(param => {
+      this.details = param;
+      this.dateCccBbb = (<any>param).dateCccBbb;
     }),
     catchError(error => of(error)),
     shareReplay(1)
   );
 
-  account$ = defer(() => of(this.accountSummary)).pipe(
+  bar$ = defer(() => of(this.ssssMmmm)).pipe(
     map(summary => {
-      const { accountNumber, accountStatus, billing, accountTypeNumber } = summary;
-      return { accountNumber, accountStatus, billing, accountTypeNumber };
+      const { nnnAaaa, fooStatus, billing, numTttAaa } = summary;
+      return { nnnAaaa, fooStatus, billing, numTttAaa };
     }),
-    tap(summary => (this.accountNumber = summary.accountNumber)),
+    tap(summary => (this.nnnAaaa = summary.nnnAaaa)),
     shareReplay()
   );
 
-  bills$ = defer(() => {
-    this.dialog.open(LoadingComponent, this.dialogOptionsError);
-    return this.billingService.loadUserBill();
+  fuz$ = defer(() => {
+    this.serviceThree.open(LoadingComponent, this.serviceThreeOptionsError);
+    return this.serviceFour.loadBbbUuuu();
   }).pipe(
-    map((userBills: any) =>
-      userBills.bills.map(bill => {
-        const temp = bill.issue_date;
-        const issue_date = new Date(temp.replace('-', '/'));
-        return { ...bill, issue_date };
+    map((userBaz: any) =>
+      userBaz.fuz.map(param => {
+        const temp = param.dataFoo;
+        const dataFoo = new Date(temp.replace('-', '/'));
+        return { ...param, dateFoo };
       })
     ),
     catchError(error => of(error)),
-    tap(bills => {
-      if (bills && bills.length > 0) {
-        this.billSelection = bills[0];
+    tap(fuz => {
+      if (fuz && fuz.length > 0) {
+        this.mySelection = fuz[0];
       }
     }),
     shareReplay(1)
   );
 
-  overlay$ = combineLatest(this.bill$, this.bills$).pipe(
-    map(([bill, bills]) => {
-      if (bill.billCycleEndDate && bills.length === 0) {
-        this.overlayStatus = 'INFO';
-      } else if (bill.error || bills.error) {
-        this.overlayStatus = 'ERROR';
+  baz$ = combineLatest(this.foo$, this.fuz$).pipe(
+    map(([foo, fuz]) => {
+      if (foo.dateCccBbb && fuz.length === 0) {
+        this.statusOooo = 'INFO';
+      } else if (foo.error || fuz.error) {
+        this.statusOooo = 'ERROR';
       }
-      return this.overlayStatus;
+      return this.statusOooo;
     })
   );
 
-  showNotification$ = combineLatest(this.account$, this.bills$, this.bill$).pipe(
-    map(([account, bills, bill]) => {
+  showBarXxx$ = combineLatest(this.bar$, this.fuz$, this.foo$).pipe(
+    map(([param1, fuz, foo]) => {
       if (
-        account.accountTypeNumber !== 1 ||
-        (account.accountStatus.toLowerCase() !== 'open' && account.accountStatus.toLowerCase() !== 'active')
+        param1.numTttAaa !== 1 ||
+        (param1.fooStatus.toLowerCase() !== 'open' && bar.fooStatus.toLowerCase() !== 'active')
       ) {
         return false;
       } else {
-        return this.dateHandler.toShowNotification(bills[0].issue_date, bill.billCycleEndDate);
+        return this.service62.toshowBarXxx(fuz[0].dateFoo, foo.dateCccBbb);
       }
     }),
     catchError(_ => of(false)),
     tap(show => {
-      this.dialog.close();
+      this.serviceThree.close();
       if (show) {
         this.setTranslations();
       }
@@ -177,113 +177,113 @@ export class BillingPageComponent implements OnInit {
   );
 
   ngOnInit() {
-    const queryParams = this.route.snapshot.queryParams['defaultTab'];
-    this.defaultTab = queryParams ? queryParams : this.defaultTab;
+    const qp = tis.route.snapshot.queryParams['qp'];
+    this.defaultTab = qp ? qp : this.defaultTab;
 
-    this.showSuccessPayment = this.navigationService.isRoutedFromPayment;
+    this.showPppSss = this.serviceEleven.isFffPppRrrr;
 
-    if (this.showSuccessPayment) {
-      this.router.events.pipe( // once we navigate away from page we should not show the banner again
+    if (this.showPppSss) {
+      this.router.events.pipe(
         take(1), filter(event => event instanceof NavigationStart)
       ).subscribe(() => {
-        this.navigationService.isRoutedFromPayment = false;
+        this.serviceEleven.isFffPppRrrr = false;
       });
     }
 
-    this.ptpService.getAllPtpInfo().subscribe(
+    this.service64.getPppIiiAaaa().subscribe(
       (resp: any) => {
-        const isValidAllPTPInfoResponse = resp && resp.ptpDetails && resp.ptpDetails.length;
-        if (isValidAllPTPInfoResponse) {
-          this.allPtpInfo = resp; // for billing page use
-          this.setBillingHeaderPTPMessage(); // for billing header values only
+        const isAaPpIRV = resp && resp.dddPpp && resp.dddPpp.length;
+        if (isAaPpIRV) {
+          this.iiiPppAaa = resp; // for billing page use
+          this.setbbbHhhPTPMessage(); // for billing header values only
         } else {
-          if (resp.ptpDetails && resp.ptpDetails.length === 0) {
-            this.noHistoryMessage = true;
+          if (resp.dddPpp && resp.dddPpp.length === 0) {
+            this.hhhMMmNnn = true;
           }
           // other business error
-          this.allPtpInfoErr = true;
-          this.ptpInstallmentsErr = true;
+          this.iiiPppAaaErr = true;
+          this.myError = true;
         }
       },
       error => {
-        this.allPtpInfoErr = true;
-        this.ptpInstallmentsErr = true;
+        this.iiiPppAaaErr = true;
+        this.myError = true;
       }
     );
 
-    this.paymentService.getPaymentHistory().subscribe(
-      resp => this.paymentHistory =  resp,
-      error => console.log('error getting payment history: ',  error)
+    this.serviceOne.getHhhPppp().subscribe(
+      resp => this.hhhPppp =  resp,
+      error => console.log('error: ',  error)
     );
 
-    this.billingService.getBillingNotificationConfig().subscribe(
-      resp => this.billingNotificationConfig = resp,
-      error => this.billingNotificationConfigErr = true
+    this.serviceFour.getmyConfig().subscribe(
+      resp => this.myConfig = resp,
+      error => this.myConfigErr = true
       );
   }
 
-  getPTPInstallments(event) { // for future event calls to update installments
-    if (event.detail.ptpId) {
-      this.ptpService.getPTPInstallments(event.detail.ptpId).subscribe(
+  getIiiFooPppBar(event) { // for future event calls to update fooFuz
+    if (event.detail.PId) {
+      this.service64.getIiiFooPppBar(event.detail.PId).subscribe(
         (resp: any) => {
-          if (resp.installments && resp.installments.length) {
-            this.ptpInstallments = resp;
+          if (resp.fooFuz && resp.fooFuz.length) {
+            this.iiiiPppp = resp;
           } else {
-            this.ptpInstallmentsErr = true;
+            this.myError = true;
           }
         },
-        error => this.ptpInstallmentsErr = true);
+        error => this.myError = true);
     }
   }
 
-  setBillingHeaderPTPMessage() { // called on ngInit
-    const ptpID = this.billingService.getPTPIDForHeader(this.allPtpInfo);
-    this.ptpService.getPTPInstallments(ptpID).subscribe(
+  setbbbHhhPTPMessage() { // called on ngInit
+    const ptpID = this.serviceFour.getIdFffHhhP(this.iiiPppAaa);
+    this.service64.getIiiFooPppBar(ptpID).subscribe(
       (resp: any) => {
-        if (resp.installments && resp.installments.length) {
-          this.ptpInstallmentsHeader = resp;
+        if (resp.fooFuz && resp.fooFuz.length) {
+          this.iiiHhhhhppppp = resp;
         } else {
-          this.ptpInstallmentsHeaderErr = true;
+          this.iiiHhhhhpppppErr = true;
         }
       },
-      error => this.ptpInstallmentsHeaderErr = true);
+      error => this.iiiHhhhhpppppErr = true);
   }
 
   setTranslations() {
-    this.billingService.getBillType().subscribe(type => {
+    this.serviceFour.getmyType().subscribe(type => {
       const month = format(
-        this.dateHandler.getCurrentCycleEndDate(this.billSelection.issue_date),
+        this.service62.getCccEchoDtCcc(this.mySelection.issue_date),
         'MMMM',
         this.language === 'fr' ? { ...{ locale: fr } } : {}
       );
-      if (type === 'E_BILL') {
-        this.billMessage = this.translate.instant('billNotificationForOnlineBillNoEmail').replace('{{monthName}}', month);
+      if (type === 'BAR') {
+        this.msgBbbb = this.serviceFive.instant('foo').replace('{{x}}', month);
       } else {
-        this.billMessage = this.translate.instant('billNotificationForPaperBill').replace('{{monthName}}', month);
+        this.msgBbbb = this.serviceFive.instant('bar').replace('{{x}}', month);
       }
     });
   }
 
-  downloadBillAs(type: string) {
-    this.dialog.open(LoadingComponent, this.dialogOptionsError);
-    this.fetchResource(type).subscribe();
+  doBbbAaaDddd(type: string) {
+    this.serviceThree.open(LoadingComponent, this.serviceThreeOptionsError);
+    this.fetchMee(type).subscribe();
   }
 
-  fetchResource(type) {
-    return this.billingService.getEncryptedString().pipe(
-      mergeMap(encrypt =>
-        this.billingService.fetchUserBill(this.billSelection, this.accountNumber, type, encrypt).pipe(
+  fetchMee(type) {
+    return this.serviceFour.betSssEeeMee().pipe(
+      mergeMap(param =>
+        this.serviceFour.fetchBar(this.mySelection, this.nnnAaaa, type, param).pipe(
           tap(content => {
-            this.dialog.close();
+            this.serviceThree.close();
             if (content.error) {
-              this.dialog.open(BillingDownloadFailureComponent, { data: type });
+              this.serviceThree.open(Component66, { data: type });
             } else {
-              this.billingService.downloadFile(
-                this.billSelection.content_id,
+              this.serviceFour.doFoo(
+                this.mySelection.id,
                 content,
-                `Rogers-${this.billSelection.issue_date}-${this.accountNumber}-Usage.${type}`
+                `${this.mySelection.date}-${this.nnnAaaa}-${type}`
               );
-              this.dialog.open(BillingDownloadSuccessComponent, { data: type });
+              this.serviceThree.open(Component67, { data: type });
             }
           })
         )
@@ -292,42 +292,42 @@ export class BillingPageComponent implements OnInit {
   }
 
   /** Refactor this later */
-  printPDF() {
-    this.dialog.open(LoadingComponent, this.dialogOptionsError);
-    this.billingService.getEncryptedString().subscribe(encryptStr => {
+  printBar() {
+    this.serviceThree.open(LoadingComponent, this.serviceThreeOptionsError);
+    this.serviceFour.betSssEeeMee().subscribe(param => {
       try {
-        const iFramePrintFile = document.getElementById('iFramePrintFile');
-        iFramePrintFile.focus();
-        this.dialog.close();
-        iFramePrintFile.onload = () => {
-          const result = (<any>iFramePrintFile).contentWindow.document.execCommand('print', false, null);
+        const myFooElement = document.getElementById('myFooElement');
+        myFooElement.focus();
+        this.serviceThree.close();
+        myFooElement.onload = () => {
+          const result = (<any>myFooElement).contentWindow.document.execCommand('print', false, null);
           if (!result) {
-            (<any>iFramePrintFile).contentWindow.print();
+            (<any>myFooElement).contentWindow.print();
           }
         };
-        this.printPDFSrc = this.sanitize.bypassSecurityTrustResourceUrl(
-          this.billingService.resolveIFrameUrl(this.billSelection.link, encryptStr, false)
+        this.printFooSrc = this.sanitize.bypassSecurityTrustResourceUrl(
+          this.serviceFour.resolveMyUrl(this.mySelection.link, param, false)
         );
       } catch {
-        this.dialog.open(ProfileErrorComponent, { data: { content: this.translate.instant('error_print_msg') } });
+        this.serviceThree.open(Component61, { data: { content: this.serviceFive.instant('msg') } });
       }
     });
   }
 
-  savePDF() {
-    this.dialog.open(LoadingComponent, this.dialogOptionsError);
-    this.billingService.getEncryptedString().subscribe(encryptStr => {
+  saveFoo() {
+    this.serviceThree.open(LoadingComponent, this.serviceThreeOptionsError);
+    this.serviceFour.betSssEeeMee().subscribe(encryptStr => {
       try {
-        const url = this.billingService.resolveIFrameUrl(this.billSelection.link, encryptStr, true);
+        const url = this.serviceFour.resolveMyUrl(this.mySelection.link, encryptStr, true);
         window.open(url, '_blank');
-        this.dialog.close();
+        this.serviceThree.close();
       } catch {
-        this.dialog.open(ProfileErrorComponent, { data: { content: this.translate.instant('error_print_msg') } });
+        this.serviceThree.open(Component61, { data: { content: this.serviceFive.instant('msg') } });
       }
     });
   }
 
-  setIframeHeight(e: Event) {
+  setFuz(e: Event) {
     const frame = this.iFrameBill && this.iFrameBill.first.nativeElement;
 
     if (frame && frame.contentDocument && frame.contentDocument.body) {
@@ -357,76 +357,76 @@ export class BillingPageComponent implements OnInit {
     }
   }
 
-  schedulePTPHistoryClicked($event) {
-    this.defaultTab = 'schedule-ptp';
+  schFooClicked($event) {
+    this.defaultTab = 'tab';
   }
 
-  ptpLinkSelected(event) {
-    this.ptpService.checkPendingPTP().subscribe((resp: any) => {
-      const pendingPtpData = {
-        pending: true,
-        amount: this.billingDetails.balanceAmount,
-        details: resp.ptpPaymentInfo
+  barSelected(event) {
+    this.service64.checkFoo().subscribe((resp: any) => {
+      const foo = {
+        x: true,
+        y: this.details.x,
+        z: resp.x
       };
 
-      resp.ptpPendingIndicator ? this.dialog.open(SchedulePtpFailureDialogComponent, {data: pendingPtpData}) :
-        this.checkEligibility();
+      resp.x ? this.serviceThree.open(Component63, {data: foo}) :
+        this.checkTyEl();
     },
-    (e) => {this.openSystemError(e); });
+    (e) => {this.openFoo(e); });
   }
 
-  checkEligibility() {
-    this.ptpService.checkPTPElgibility().subscribe((resp: any) => {
-      const eligErrorData = {
-        pending: false,
-        amount: this.billingDetails.balanceAmount,
-        errorList: resp.inEligibleReasonCodes
+  checkTyEl() {
+    this.service64.checkEeePppMe1().subscribe((resp: any) => {
+      const data = {
+        x: false,
+        y: this.details.x,
+        z: resp.x
       };
 
-      resp.isPTPEligible ? this.showSchedulePtp() :
-        this.dialog.open(SchedulePtpFailureDialogComponent, {data: eligErrorData});
+      resp.x ? this.showBar1() :
+        this.serviceThree.open(Component63, {data: data});
     },
-    (e) => {this.openSystemError(e); });
+    (e) => {this.openFoo(e); });
   }
 
-  showSchedulePtp() {
-    this.ptpService.getNovaLinks().subscribe((resp: any) => {
-      const novaLinks = this.commonData.language === 'fr' ? resp.ptp.fr : resp.ptp.en;
+  showBar1() {
+    this.service64.getFooLink().subscribe((resp: any) => {
+      const fooLinks = this.service8.language === 'fr' ? resp.x.fr : resp.x.en;
 
-      const dialog: any = this.dialog.open(SchedulePtpDialogComponent, { data:
+      const serviceThree: any = this.serviceThree.open(Component62, { data:
         {
-          amount: this.billingDetails.balanceAmount,
-          novaLinks: novaLinks
+          x: this.details.x,
+          y: fooLinks
         }});
-       dialog.submitPTP$.subscribe(formData => { this.savePtp(formData); });
+       serviceThree.foo$.subscribe(resp => { this.saveFuz(res); });
     },
-    (e) => {this.openSystemError(e); });
+    (e) => {this.openFoo(e); });
   }
 
-  savePtp(formData) {
-    const scheduleSuccessData = {
-      title: this.translate.instant('promiseToPay.scheduleSuccessTitle'),
-      content: this.translate.instant('promiseToPay.scheduleSuccessContent')
+  saveFuz(param) {
+    const x = {
+      y: this.serviceFive.instant('x'),
+      z: this.serviceFive.instant('y')
     };
 
-    this.ptpService.schedulePTP(formData).subscribe((resp: any) => {
-      resp.status ? this.dialog.open(SuccessComponent, {data: scheduleSuccessData}) :
-        this.openSystemError();
+    this.service64.schedulePTP(param).subscribe((resp: any) => {
+      resp.status ? this.serviceThree.open(Component65, {data: x}) :
+        this.openFoo();
     },
-    (e) => {this.openSystemError(e); });
+    (e) => {this.openFoo(e); });
   }
 
-  openSystemError(err?) {
-    const genericErrorData = {
-      content: this.translate.instant('somethingWentWrongContent'),
-      error: this.translate.instant('somethingWentWrongTitle')
+  openFoo(err?) {
+    const x = {
+      y: this.serviceFive.instant('x'),
+      z: this.serviceFive.instant('y')
     };
-    this.dialog.open(ErrorComponent, {data: genericErrorData});
+    this.serviceThree.open(Component64, {data: genericErrorData});
   }
 
   handleError(e) {
     if (e.error) {
-      this.overlayStatus = 'ERROR';
+      this.statusOooo = 'E';
     }
   }
 }

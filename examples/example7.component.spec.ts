@@ -7,16 +7,19 @@ import { By } from '@angular/platform-browser';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
 import { Component } from '@angular/core';
-import { ChangePlanComponent } from './example7.component';
-import { DialogService } from '@rogers/oneview-components';
-import { ChangePlanDataService } from './change-plan-data.service';
-import { NavigationService } from './../../framework/navigation.service';
+import { Example7Componet } from './example7.component';
+import { ServiceThree } from './my-components';
+import { Service71 } from './one.service';
+import { ServiceEleven } from './eleven.service';
 
 @Injectable()
-class MockChangePlanDataService {}
+class MockServiceThree {}
 
 @Injectable()
-class MockNavigationService {}
+class MockService71 {}
+
+@Injectable()
+class MockServiceEleven {}
 
 @Directive({ selector: '[oneviewPermitted]' })
 class OneviewPermittedDirective {
@@ -38,7 +41,7 @@ class SafeHtmlPipe implements PipeTransform {
   transform(value) { return value; }
 }
 
-describe('ChangePlanComponent', () => {
+describe('Example7Componet', () => {
   let fixture;
   let component;
 
@@ -46,20 +49,20 @@ describe('ChangePlanComponent', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, ReactiveFormsModule ],
       declarations: [
-        ChangePlanComponent,
+        Example7Componet,
         TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
         OneviewPermittedDirective
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [
-        DialogService,
-        { provide: ChangePlanDataService, useClass: MockChangePlanDataService },
-        { provide: NavigationService, useClass: MockNavigationService }
+        { provide: ServiceThree, useClass: MockServiceThree },
+        { provide: Service71, useClass: MockService71 },
+        { provide: ServiceEleven, useClass: MockServiceEleven }
       ]
-    }).overrideComponent(ChangePlanComponent, {
+    }).overrideComponent(Example7Componet, {
 
     }).compileComponents();
-    fixture = TestBed.createComponent(ChangePlanComponent);
+    fixture = TestBed.createComponent(Example7Componet);
     component = fixture.debugElement.componentInstance;
   });
 
@@ -72,125 +75,126 @@ describe('ChangePlanComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should run #changePricePlan()', async () => {
-    component.changePlanData = component.changePlanData || {};
-    component.changePlanData.getPrimaryPhoneNumber = jest.fn();
-    component.changePlanData.getPPCSubscribers = jest.fn().mockReturnValue(observableOf({}));
-    component.changePlanData.checkifMultiorSingle = jest.fn();
-    component.changePlanData.getActiveSubs = jest.fn();
-    component.changePlanData.getPrimaryNumberShareStatus = jest.fn();
-    component.changePlanData.hasActiveAdditionalSubs = jest.fn();
-    component.changePlanData.getMainSub = jest.fn().mockReturnValue({
-      subscriberNumber: {}
+  it('should run #changePlPr()', async () => {
+    component.component3Data = component.component3Data || {};
+    component.component3Data.getPx1 = jest.fn();
+    component.component3Data.getPpSFuz = jest.fn().mockReturnValue(observableOf({}));
+    component.component3Data.checkIfMOS = jest.fn();
+    component.component3Data.getFuz = jest.fn();
+    component.component3Data.getBarStatus = jest.fn();
+    component.component3Data.hasFooAaSubs = jest.fn();
+    component.component3Data.getMainSub = jest.fn().mockReturnValue({
+      numMainFoo: {}
     });
-    component.changePlanData.getSingleSubNumber = jest.fn();
-    component.setEligibilityAndStatePostData = jest.fn();
-    component.getIndividualSubPostData = jest.fn();
-    component.getEligibility = jest.fn();
-    component.eligiblePostData = component.eligiblePostData || {};
-    component.eligiblePostData.subNumber = 'subNumber';
-    component.eligiblePostData.flowType = 'flowType';
-    component.statePostData = component.statePostData || {};
-    component.statePostData.eligibilityChecked = 'eligibilityChecked';
-    component.saveStateAndChangePlan = jest.fn();
-    await component.changePricePlan();
-    // expect(component.changePlanData.getPrimaryPhoneNumber).toHaveBeenCalled();
-    // expect(component.changePlanData.getPPCSubscribers).toHaveBeenCalled();
-    // expect(component.changePlanData.checkifMultiorSingle).toHaveBeenCalled();
-    // expect(component.changePlanData.getActiveSubs).toHaveBeenCalled();
-    // expect(component.changePlanData.getPrimaryNumberShareStatus).toHaveBeenCalled();
-    // expect(component.changePlanData.hasActiveAdditionalSubs).toHaveBeenCalled();
-    // expect(component.changePlanData.getMainSub).toHaveBeenCalled();
-    // expect(component.changePlanData.getSingleSubNumber).toHaveBeenCalled();
-    // expect(component.setEligibilityAndStatePostData).toHaveBeenCalled();
-    // expect(component.getIndividualSubPostData).toHaveBeenCalled();
-    // expect(component.getEligibility).toHaveBeenCalled();
-    // expect(component.saveStateAndChangePlan).toHaveBeenCalled();
+    component.component3Data.getNumSFooS = jest.fn();
+    component.setFooBarFuzData = jest.fn();
+    component.getFooData = jest.fn();
+    component.getGoodness = jest.fn();
+    component.barData = component.barData || {};
+    component.barData.numSxFoo = 'numSxFoo';
+    component.barData.typeFxFoo = 'typeFxFoo';
+    component.fooData = component.fooData || {};
+    component.fooData.cccEeeeChecked = 'cccEeeeChecked';
+    component.saveFoo = jest.fn();
+    await component.changePlPr();
+    // expect(component.component3Data.getPx1).toHaveBeenCalled();
+    // expect(component.component3Data.getPpSFuz).toHaveBeenCalled();
+    // expect(component.component3Data.checkIfMOS).toHaveBeenCalled();
+    // expect(component.component3Data.getFuz).toHaveBeenCalled();
+    // expect(component.component3Data.getBarStatus).toHaveBeenCalled();
+    // expect(component.component3Data.hasFooAaSubs).toHaveBeenCalled();
+    // expect(component.component3Data.getMainSub).toHaveBeenCalled();
+    // expect(component.component3Data.getNumSFooS).toHaveBeenCalled();
+    // expect(component.setFooBarFuzData).toHaveBeenCalled();
+    // expect(component.getFooData).toHaveBeenCalled();
+    // expect(component.getGoodness).toHaveBeenCalled();
+    // expect(component.saveFoo).toHaveBeenCalled();
   });
 
-  it('should run #getEligibility()', async () => {
-    component.changePlanData = component.changePlanData || {};
-    component.changePlanData.getPPCEligibility = jest.fn().mockReturnValue(observableOf({}));
-    component.changePlanData.formatEligibilityErrorCode = jest.fn();
-    component.checkIfBOTEligible = jest.fn();
-    component.dialog = component.dialog || {};
-    component.dialog.open = jest.fn();
-    await component.getEligibility({}, {});
-    // expect(component.changePlanData.getPPCEligibility).toHaveBeenCalled();
-    // expect(component.changePlanData.formatEligibilityErrorCode).toHaveBeenCalled();
-    // expect(component.checkIfBOTEligible).toHaveBeenCalled();
-    // expect(component.dialog.open).toHaveBeenCalled();
+  it('should run #getGoodness()', async () => {
+    component.component3Data = component.component3Data || {};
+    component.component3Data.getEeeRrrSss = jest.fn().mockReturnValue(observableOf({}));
+    component.component3Data.formatEeeCccEee = jest.fn();
+    component.checkBbEeIi = jest.fn();
+    component.serviceThree = component.serviceThree || {};
+    component.serviceThree.open = jest.fn();
+    await component.getGoodness({}, {});
+    // expect(component.component3Data.getEeeRrrSss).toHaveBeenCalled();
+    // expect(component.component3Data.formatEeeCccEee).toHaveBeenCalled();
+    // expect(component.checkBbEeIi).toHaveBeenCalled();
+    // expect(component.serviceThree.open).toHaveBeenCalled();
   });
 
-  it('should run #checkIfBOTEligible()', async () => {
-    component.statePostData = component.statePostData || {};
-    component.statePostData.availableCreditAmount = 'availableCreditAmount';
-    component.changePlanData = component.changePlanData || {};
-    component.changePlanData.getCases = jest.fn().mockReturnValue(observableOf({}));
-    component.changePlanData.getPendingCases = jest.fn();
-    component.changePlanData.closeCase = jest.fn().mockReturnValue(observableOf({}));
-    component.dialog = component.dialog || {};
-    component.dialog.open = jest.fn().mockReturnValue({
-      saveStateAndChangePlan$: observableOf({})
+  it('should run #checkBbEeIi()', async () => {
+    component.fooData = component.fooData || {};
+    component.fooData.ccccAaaAaaa = 'ccccAaaAaaa';
+    component.component3Data = component.component3Data || {};
+    component.component3Data.getFuz = jest.fn().mockReturnValue(observableOf({}));
+    component.component3Data.getPpFuz = jest.fn();
+    component.component3Data.cccCcc = jest.fn().mockReturnValue(observableOf({}));
+    component.serviceThree = component.serviceThree || {};
+    component.serviceThree.open = jest.fn().mockReturnValue({
+      saveFoo$: observableOf({})
     });
-    component.saveStateAndChangePlan = jest.fn();
-    await component.checkIfBOTEligible({
-      availableCreditAmount: {}
+    component.saveFoo = jest.fn();
+    await component.checkBbEeIi({
+      ccccAaaAaaa: {}
     });
-    // expect(component.changePlanData.getCases).toHaveBeenCalled();
-    // expect(component.changePlanData.getPendingCases).toHaveBeenCalled();
-    // expect(component.changePlanData.closeCase).toHaveBeenCalled();
-    // expect(component.dialog.open).toHaveBeenCalled();
-    // expect(component.saveStateAndChangePlan).toHaveBeenCalled();
+    // expect(component.component3Data.getFuz).toHaveBeenCalled();
+    // expect(component.component3Data.getPpFuz).toHaveBeenCalled();
+    // expect(component.component3Data.cccCcc).toHaveBeenCalled();
+    // expect(component.serviceThree.open).toHaveBeenCalled();
+    // expect(component.saveFoo).toHaveBeenCalled();
   });
 
-  it('should run #saveStateAndChangePlan()', async () => {
-    component.changePlanData = component.changePlanData || {};
-    component.changePlanData.savePPCState = jest.fn().mockReturnValue(observableOf({}));
+  it('should run #saveFoo()', async () => {
+    component.component3Data = component.component3Data || {};
+    component.component3Data.savePPCState = jest.fn().mockReturnValue(observableOf({}));
     component.navigation = component.navigation || {};
-    component.navigation.changeRoute = jest.fn();
-    await component.saveStateAndChangePlan();
-    // expect(component.changePlanData.savePPCState).toHaveBeenCalled();
-    // expect(component.navigation.changeRoute).toHaveBeenCalled();
+    component.navigation.changeR = jest.fn();
+    await component.saveFoo();
+    // expect(component.component3Data.savePPCState).toHaveBeenCalled();
+    // expect(component.navigation.changeR).toHaveBeenCalled();
   });
 
-  it('should run #getIndividualSubPostData()', async () => {
-    component.changePlanData = component.changePlanData || {};
-    component.changePlanData.hasActiveMain = jest.fn();
-    component.changePlanData.hasOtherIndividualSubs = jest.fn();
-    component.changePlanData.getIndSubPostData = 'getIndSubPostData';
-    component.changePlanData.getMainSub = jest.fn().mockReturnValue({
-      subscriberNumber: {}
+  it('should run #getFooData()', async () => {
+    component.component3Data = component.component3Data || {};
+    component.component3Data.hasAM = jest.fn();
+    component.component3Data.hasOivs = jest.fn();
+    component.component3Data.etIspd = 'etIspd';
+    component.component3Data.getMainSub = jest.fn().mockReturnValue({
+      numMainFoo: {}
     });
-    component.changePlanData.getActiveAdditionalSubsWithPrimary = jest.fn();
-    component.changePlanData.getOtherIndividualSubs = jest.fn();
-    component.dialog = component.dialog || {};
-    component.dialog.open = jest.fn().mockReturnValue({
-      createASharedPlanWithYourOtherLines$: observableOf({
-        ctn: {},
-        selectAdditionalSubscribers: {}
+    component.component3Data.getAasp = jest.fn();
+    component.component3Data.getOiiis = jest.fn();
+    component.serviceThree = component.serviceThree || {};
+    component.serviceThree.open = jest.fn().mockReturnValue({
+      createAspwyol: observableOf({
+        ccc: {},
+        aaaSssSelected: {}
       }),
-      makeChangesToYourCurrentPlan$: observableOf({})
+      makeCtycp$: observableOf({})
     });
-    await component.getIndividualSubPostData({}, {});
-    // expect(component.changePlanData.hasActiveMain).toHaveBeenCalled();
-    // expect(component.changePlanData.hasOtherIndividualSubs).toHaveBeenCalled();
-    // expect(component.changePlanData.getMainSub).toHaveBeenCalled();
-    // expect(component.changePlanData.getActiveAdditionalSubsWithPrimary).toHaveBeenCalled();
-    // expect(component.changePlanData.getOtherIndividualSubs).toHaveBeenCalled();
-    // expect(component.dialog.open).toHaveBeenCalled();
+    await component.getFooData({}, {});
+    // expect(component.component3Data.hasAM).toHaveBeenCalled();
+    // expect(component.component3Data.hasOivs).toHaveBeenCalled();
+    // expect(component.component3Data.getMainSub).toHaveBeenCalled();
+    // expect(component.component3Data.getAasp).toHaveBeenCalled();
+    // expect(component.component3Data.getOiiis).toHaveBeenCalled();
+    // expect(component.serviceThree.open).toHaveBeenCalled();
   });
 
-  it('should run #setEligibilityAndStatePostData()', async () => {
-    component.eligiblePostData = component.eligiblePostData || {};
-    component.eligiblePostData.x = 'x';
-    component.statePostData = component.statePostData || {};
-    component.statePostData.x = 'x';
-    component.setEligibilityAndStatePostData({
-      subNumber: {},
-      flowType: {},
-      filterOption: {},
-      selectAdditionalSubscribers: {}
+  it('should run #setFooBarFuzData()', async () => {
+    component.barData = component.barData || {};
+    component.barData.x = 'x';
+    component.fooData = component.fooData || {};
+    component.fooData.x = 'x';
+    component.setFooBarFuzData({
+      x: {},
+      y: {},
+      z: {},
+      a: {},
+      b: {}
     });
 
   });

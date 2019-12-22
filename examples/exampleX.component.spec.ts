@@ -7,7 +7,7 @@ import { By } from '@angular/platform-browser';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
 import { Component } from '@angular/core';
-import { TotalDataDetailsComponent } from './exampleX.component';
+import { ExampleXComponent } from './exampleX.component';
 
 @Directive({ selector: '[oneviewPermitted]' })
 class OneviewPermittedDirective {
@@ -29,7 +29,7 @@ class SafeHtmlPipe implements PipeTransform {
   transform(value) { return value; }
 }
 
-describe('TotalDataDetailsComponent', () => {
+describe('ExampleXComponent', () => {
   let fixture;
   let component;
 
@@ -37,7 +37,7 @@ describe('TotalDataDetailsComponent', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, ReactiveFormsModule ],
       declarations: [
-        TotalDataDetailsComponent,
+        ExampleXComponent,
         TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
         OneviewPermittedDirective
       ],
@@ -45,10 +45,10 @@ describe('TotalDataDetailsComponent', () => {
       providers: [
 
       ]
-    }).overrideComponent(TotalDataDetailsComponent, {
+    }).overrideComponent(ExampleXComponent, {
 
     }).compileComponents();
-    fixture = TestBed.createComponent(TotalDataDetailsComponent);
+    fixture = TestBed.createComponent(ExampleXComponent);
     component = fixture.debugElement.componentInstance;
   });
 
@@ -62,18 +62,18 @@ describe('TotalDataDetailsComponent', () => {
   });
 
   it('should run #doMore()', async () => {
-    component.dataService = component.dataService || {};
-    component.dataService.getDataDetailsForSharing = jest.fn().mockReturnValue({
-      remainingData: {},
-      totalData: {}
+    component.dtSv = component.dtSv || {};
+    component.dtSv.getDtDts4Sh = jest.fn().mockReturnValue({
+      rmDt: {},
+      ttDt: {}
     });
-    component.deviceDetails = component.deviceDetails || {};
-    component.deviceDetails.deviceDetailsNumber = {
+    component.dvDts = component.dvDts || {};
+    component.dvDts.dvDtsNumber = {
       EN: {
-        productTitle: {}
+        pdTt: {}
       },
       FR: {
-        productTitle: {}
+        pdTt: {}
       }
     };
     component.foo = component.foo || {};
@@ -86,9 +86,9 @@ describe('TotalDataDetailsComponent', () => {
         };
       }
     };
-    component.dialogService = component.dialogService || {};
-    component.dialogService.open = jest.fn().mockReturnValue({
-      userAction: observableOf({})
+    component.serviceThree = component.serviceThree || {};
+    component.serviceThree.open = jest.fn().mockReturnValue({
+      usAc: observableOf({})
     });
     component.dates = component.dates || {};
     component.dates = ['dates'];
@@ -103,28 +103,28 @@ describe('TotalDataDetailsComponent', () => {
         }
       }
     });
-    // expect(component.dataService.getDataDetailsForSharing).toHaveBeenCalled();
-    // expect(component.dialogService.open).toHaveBeenCalled();
+    // expect(component.dtSv.getDtDts4Sh).toHaveBeenCalled();
+    // expect(component.serviceThree.open).toHaveBeenCalled();
   });
 
-  it('should run #setCreditCardDetails()', async () => {
-    component.billingDetails = component.billingDetails || {};
-    component.billingDetails.methodOfPayment = {
-      creditCardDetails: {
+  it('should run #setFooDddCcc()', async () => {
+    component.details = component.details || {};
+    component.details.OooPppMmm = {
+      fooCdDetails: {
         ccType: {},
-        ccExpiry: {}
+        fooBaz: {}
       }
     };
-    component.billingHeader = component.billingHeader || {};
-    component.billingHeader.getLocalDate = jest.fn();
-    component.billingHeader.formatDate = jest.fn();
-    component.billingHeader.isCreditCardExpired = jest.fn();
-    component.billingHeader.isCreditCardExpiring = jest.fn();
-    component.setCreditCardDetails();
-    // expect(component.billingHeader.getLocalDate).toHaveBeenCalled();
-    // expect(component.billingHeader.formatDate).toHaveBeenCalled();
-    // expect(component.billingHeader.isCreditCardExpired).toHaveBeenCalled();
-    // expect(component.billingHeader.isCreditCardExpiring).toHaveBeenCalled();
+    component.bbbHhh = component.bbbHhh || {};
+    component.bbbHhh.getLcDt = jest.fn();
+    component.bbbHhh.formatDate = jest.fn();
+    component.bbbHhh.isFooDddCcc = jest.fn();
+    component.bbbHhh.isFooEeeCcc = jest.fn();
+    component.setFooDddCcc();
+    // expect(component.bbbHhh.getLcDt).toHaveBeenCalled();
+    // expect(component.bbbHhh.formatDate).toHaveBeenCalled();
+    // expect(component.bbbHhh.isFooDddCcc).toHaveBeenCalled();
+    // expect(component.bbbHhh.isFooEeeCcc).toHaveBeenCalled();
   });
 
 });

@@ -8,16 +8,11 @@ import { Observable, of as observableOf, throwError } from 'rxjs';
 
 import { Component } from '@angular/core';
 import { TotalDataDetailsComponent } from './example9.component';
-import { TranslateService } from '@ngx-translate/core';
+import { ServiceFive } from '@ngx-serviceFive/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { DataManagerService } from '../data-manager.service';
 import { EncryptionService } from '@rogers/oneview-components';
-
-@Injectable()
-class MockTranslateService {
-  translate() {};
-}
 
 @Injectable()
 class MockHttpClient {
@@ -66,7 +61,7 @@ describe('TotalDataDetailsComponent', () => {
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [
-        { provide: TranslateService, useClass: MockTranslateService },
+        ServiceFive,
         { provide: HttpClient, useClass: MockHttpClient },
         {
           provide: ActivatedRoute,
@@ -84,7 +79,7 @@ describe('TotalDataDetailsComponent', () => {
       ]
     }).overrideComponent(TotalDataDetailsComponent, {
 
-      set: { providers: [{ provide: SuspendCtnService, useClass: MockSuspendCtnService }] }    
+      set: { providers: [{ provide: SuspendcccService, useClass: MockSuspendcccService }] }    
     }).compileComponents();
     fixture = TestBed.createComponent(TotalDataDetailsComponent);
     component = fixture.debugElement.componentInstance;
@@ -100,29 +95,29 @@ describe('TotalDataDetailsComponent', () => {
   });
 
   it('should run #ngOnInit()', async () => {
-    component.accountSummary = component.accountSummary || {};
-    component.accountSummary.subList = [
+    component.ssssMmmm = component.ssssMmmm || {};
+    component.ssssMmmm.subList = [
       {
         "shareEverything": {
           "isSharingData": {}
         }
       }
     ];
-    component.commonData = component.commonData || {};
-    component.commonData.accountSummary = {
+    component.service8 = component.service8 || {};
+    component.service8.ssssMmmm = {
       subList: [{
         shareEverything: {
-          isPrimaryCtn: {}
+          isPrimaryccc: {}
         },
-        subNumber: {}
+        numSxFoo: {}
       }]
     };
     component.getPastUsage1 = jest.fn().mockReturnValue({
-      ctnDataUsed: {},
+      cccDataUsed: {},
       dates: {}
     });
     component.getPastUsage2 = jest.fn().mockReturnValue([
-      "ctnDataUsed2",
+      "cccDataUsed2",
       "dates2"
     ]);
     component.getPastUsage3 = jest.fn();
@@ -132,17 +127,17 @@ describe('TotalDataDetailsComponent', () => {
     // expect(component.getPastUsage3).toHaveBeenCalled();
   });
 
-  it('should run #getPrimaryCtn()', async () => {
-    component.commonData = component.commonData || {};
-    component.commonData.accountSummary = {
+  it('should run #getPrimaryccc()', async () => {
+    component.service8 = component.service8 || {};
+    component.service8.ssssMmmm = {
       subList: [{
         shareEverything: {
-          isPrimaryCtn: {}
+          isPrimaryccc: {}
         },
-        subNumber: {}
+        numSxFoo: {}
       }]
     };
-    component.getPrimaryCtn({
+    component.getPrimaryccc({
       featureGroupList: observableOf({
         featureGroup: {
           label: {
@@ -154,16 +149,16 @@ describe('TotalDataDetailsComponent', () => {
 
   });
 
-  it('should run #openErrorDialog()', async () => {
-    component.dialog = component.dialog || {};
-    component.dialog.open = jest.fn().mockReturnValue({
-      dialogOutput: {}
+  it('should run #openErrorserviceThree()', async () => {
+    component.serviceThree = component.serviceThree || {};
+    component.serviceThree.open = jest.fn().mockReturnValue({
+      serviceThreeOutput: {}
     });
-    component.translate = component.translate || {};
-    component.translate.instant = jest.fn();
-    component.openErrorDialog({}, {});
-    // expect(component.dialog.open).toHaveBeenCalled();
-    // expect(component.translate.instant).toHaveBeenCalled();
+    component.serviceFive = component.serviceFive || {};
+    component.serviceFive.instant = jest.fn();
+    component.openErrorserviceThree({}, {});
+    // expect(component.serviceThree.open).toHaveBeenCalled();
+    // expect(component.serviceFive.instant).toHaveBeenCalled();
   });
 
   it('should run #getWirelessDetails()', async () => {
@@ -176,10 +171,10 @@ describe('TotalDataDetailsComponent', () => {
 
   it('should run #getBonusDataListForSharing()', async () => {
     component.data = component.data || {};
-    component.data.ctn = 'ctn';
+    component.data.ccc = 'ccc';
     component.getBonusDataListForSharing({}, {
       data: {
-        seCTNList: [{}]
+        secccList: [{}]
       }
     });
 

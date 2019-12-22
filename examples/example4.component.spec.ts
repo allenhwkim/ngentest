@@ -7,14 +7,9 @@ import { By } from '@angular/platform-browser';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
 import { Component } from '@angular/core';
-import { InteractionsComponent } from './example4.component';
+import { Example4Component } from './example4.component';
 import { ActivatedRoute } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-
-@Injectable()
-class MockTranslateService {
-  translate() {};
-}
+import { ServiceFive } from '@ngx-serviceFive/core';
 
 @Directive({ selector: '[oneviewPermitted]' })
 class OneviewPermittedDirective {
@@ -36,7 +31,7 @@ class SafeHtmlPipe implements PipeTransform {
   transform(value) { return value; }
 }
 
-describe('InteractionsComponent', () => {
+describe('Example4Component', () => {
   let fixture;
   let component;
 
@@ -44,7 +39,7 @@ describe('InteractionsComponent', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, ReactiveFormsModule ],
       declarations: [
-        InteractionsComponent,
+        Example4Component,
         TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
         OneviewPermittedDirective
       ],
@@ -61,12 +56,12 @@ describe('InteractionsComponent', () => {
             data: observableOf({})
           }
         },
-        { provide: TranslateService, useClass: MockTranslateService }
+        ServiceFive
       ]
-    }).overrideComponent(InteractionsComponent, {
+    }).overrideComponent(Example4Component, {
 
     }).compileComponents();
-    fixture = TestBed.createComponent(InteractionsComponent);
+    fixture = TestBed.createComponent(Example4Component);
     component = fixture.debugElement.componentInstance;
   });
 
@@ -79,15 +74,15 @@ describe('InteractionsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should run SetterDeclaration #currentPage', async () => {
+  it('should run SetterDeclaration #pppCcccc', async () => {
 
-    component.currentPage = {};
+    component.pppCcccc = {};
 
   });
 
-  it('should run GetterDeclaration #currentPage', async () => {
+  it('should run GetterDeclaration #pppCcccc', async () => {
 
-    const currentPage = component.currentPage;
+    const pppCcccc = component.pppCcccc;
 
   });
 
@@ -95,14 +90,14 @@ describe('InteractionsComponent', () => {
     component.route = component.route || {};
     component.route.snapshot = {
       data: {
-        'interactions': {}
+        'iiiiiiiii': {}
       }
     };
-    component.getInteractions = jest.fn();
-    component.interactions = component.interactions || {};
-    component.interactions = ['interactions'];
+    component.getIiiiiiiii = jest.fn();
+    component.iiiiiiiii = component.iiiiiiiii || {};
+    component.iiiiiiiii = ['iiiiiiiii'];
     component.ngOnInit();
-    // expect(component.getInteractions).toHaveBeenCalled();
+    // expect(component.getIiiiiiiii).toHaveBeenCalled();
   });
 
   it('should run #ngAfterViewInit()', async () => {
@@ -121,31 +116,31 @@ describe('InteractionsComponent', () => {
 
   });
 
-  it('should run #getInteractions()', async () => {
-    component.translate = component.translate || {};
-    component.translate.instant = jest.fn();
-    component.getInteractions({
+  it('should run #getIiiiiiiii()', async () => {
+    component.serviceFive = component.serviceFive || {};
+    component.serviceFive.instant = jest.fn();
+    component.getIiiiiiiii({
       error: {},
       filter: function() {
         return [
           {
-            "itemType": {}
+            "tttIiii": {}
           }
         ];
       }
     });
-    // expect(component.translate.instant).toHaveBeenCalled();
+    // expect(component.serviceFive.instant).toHaveBeenCalled();
   });
 
-  it('should run #searchInteractions()', async () => {
+  it('should run #searchIiiiiiiii()', async () => {
 
-    component.searchInteractions({});
+    component.searchIiiiiiiii({});
 
   });
 
-  it('should run #iconToShow()', async () => {
+  it('should run #tttSssIii()', async () => {
 
-    component.iconToShow('itemType', 'media');
+    component.tttSssIii('tttIiii', 'param');
 
   });
 

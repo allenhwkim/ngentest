@@ -7,31 +7,43 @@ import { By } from '@angular/platform-browser';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
 import { Component } from '@angular/core';
-import { BillingPageComponent } from './example6.component';
-import { DialogService, CommonDataService } from '@rogers/oneview-components';
+import { Example6Component } from './example6.component';
+import { ServiceThree, ServiceEight } from './my-components';
 import { DomSanitizer } from '@angular/platform-browser';
-import { BillingDataService } from './billing-data.service';
-import { SchedulePtpDataService } from '../schedule-ptp/schedule-ptp-data.service';
-import { PaymentService } from '../../payment/payment.service';
+import { ServiceFour } from './four.service';
+import { Service61 } from '../sixty-one.service';
+import { serviceOne } from '../one.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { NavigationService } from '../../framework/navigation.service';
-import { TranslateService } from '@ngx-translate/core';
-import { BillingDateHandlerService } from './billing-date-handler.service';
+import { ServiceEleven } from '../../evleven.service';
+import { ServiceFive } from '@ngx-tranalste/core';
+import { Service62 } from './sixty-two.service';
 
 @Injectable()
-class MockBillingDataService {
-  catchError = function() {
-    return observableOf({});
-  };
-  getBilling = function() {};
-  loadUserBill = function() {};
+class MockServiceThree {
+  open = function() {};
+  close = function() {};
 }
 
 @Injectable()
-class MockSchedulePtpDataService {}
+class MockServiceFour {
+  catchError = function() {
+    return observableOf({});
+  };
+  getFooing = function() {};
+  loadBbbUuuu = function() {};
+}
 
 @Injectable()
-class MockPaymentService {}
+class MockService61 {}
+
+@Injectable()
+class MockserviceOne {}
+
+@Injectable()
+class MockServiceEight {
+  language = {};
+  ssssMmmm = {};
+}
 
 @Injectable()
 class MockRouter {
@@ -39,16 +51,11 @@ class MockRouter {
 }
 
 @Injectable()
-class MockNavigationService {}
+class MockServiceEleven {}
 
 @Injectable()
-class MockTranslateService {
-  translate() {};
-}
-
-@Injectable()
-class MockBillingDateHandlerService {
-  toShowNotification = function() {};
+class MockService62 {
+  toshowBarXxx = function() {};
 }
 
 @Directive({ selector: '[oneviewPermitted]' })
@@ -71,7 +78,7 @@ class SafeHtmlPipe implements PipeTransform {
   transform(value) { return value; }
 }
 
-describe('BillingPageComponent', () => {
+describe('Example6Component', () => {
   let fixture;
   let component;
 
@@ -79,18 +86,18 @@ describe('BillingPageComponent', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, ReactiveFormsModule ],
       declarations: [
-        BillingPageComponent,
+        Example6Component,
         TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
         OneviewPermittedDirective
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [
-        DialogService,
+        { provide: ServiceThree, useClass: MockServiceThree },
         DomSanitizer,
-        { provide: BillingDataService, useClass: MockBillingDataService },
-        { provide: SchedulePtpDataService, useClass: MockSchedulePtpDataService },
-        { provide: PaymentService, useClass: MockPaymentService },
-        CommonDataService,
+        { provide: ServiceFour, useClass: MockServiceFour },
+        { provide: Service61, useClass: MockService61 },
+        { provide: serviceOne, useClass: MockserviceOne },
+        { provide: ServiceEight, useClass: MockServiceEight },
         { provide: Router, useClass: MockRouter },
         {
           provide: ActivatedRoute,
@@ -103,14 +110,14 @@ describe('BillingPageComponent', () => {
             data: observableOf({})
           }
         },
-        { provide: NavigationService, useClass: MockNavigationService },
-        { provide: TranslateService, useClass: MockTranslateService },
-        { provide: BillingDateHandlerService, useClass: MockBillingDateHandlerService }
+        { provide: ServiceEleven, useClass: MockServiceEleven },
+        ServiceFive,
+        { provide: Service62, useClass: MockService62 }
       ]
-    }).overrideComponent(BillingPageComponent, {
+    }).overrideComponent(Example6Component, {
 
     }).compileComponents();
-    fixture = TestBed.createComponent(BillingPageComponent);
+    fixture = TestBed.createComponent(Example6Component);
     component = fixture.debugElement.componentInstance;
   });
 
@@ -123,157 +130,151 @@ describe('BillingPageComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should run SetterDeclaration #billSelection', async () => {
+  it('should run SetterDeclaration #mySelection', async () => {
 
-    component.billSelection = {};
+    component.mySelection = {};
 
   });
 
-  it('should run GetterDeclaration #billSelection', async () => {
+  it('should run GetterDeclaration #mySelection', async () => {
 
-    const billSelection = component.billSelection;
+    const mySelection = component.mySelection;
 
   });
 
   it('should run #ngOnInit()', async () => {
-    component.route = component.route || {};
-    component.route.snapshot = {
-      queryParams: {
-        'defaultTab': {}
-      }
-    };
-    component.navigationService = component.navigationService || {};
-    component.navigationService.isRoutedFromPayment = 'isRoutedFromPayment';
+    component.serviceEleven = component.serviceEleven || {};
+    component.serviceEleven.isFffPppRrrr = 'isFffPppRrrr';
     component.router = component.router || {};
     component.router.events = observableOf({});
-    component.ptpService = component.ptpService || {};
-    component.ptpService.getAllPtpInfo = jest.fn().mockReturnValue(observableOf({
-      ptpDetails: {
+    component.service64 = component.service64 || {};
+    component.service64.getPppIiiAaaa = jest.fn().mockReturnValue(observableOf({
+      dddPpp: {
         length: {}
       }
     }));
-    component.setBillingHeaderPTPMessage = jest.fn();
-    component.paymentService = component.paymentService || {};
-    component.paymentService.getPaymentHistory = jest.fn().mockReturnValue(observableOf({}));
-    component.billingService = component.billingService || {};
-    component.billingService.getBillingNotificationConfig = jest.fn().mockReturnValue(observableOf({}));
+    component.setbbbHhhPTPMessage = jest.fn();
+    component.serviceOne = component.serviceOne || {};
+    component.serviceOne.getHhhPppp = jest.fn().mockReturnValue(observableOf({}));
+    component.serviceFour = component.serviceFour || {};
+    component.serviceFour.getmyConfig = jest.fn().mockReturnValue(observableOf({}));
     component.ngOnInit();
-    // expect(component.ptpService.getAllPtpInfo).toHaveBeenCalled();
-    // expect(component.setBillingHeaderPTPMessage).toHaveBeenCalled();
-    // expect(component.paymentService.getPaymentHistory).toHaveBeenCalled();
-    // expect(component.billingService.getBillingNotificationConfig).toHaveBeenCalled();
+    // expect(component.service64.getPppIiiAaaa).toHaveBeenCalled();
+    // expect(component.setbbbHhhPTPMessage).toHaveBeenCalled();
+    // expect(component.serviceOne.getHhhPppp).toHaveBeenCalled();
+    // expect(component.serviceFour.getmyConfig).toHaveBeenCalled();
   });
 
-  it('should run #getPTPInstallments()', async () => {
-    component.ptpService = component.ptpService || {};
-    component.ptpService.getPTPInstallments = jest.fn().mockReturnValue(observableOf({
-      installments: {
+  it('should run #getIiiFooPppBar()', async () => {
+    component.service64 = component.service64 || {};
+    component.service64.getIiiFooPppBar = jest.fn().mockReturnValue(observableOf({
+      fooFuz: {
         length: {}
       }
     }));
-    component.getPTPInstallments({
+    component.getIiiFooPppBar({
       detail: {
-        ptpId: {}
+        PId: {}
       }
     });
-    // expect(component.ptpService.getPTPInstallments).toHaveBeenCalled();
+    // expect(component.service64.getIiiFooPppBar).toHaveBeenCalled();
   });
 
-  it('should run #setBillingHeaderPTPMessage()', async () => {
-    component.billingService = component.billingService || {};
-    component.billingService.getPTPIDForHeader = jest.fn();
-    component.ptpService = component.ptpService || {};
-    component.ptpService.getPTPInstallments = jest.fn().mockReturnValue(observableOf({
-      installments: {
+  it('should run #setbbbHhhPTPMessage()', async () => {
+    component.serviceFour = component.serviceFour || {};
+    component.serviceFour.getIdFffHhhP = jest.fn();
+    component.service64 = component.service64 || {};
+    component.service64.getIiiFooPppBar = jest.fn().mockReturnValue(observableOf({
+      fooFuz: {
         length: {}
       }
     }));
-    component.setBillingHeaderPTPMessage();
-    // expect(component.billingService.getPTPIDForHeader).toHaveBeenCalled();
-    // expect(component.ptpService.getPTPInstallments).toHaveBeenCalled();
+    component.setbbbHhhPTPMessage();
+    // expect(component.serviceFour.getIdFffHhhP).toHaveBeenCalled();
+    // expect(component.service64.getIiiFooPppBar).toHaveBeenCalled();
   });
 
   it('should run #setTranslations()', async () => {
-    component.billingService = component.billingService || {};
-    component.billingService.getBillType = jest.fn().mockReturnValue(observableOf({}));
-    component.dateHandler = component.dateHandler || {};
-    component.dateHandler.getCurrentCycleEndDate = jest.fn();
-    component.billSelection = component.billSelection || {};
-    component.billSelection.issue_date = 'issue_date';
-    component.translate = component.translate || {};
-    component.translate.instant = jest.fn().mockReturnValue('ngentest');
+    component.serviceFour = component.serviceFour || {};
+    component.serviceFour.getmyType = jest.fn().mockReturnValue(observableOf({}));
+    component.service62 = component.service62 || {};
+    component.service62.getCccEchoDtCcc = jest.fn();
+    component.mySelection = component.mySelection || {};
+    component.mySelection.issue_date = 'issue_date';
+    component.serviceFive = component.serviceFive || {};
+    component.serviceFive.instant = jest.fn().mockReturnValue('ngentest');
     component.setTranslations();
-    // expect(component.billingService.getBillType).toHaveBeenCalled();
-    // expect(component.dateHandler.getCurrentCycleEndDate).toHaveBeenCalled();
-    // expect(component.translate.instant).toHaveBeenCalled();
+    // expect(component.serviceFour.getmyType).toHaveBeenCalled();
+    // expect(component.service62.getCccEchoDtCcc).toHaveBeenCalled();
+    // expect(component.serviceFive.instant).toHaveBeenCalled();
   });
 
-  it('should run #downloadBillAs()', async () => {
-    component.dialog = component.dialog || {};
-    component.dialog.open = jest.fn();
-    component.fetchResource = jest.fn().mockReturnValue(observableOf({}));
-    component.downloadBillAs({});
-    // expect(component.dialog.open).toHaveBeenCalled();
-    // expect(component.fetchResource).toHaveBeenCalled();
+  it('should run #doBbbAaaDddd()', async () => {
+    component.serviceThree = component.serviceThree || {};
+    component.serviceThree.open = jest.fn();
+    component.fetchMee = jest.fn().mockReturnValue(observableOf({}));
+    component.doBbbAaaDddd({});
+    // expect(component.serviceThree.open).toHaveBeenCalled();
+    // expect(component.fetchMee).toHaveBeenCalled();
   });
 
-  it('should run #fetchResource()', async () => {
-    component.billingService = component.billingService || {};
-    component.billingService.getEncryptedString = jest.fn().mockReturnValue(observableOf({}));
-    component.billingService.fetchUserBill = jest.fn().mockReturnValue(observableOf({}));
-    component.billingService.downloadFile = jest.fn();
-    component.billSelection = component.billSelection || {};
-    component.billSelection.content_id = 'content_id';
-    component.billSelection.issue_date = 'issue_date';
-    component.dialog = component.dialog || {};
-    component.dialog.close = jest.fn();
-    component.dialog.open = jest.fn();
-    component.fetchResource({});
-    // expect(component.billingService.getEncryptedString).toHaveBeenCalled();
-    // expect(component.billingService.fetchUserBill).toHaveBeenCalled();
-    // expect(component.billingService.downloadFile).toHaveBeenCalled();
-    // expect(component.dialog.close).toHaveBeenCalled();
-    // expect(component.dialog.open).toHaveBeenCalled();
+  it('should run #fetchMee()', async () => {
+    component.serviceFour = component.serviceFour || {};
+    component.serviceFour.betSssEeeMee = jest.fn().mockReturnValue(observableOf({}));
+    component.serviceFour.fetchBar = jest.fn().mockReturnValue(observableOf({}));
+    component.serviceFour.doFoo = jest.fn();
+    component.mySelection = component.mySelection || {};
+    component.mySelection.id = 'id';
+    component.mySelection.date = 'date';
+    component.serviceThree = component.serviceThree || {};
+    component.serviceThree.close = jest.fn();
+    component.serviceThree.open = jest.fn();
+    component.fetchMee({});
+    // expect(component.serviceFour.betSssEeeMee).toHaveBeenCalled();
+    // expect(component.serviceFour.fetchBar).toHaveBeenCalled();
+    // expect(component.serviceFour.doFoo).toHaveBeenCalled();
+    // expect(component.serviceThree.close).toHaveBeenCalled();
+    // expect(component.serviceThree.open).toHaveBeenCalled();
   });
 
-  it('should run #printPDF()', async () => {
-    component.dialog = component.dialog || {};
-    component.dialog.open = jest.fn();
-    component.dialog.close = jest.fn();
-    component.billingService = component.billingService || {};
-    component.billingService.getEncryptedString = jest.fn().mockReturnValue(observableOf({}));
-    component.billingService.resolveIFrameUrl = jest.fn();
+  it('should run #printBar()', async () => {
+    component.serviceThree = component.serviceThree || {};
+    component.serviceThree.open = jest.fn();
+    component.serviceThree.close = jest.fn();
+    component.serviceFour = component.serviceFour || {};
+    component.serviceFour.betSssEeeMee = jest.fn().mockReturnValue(observableOf({}));
+    component.serviceFour.resolveMyUrl = jest.fn();
     component.sanitize = component.sanitize || {};
     component.sanitize.bypassSecurityTrustResourceUrl = jest.fn();
-    component.billSelection = component.billSelection || {};
-    component.billSelection.link = 'link';
-    component.printPDF();
-    // expect(component.dialog.open).toHaveBeenCalled();
-    // expect(component.dialog.close).toHaveBeenCalled();
-    // expect(component.billingService.getEncryptedString).toHaveBeenCalled();
-    // expect(component.billingService.resolveIFrameUrl).toHaveBeenCalled();
+    component.mySelection = component.mySelection || {};
+    component.mySelection.link = 'link';
+    component.printBar();
+    // expect(component.serviceThree.open).toHaveBeenCalled();
+    // expect(component.serviceThree.close).toHaveBeenCalled();
+    // expect(component.serviceFour.betSssEeeMee).toHaveBeenCalled();
+    // expect(component.serviceFour.resolveMyUrl).toHaveBeenCalled();
     // expect(component.sanitize.bypassSecurityTrustResourceUrl).toHaveBeenCalled();
   });
 
-  it('should run #savePDF()', async () => {
-    component.dialog = component.dialog || {};
-    component.dialog.open = jest.fn();
-    component.dialog.close = jest.fn();
-    component.billingService = component.billingService || {};
-    component.billingService.getEncryptedString = jest.fn().mockReturnValue(observableOf({}));
-    component.billingService.resolveIFrameUrl = jest.fn();
-    component.billSelection = component.billSelection || {};
-    component.billSelection.link = 'link';
+  it('should run #saveFoo()', async () => {
+    component.serviceThree = component.serviceThree || {};
+    component.serviceThree.open = jest.fn();
+    component.serviceThree.close = jest.fn();
+    component.serviceFour = component.serviceFour || {};
+    component.serviceFour.betSssEeeMee = jest.fn().mockReturnValue(observableOf({}));
+    component.serviceFour.resolveMyUrl = jest.fn();
+    component.mySelection = component.mySelection || {};
+    component.mySelection.link = 'link';
     window.open = jest.fn();
-    component.savePDF();
-    // expect(component.dialog.open).toHaveBeenCalled();
-    // expect(component.dialog.close).toHaveBeenCalled();
-    // expect(component.billingService.getEncryptedString).toHaveBeenCalled();
-    // expect(component.billingService.resolveIFrameUrl).toHaveBeenCalled();
+    component.saveFoo();
+    // expect(component.serviceThree.open).toHaveBeenCalled();
+    // expect(component.serviceThree.close).toHaveBeenCalled();
+    // expect(component.serviceFour.betSssEeeMee).toHaveBeenCalled();
+    // expect(component.serviceFour.resolveMyUrl).toHaveBeenCalled();
     // expect(window.open).toHaveBeenCalled();
   });
 
-  it('should run #setIframeHeight()', async () => {
+  it('should run #setFuz()', async () => {
     component.iFrameBill = component.iFrameBill || {};
     component.iFrameBill.first = {
       nativeElement: {}
@@ -286,104 +287,102 @@ describe('BillingPageComponent', () => {
     component.iFrameBill.style = {
       height: {}
     };
-    component.setIframeHeight({});
+    component.setFuz({});
 
   });
 
-  it('should run #schedulePTPHistoryClicked()', async () => {
+  it('should run #schFooClicked()', async () => {
 
-    component.schedulePTPHistoryClicked({});
+    component.schFooClicked({});
 
   });
 
-  it('should run #ptpLinkSelected()', async () => {
-    component.ptpService = component.ptpService || {};
-    component.ptpService.checkPendingPTP = jest.fn().mockReturnValue(observableOf({
-      ptpPaymentInfo: {},
-      ptpPendingIndicator: {}
+  it('should run #barSelected()', async () => {
+    component.service64 = component.service64 || {};
+    component.service64.checkFoo = jest.fn().mockReturnValue(observableOf({
+      x: {}
     }));
-    component.billingDetails = component.billingDetails || {};
-    component.billingDetails.balanceAmount = 'balanceAmount';
-    component.dialog = component.dialog || {};
-    component.dialog.open = jest.fn();
-    component.checkEligibility = jest.fn();
-    component.openSystemError = jest.fn();
-    component.ptpLinkSelected({});
-    // expect(component.ptpService.checkPendingPTP).toHaveBeenCalled();
-    // expect(component.dialog.open).toHaveBeenCalled();
-    // expect(component.checkEligibility).toHaveBeenCalled();
-    // expect(component.openSystemError).toHaveBeenCalled();
+    component.details = component.details || {};
+    component.details.x = 'x';
+    component.serviceThree = component.serviceThree || {};
+    component.serviceThree.open = jest.fn();
+    component.checkTyEl = jest.fn();
+    component.openFoo = jest.fn();
+    component.barSelected({});
+    // expect(component.service64.checkFoo).toHaveBeenCalled();
+    // expect(component.serviceThree.open).toHaveBeenCalled();
+    // expect(component.checkTyEl).toHaveBeenCalled();
+    // expect(component.openFoo).toHaveBeenCalled();
   });
 
-  it('should run #checkEligibility()', async () => {
-    component.ptpService = component.ptpService || {};
-    component.ptpService.checkPTPElgibility = jest.fn().mockReturnValue(observableOf({
-      inEligibleReasonCodes: {},
-      isPTPEligible: {}
+  it('should run #checkTyEl()', async () => {
+    component.service64 = component.service64 || {};
+    component.service64.checkEeePppMe1 = jest.fn().mockReturnValue(observableOf({
+      x: {}
     }));
-    component.billingDetails = component.billingDetails || {};
-    component.billingDetails.balanceAmount = 'balanceAmount';
-    component.showSchedulePtp = jest.fn();
-    component.dialog = component.dialog || {};
-    component.dialog.open = jest.fn();
-    component.openSystemError = jest.fn();
-    component.checkEligibility();
-    // expect(component.ptpService.checkPTPElgibility).toHaveBeenCalled();
-    // expect(component.showSchedulePtp).toHaveBeenCalled();
-    // expect(component.dialog.open).toHaveBeenCalled();
-    // expect(component.openSystemError).toHaveBeenCalled();
+    component.details = component.details || {};
+    component.details.x = 'x';
+    component.showBar1 = jest.fn();
+    component.serviceThree = component.serviceThree || {};
+    component.serviceThree.open = jest.fn();
+    component.openFoo = jest.fn();
+    component.checkTyEl();
+    // expect(component.service64.checkEeePppMe1).toHaveBeenCalled();
+    // expect(component.showBar1).toHaveBeenCalled();
+    // expect(component.serviceThree.open).toHaveBeenCalled();
+    // expect(component.openFoo).toHaveBeenCalled();
   });
 
-  it('should run #showSchedulePtp()', async () => {
-    component.ptpService = component.ptpService || {};
-    component.ptpService.getNovaLinks = jest.fn().mockReturnValue(observableOf({
-      ptp: {
+  it('should run #showBar1()', async () => {
+    component.service64 = component.service64 || {};
+    component.service64.getFooLink = jest.fn().mockReturnValue(observableOf({
+      x: {
         fr: {},
         en: {}
       }
     }));
-    component.commonData = component.commonData || {};
-    component.commonData.language = 'language';
-    component.dialog = component.dialog || {};
-    component.dialog.open = jest.fn().mockReturnValue({
-      submitPTP$: observableOf({})
+    component.service8 = component.service8 || {};
+    component.service8.language = 'language';
+    component.serviceThree = component.serviceThree || {};
+    component.serviceThree.open = jest.fn().mockReturnValue({
+      foo$: observableOf({})
     });
-    component.billingDetails = component.billingDetails || {};
-    component.billingDetails.balanceAmount = 'balanceAmount';
-    component.savePtp = jest.fn();
-    component.openSystemError = jest.fn();
-    component.showSchedulePtp();
-    // expect(component.ptpService.getNovaLinks).toHaveBeenCalled();
-    // expect(component.dialog.open).toHaveBeenCalled();
-    // expect(component.savePtp).toHaveBeenCalled();
-    // expect(component.openSystemError).toHaveBeenCalled();
+    component.details = component.details || {};
+    component.details.x = 'x';
+    component.saveFuz = jest.fn();
+    component.openFoo = jest.fn();
+    component.showBar1();
+    // expect(component.service64.getFooLink).toHaveBeenCalled();
+    // expect(component.serviceThree.open).toHaveBeenCalled();
+    // expect(component.saveFuz).toHaveBeenCalled();
+    // expect(component.openFoo).toHaveBeenCalled();
   });
 
-  it('should run #savePtp()', async () => {
-    component.translate = component.translate || {};
-    component.translate.instant = jest.fn();
-    component.ptpService = component.ptpService || {};
-    component.ptpService.schedulePTP = jest.fn().mockReturnValue(observableOf({
+  it('should run #saveFuz()', async () => {
+    component.serviceFive = component.serviceFive || {};
+    component.serviceFive.instant = jest.fn();
+    component.service64 = component.service64 || {};
+    component.service64.schedulePTP = jest.fn().mockReturnValue(observableOf({
       status: {}
     }));
-    component.dialog = component.dialog || {};
-    component.dialog.open = jest.fn();
-    component.openSystemError = jest.fn();
-    component.savePtp({});
-    // expect(component.translate.instant).toHaveBeenCalled();
-    // expect(component.ptpService.schedulePTP).toHaveBeenCalled();
-    // expect(component.dialog.open).toHaveBeenCalled();
-    // expect(component.openSystemError).toHaveBeenCalled();
+    component.serviceThree = component.serviceThree || {};
+    component.serviceThree.open = jest.fn();
+    component.openFoo = jest.fn();
+    component.saveFuz({});
+    // expect(component.serviceFive.instant).toHaveBeenCalled();
+    // expect(component.service64.schedulePTP).toHaveBeenCalled();
+    // expect(component.serviceThree.open).toHaveBeenCalled();
+    // expect(component.openFoo).toHaveBeenCalled();
   });
 
-  it('should run #openSystemError()', async () => {
-    component.translate = component.translate || {};
-    component.translate.instant = jest.fn();
-    component.dialog = component.dialog || {};
-    component.dialog.open = jest.fn();
-    component.openSystemError({});
-    // expect(component.translate.instant).toHaveBeenCalled();
-    // expect(component.dialog.open).toHaveBeenCalled();
+  it('should run #openFoo()', async () => {
+    component.serviceFive = component.serviceFive || {};
+    component.serviceFive.instant = jest.fn();
+    component.serviceThree = component.serviceThree || {};
+    component.serviceThree.open = jest.fn();
+    component.openFoo({});
+    // expect(component.serviceFive.instant).toHaveBeenCalled();
+    // expect(component.serviceThree.open).toHaveBeenCalled();
   });
 
   it('should run #handleError()', async () => {

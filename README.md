@@ -1,114 +1,104 @@
 # ngentest
-Angular5+ Unit Test Generator For Components, Directive, Services, and Pipes
+Angular5,6,7,8+ Unit Test Generator For Components, Directive, Services, and Pipes
 
 ## Install & Run
 ```
 $ npm install ngentest -g # to run this command anywhere
-$ ngentest -h
-Usage: index.js <tsFile> [options]
-
-Options:
-  --version      Show version number                                   [boolean]
-  -s, --spec     write the spec file along with source file            [boolean]
-  -f, --force    Do not ask question when overwrite spec file          [boolean]
-  -v, --verbose  log verbose debug messages                            [boolean]
-  -h             Show help                                             [boolean]
-$ ngentest my.component.ts # node_modules/.bin/gentest
+$ ngentest my.component.ts 
 $ ngentest my.directive.ts -s # write unit test to my.directive.spec.ts
-$ ngentest my.pipe.ts > my.pipe.test.ts 
-$ ngentest my.service.ts
 ```
 
-## How It works 
+To see the source file and generated examples, please take a look at examples directory.
 
-1. Get data for test generation from typescript.
+## Config
+You can override configuration by creating a file named as `ngentest.config.js` in your application directory.
 
-    * inputs
-    * outputs
-    * providers
-    * imports
-    * selector (for directive only)
-    * constructor params
-    * provider mocks
+  * **framework**: `jest` or `karma`. The default is `jest`. This value determines how function mock and assert is to be done.
 
-1. For each function in a class, generate function test and save it as function tests by
+  * **templates**: template string for each type. Please specify your own template if you want to override
+    the default template. There are five types;
+    * klass: An ES6 class without angular decorator
+    * component: A class with @Component decorato
+    * directive: A class with @Directive decoratorr
+    * injectable: A class with @Injectable decoratorr
+    * pipe: A class with @Pipe decoratorr
 
-    * generating function mock codes
-    * generating function call codes
-    * generating test assert codes
+    e.g., 
+    ```
+    templates: {
+      klass: myKlassTemplate,
+      component: myComponentTemplate,
+      directive: myDirectiveTemplate,
+      injectable: myInjectableTemplate, 
+      pipe: myPipeTemplate 
+    }
+    ```
 
-1. Run EJS template with data to generate tests
+  * **directives**: Array of diretive names used for a component test. e.g., 
+    ```
+    directives: ['myDirective']
+    ```
 
-## Data Used For Test Generation
+  * **pipes**: Array of pipe names used for a component test. e.g. 
+    ```
+    pipes: ['translate', 'phoneNumber', 'safeHtml']
+    ```
 
-### inputs
-Input Codes(related @Input)
+  * **replacements**: There are some codes, which causes error without proper environment. You need to replace these codes.
+    You can specify `from` value with regular expression and `to` value with string.
+    e.g. 
+    ```
+    replacements: [
+      { from: '^\\S+\\.define\\(.*\\);', to: ''}`
+    ]
+    ```
 
-  * attributes. html-related codes. e.g., `[my-attr]="myAttr"` 
-  * properties, JS-related codes. e.g.,   `myAttr: DirectiveTestComponent`
+  * **providerMocks**: When the following class is used in a constructor, create a mock class with the given statements.
+    e.g.
+    ```
+    providerMocks: {
+      ElementRef: ['nativeElement = {};'],
+      Router: ['navigate() {};'],
+      Document: ['querySelector() {};'],
+      HttpClient: ['post() {};'],
+      TranslateService: ['translate() {};'],
+      EncryptionService: [],
+    }
+    ```
 
-### outputs
-Output Codes(related @Output)
+  * **includeMatch**: When ngentest runs with a directory, include only these files. e.g.,
+    ```
+    includeMatch: [/(component|directive|pipe|service).ts/],
+    ````
+  
+  * **excludeMatch**: When ngentest runs with a directory, exclude these files. e.g., 
+    ```
+    excludeMatch: [/.*module.ts$/]
+    ```
 
-  * attributes. html-related codes. e.g., `(onButtonPressed)="callMyFunc($event)"`
-  * properties. JS-related codes. e.g., `callMyFunc(event): void { /* */ }`
+## How It works
 
-### imports
-Import Codes(related import statement. grouped by library name)  e.g.,
-```
-  {
-    '@angular/core': ['Component', 'Directive', 'Input', 'Output', 'Foo as myFoo']
-  }
-```
+1. Parse a Typescript file and find these info.
 
-### providers
-Module Provider Statement Codes. Keys are constructo variable names . e.g.,
-```
-  {
-    'document' : `{ provide: DOCUMENT, useClass: MockDocument }`,
-    'platform' : `{ provide: 'PLATFORM_ID', useValue: 'browser' }`,
-    'language' : `{ provide: 'LOCALE_ID', useValue: 'en' }`,
-    'myService' : `{ provide: MyService, useClass: MockMyService }`
-  }
-```
+    * imports: imports statements info.
+    * inputs: @Input statements info.
+    * outputs: @Output statements info.
+    * component provider: providers info used in @Component decorator.
+    * selector: selector info used in @Component or @Directove decorator.
 
-### provider mocks
-Mock code for constructor with its properties/functions as an array. e.g.,
-```
-  {
-    ElementRef: ['nativeElement = {};'],
-    Router: ['navigate = jest.fn();'],
-    Document: ['querySelector = jest.fn();'],
-    MyService: []
-  }
-```
+2. Compile Typescript to Javascript, then parse the Javascript compiled, and get the following info.
 
-### class imports (Used internally)
-Import info. from parsed typescript-parser. e.g., 
-```
-  {
-    ElementRef: {
-      import: {
-        libraryName: '@angular/core',
-        alias: 'foo'
-      },
-      specifier: {
-        specifier: 'ElementRef',
-        alias: 'elRef'
-      }
-    },
-  }
-```
+    * constructor param data
+    * provider mock data
+    * accessor tests
+    * function tests
+
+3. build ejs data from #1 and #2, and generate test code.
 
 ## For Developers: To make it sure it does not break any feature
 
-There are example directory under `src/for-*`. The example directory has typescript files and its generated spec files.
-The generaged spec files are the last output of the generated test, e.g., `src/for-component/example/example.component.spec.ts`.
-
-Whenever you change the code, run `npm test`. This will run `./test.js` and compare the output of generated test and the file which is saved last time.
-
-If you are satisfied the result, regenerate spec files and save it by running `sh all-examples.sh`.
-
-
-
-
+Genearate spec files for all examples and compare if there is any difference.
+```
+$ sh tools/all-examples.sh
+$ git diff
+```

@@ -1,105 +1,106 @@
 import { Component } from '@angular/core';
-import { DialogService } from '@rogers/oneview-components';
-import { ChangePlanDialogComponent } from './change-plan-dialog.component';
-import { ChangePlanIndividualDialogComponent } from './change-plan-individual-dialog.component';
-import { NavigationService } from './../../framework/navigation.service';
-import { ChangePlanDataService } from './change-plan-data.service';
+import { ServiceThree } from './my-components';
 
-@Component({template: '', selector: 'app-change-plan'})
+import { Component71 } from './one.component';
+import { Component72 } from './two.component';
+import { ServiceEleven } from './eleven.service';
+import { Service71 } from './one.service';
 
-export class ChangePlanComponent {
-  statePostData = {
-    ctn: null,
-    eligibilityChecked: false,
-    selectAdditionalSubscribers: '',
-    filterOption: 'all',
-    availableCreditAmount: null
+@Component({template: '', selector: 'xyz'})
+
+export class Example7Componet {
+  fooData = {
+    ccc: null,
+    cccEeeeChecked: false,
+    aaaSssSelected: '',
+    fo: 'all',
+    ccccAaaAaaa: null
   };
-  eligiblePostData = {
-    subNumber: null,
-    flowType: null
+  barData = {
+    numSxFoo: null,
+    typeFxFoo: null
   };
-  targetPath: any;
+  targetPx: any;
 
   constructor(
-    public dialog: DialogService,
-    private changePlanData: ChangePlanDataService,
-    private navigation: NavigationService) {
+    public serviceThree: ServiceThree,
+    private component3Data: Service71,
+    private navigation: ServiceEleven) {
   }
 
   // ENTRYPOINT
-  async changePricePlan() {
-    const primaryPhoneNumber = this.changePlanData.getPrimaryPhoneNumber();
-    const ppcSubscribers: any = await this.changePlanData.getPPCSubscribers().toPromise();
-    if (!ppcSubscribers) {
+  async changePlPr() {
+    const numPx1 = this.component3Data.getPx1();
+    const pSFuz: any = await this.component3Data.getPpSFuz().toPromise();
+    if (!pSFuz) {
       return;
     }
-    const singleOrMulti = ppcSubscribers && this.changePlanData.checkifMultiorSingle(ppcSubscribers);
+    const som = pSFuz && this.component3Data.checkIfMOS(pSFuz);
 
-    if (singleOrMulti === 'multi') {
-      const activeSubs = this.changePlanData.getActiveSubs(ppcSubscribers);
-      const primaryNumberShareStatus = this.changePlanData.getPrimaryNumberShareStatus(activeSubs);
+    if (som === 'x') {
+      const fuz = this.component3Data.getFuz(pSFuz);
+      const barStatus = this.component3Data.getBarStatus(fuz);
 
-      if (primaryNumberShareStatus === 'Main') {
-        const hasActiveAdditional = this.changePlanData.hasActiveAdditionalSubs(activeSubs);
-        const flowType = hasActiveAdditional ? 'multi' : 'single';
-        this.targetPath = flowType === 'multi' ? 'ChangeSharePlan' : 'ChoosePlan';
-        this.setEligibilityAndStatePostData({subNumber: primaryPhoneNumber, filterOption: 'all', flowType});
+      if (barStatus === 'a') {
+        const hasFooAa = this.component3Data.hasFooAaSubs(fuz);
+        const typeFxFoo = hasFooAa ? 'multi' : 'single';
+        this.targetPx = typeFxFoo === 'multi' ? 'X' : 'Y';
+        this.setFooBarFuzData({numSxFoo: numPx1, fo: 'all', typeFxFoo});
 
-      } else if (primaryNumberShareStatus === 'Additional') {
-        const mainSub = this.changePlanData.getMainSub(activeSubs);
-        this.setEligibilityAndStatePostData({subNumber: mainSub.subscriberNumber, filterOption: 'main', flowType: 'multi'});
-        this.targetPath = 'ChangeSharePlan';
+      } else if (barStatus === 'b') {
+        const mainS = this.component3Data.getMainSub(fuz);
+        this.setFooBarFuzData({numSxFoo: mainS.numMainFoo, fo: 'm', typeFxFoo: 'm'});
+        this.targetPx = 'X';
 
-      } else if (primaryNumberShareStatus === 'Individual') {
-        const data: any = await this.getIndividualSubPostData(activeSubs, primaryPhoneNumber);
-        this.setEligibilityAndStatePostData(data);
-        this.targetPath = data.targetPath;
+      } else if (barStatus === 'c') {
+        const data: any = await this.getFooData(fuz, numPx1);
+        this.setFooBarFuzData(data);
+        this.targetPx = data.targetPx;
       }
-    } else if (singleOrMulti === 'single') {
-      const singleSubNumber = this.changePlanData.getSingleSubNumber(ppcSubscribers);
-      this.targetPath = 'ChoosePlan';
-      this.setEligibilityAndStatePostData({subNumber: singleSubNumber, filterOption: 'all', flowType: 'single'});
+    } else if (som === 'y') {
+      const numSFooS = this.component3Data.getNumSFooS(pSFuz);
+      this.targetPx = 'ChoosePlan';
+      this.setFooBarFuzData({numSxFoo: numSFooS, fo: 'all', typeFxFoo: 's'});
     }
-    const isEligible = await this.getEligibility(this.eligiblePostData.subNumber, this.eligiblePostData.flowType);
+    const isGood = await this.getGoodness(this.barData.numSxFoo, this.barData.typeFxFoo);
 
-    if (isEligible === true) {
-      this.statePostData.eligibilityChecked = true;
-      this.saveStateAndChangePlan();
+    if (isGood === true) {
+      this.fooData.cccEeeeChecked = true;
+      this.saveFoo();
     }
   }
 
-  async getEligibility(subNumber, flowType) {
-    const subEligibliityResp: any = await this.changePlanData.getPPCEligibility(subNumber, flowType).toPromise();
-    if (subEligibliityResp) {
-      if (subEligibliityResp.eligible) {
-        const isBOTEligible = await this.checkIfBOTEligible(subEligibliityResp);
-        return isBOTEligible;
-      } else if (subEligibliityResp.eligible === false) {
-        this.dialog.open(ChangePlanDialogComponent, {data: {
-          dialogToShow: 'eligibility-error',
-          errorCode: this.changePlanData.formatEligibilityErrorCode(subEligibliityResp.eligibilityCode)
+  async getGoodness(numSxFoo, typeFxFoo) {
+    const eeeRrrSss: any = await this.component3Data.getEeeRrrSss(numSxFoo, typeFxFoo).toPromise();
+    if (eeeRrrSss) {
+      if (eeeRrrSss.good) {
+        const isBbEeIi = await this.checkBbEeIi(eeeRrrSss);
+        return isBbEeIi;
+      } else if (eeeRrrSss.good === false) {
+        this.serviceThree.open(Component71, {data: {
+          stts: 'eligibility-error',
+          errorCode: this.component3Data.formatEeeCccEee(eeeRrrSss.eligibilityCode)
         }});
       }
       return false;
     }
   }
 
-  async checkIfBOTEligible(subEligibliityResp) {
-    this.statePostData.availableCreditAmount = subEligibliityResp.availableCreditAmount;
+  async checkBbEeIi(eeeRrrSss) {
+    this.fooData.ccccAaaAaaa = eeeRrrSss.ccccAaaAaaa;
 
-    const getCases: any = await this.changePlanData.getCases().toPromise();
-    const pendingCases = getCases && this.changePlanData.getPendingCases(getCases);
+    const getFuz: any = await this.component3Data.getFuz().toPromise();
+    const pFuz = getFuz && this.component3Data.getPpFuz(getFuz);
 
-    if (pendingCases && pendingCases.length > 0) {
-      const caseID = pendingCases[0].caseID; // todays functionality is only picking one case ID even though there could be more
-      const dialog: any = this.dialog.open(ChangePlanDialogComponent, {data: { dialogToShow: 'bot-ineligible' }});
+    if (pFuz && pFuz.length > 0) {
+      const iiiCccc = pFuz[0].iiiCccc; // todays functionality is only picking one case ID even though there could be more
+      const serviceThree: any = this.serviceThree.open(Component71, {data: { stts: 'b' }});
 
-      dialog.processCloseCase$.subscribe(async resp => {
-        const closedCase: any = await this.changePlanData.closeCase(caseID).toPromise();
-        if (closedCase && closedCase.responseHeader && closedCase.responseHeader.status === 'success') {
-          const closeCaseDialog: any = this.dialog.open(ChangePlanDialogComponent, {data: { dialogToShow: 'close-case-success' }});
-          closeCaseDialog.saveStateAndChangePlan$.subscribe(closeCaseResp => this.saveStateAndChangePlan());
+      serviceThree.pcc$.subscribe(async resp => {
+        const cccCccC: any = await this.component3Data.cccCcc(iiiCccc).toPromise();
+        if (cccCccC && cccCccC.rH && cccCccC.rH.status === 's') {
+          const cccCccserviceThree: any = this.serviceThree.open(Component71, {data: { stts: 'c-a-s' }});
+          cccCccserviceThree.saveFoo$.subscribe(cccCccResp => this.saveFoo());
         }
       });
       return false;
@@ -107,71 +108,71 @@ export class ChangePlanComponent {
     return true;
   }
 
-  async saveStateAndChangePlan() {
-    const savePPCResp = await this.changePlanData.savePPCState(this.statePostData).toPromise();
-    savePPCResp && this.navigation.changeRoute({detail: this.targetPath});
+  async saveFoo() {
+    const saveBar = await this.component3Data.savePPCState(this.fooData).toPromise();
+    saveBar && this.navigation.changeR({detail: this.targetPx});
   }
 
-  async getIndividualSubPostData(activeSubs, primaryPhoneNumber) {
-    const hasActiveMain = this.changePlanData.hasActiveMain(activeSubs);
-    const hasOtherIndividualSubs =  this.changePlanData.hasOtherIndividualSubs(activeSubs);
+  async getFooData(activeFuz, numPx1) {
+    const hasAM = this.component3Data.hasAM(activeFuz);
+    const hasOivs =  this.component3Data.hasOivs(activeFuz);
     const promiseFunc = (resolve, reject) => {
-      const getIndSubPostData =  this.changePlanData.getIndSubPostData;  // DRY
-      if (hasActiveMain) {
-        const mainSub = this.changePlanData.getMainSub(activeSubs);
-        const hasActiveMainDialog: any = this.dialog.open(ChangePlanDialogComponent, {});
-        const selectAdditionalSubscribers = this.changePlanData.getActiveAdditionalSubsWithPrimary(activeSubs);
+      const etIspd =  this.component3Data.etIspd;  // DRY
+      if (hasAM) {
+        const mainS = this.component3Data.getMainSub(activeFuz);
+        const hasAMserviceThree: any = this.serviceThree.open(Component71, {});
+        const aaaSssSelected = this.component3Data.getAasp(activeFuz);
         // user chose to only make changes to individual line
-        hasActiveMainDialog.proceedWithExistingPlan$.subscribe(resp => {
-          const payLoadExistingPlan = getIndSubPostData('ChoosePlan', primaryPhoneNumber, '');
-          resolve (payLoadExistingPlan);
+        hasAMserviceThree.proceedWep$.subscribe(resp => {
+          const payLep = etIspd('cp', numPx1, '');
+          resolve (payLep);
         });
         // user chose to add individual line to shared plan and wants to add data
-        hasActiveMainDialog.proceedToAddData$.subscribe(resp => {
-          const payLoadAddData = getIndSubPostData('ChooseSharePlan', mainSub.subscriberNumber, selectAdditionalSubscribers);
-          resolve (payLoadAddData);
+        hasAMserviceThree.proceedTad$.subscribe(resp => {
+          const payLad = etIspd('csp', mainS.numMainFoo, aaaSssSelected);
+          resolve (payLad);
         });
         // user chose to add individual line to shared plan and doesnt want to add data
-        hasActiveMainDialog.proceedToNotAddData$.subscribe(resp => {
-          const payLoadNotAddData = getIndSubPostData('AdditionalLineOptions', mainSub.subscriberNumber, selectAdditionalSubscribers);
-          resolve (payLoadNotAddData);
+        hasAMserviceThree.proceedTnad$.subscribe(resp => {
+          const payLnad = etIspd('alo', mainS.numMainFoo, aaaSssSelected);
+          resolve (payLnad);
         });
 
-      } else if (hasOtherIndividualSubs) {
-          const otherIndividualSubs = this.changePlanData.getOtherIndividualSubs(activeSubs);
-          const hasOtherIndividualSubDialog: any = this.dialog.open(ChangePlanIndividualDialogComponent,
-            {data: { individualSubs: otherIndividualSubs, primaryPhoneNumber: primaryPhoneNumber }});
+      } else if (hasOivs) {
+          const oiiisubs = this.component3Data.getOiiis(activeFuz);
+          const hasOivserviceThree: any = this.serviceThree.open(Component72,
+            {data: { individualSubs: oiiisubs, numPx1: numPx1 }});
           // user chose to only make changes to individual line
-          hasOtherIndividualSubDialog.makeChangesToYourCurrentPlan$.subscribe(resp => {
-            const makeChangesToCurrentPlanPayload = getIndSubPostData('ChoosePlan', primaryPhoneNumber, '');
-            resolve (makeChangesToCurrentPlanPayload);
+          hasOivserviceThree.makeCtycp$.subscribe(resp => {
+            const makeCtcppl = etIspd('cp', numPx1, '');
+            resolve (makeCtcppl);
           });
           // user chose to create shared plan from individual lines
-          hasOtherIndividualSubDialog.createASharedPlanWithYourOtherLines$.subscribe(resp => {
-            const createASharedPlanWithYourOtherLinesPayLoad = getIndSubPostData('ChooseSharePlan',
-              resp.ctn, resp.selectAdditionalSubscribers);
-            resolve (createASharedPlanWithYourOtherLinesPayLoad);
+          hasOivserviceThree.createAspwyol.subscribe(resp => {
+            const createAspwyolpl = etIspd('csp',
+              resp.ccc, resp.aaaSssSelected);
+            resolve (createAspwyolpl);
           });
 
       } else {
-        const onlySingleIndPayLoad = getIndSubPostData('ChoosePlan', primaryPhoneNumber, '');
-        resolve (onlySingleIndPayLoad);
+        const onlysiiip = etIspd('cp', numPx1, '');
+        resolve (onlysiiip);
       }
     };
 
     return new Promise(promiseFunc);
   }
 
-  private setEligibilityAndStatePostData(data) {
-    const valuesToSet = {
-      ctn: data.subNumber,
-      subNumber: data.subNumber,
-      flowType: data.flowType,
-      filterOption: data.filterOption,
-      selectAdditionalSubscribers: data.selectAdditionalSubscribers || ''
+  private setFooBarFuzData(data) {
+    const x = {
+      a: data.x,
+      b: data.y,
+      c: data.z,
+      d: data.a,
+      e: data.b || ''
     };
-    for (const x of Object.keys(valuesToSet)) { this.eligiblePostData[x] = valuesToSet[x]; }
-    for (const x of Object.keys(valuesToSet)) { this.statePostData[x] = valuesToSet[x]; }
+    for (const x of Object.keys(x)) { this.barData[x] = x[x]; }
+    for (const x of Object.keys(x)) { this.fooData[x] = x[x]; }
   }
 
 }
