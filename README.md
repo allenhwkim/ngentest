@@ -18,11 +18,11 @@ You can override configuration by creating a file named as `ngentest.config.js` 
 
   * **templates**: template string for each type. Please specify your own template if you want to override
     the default template. There are five types;
-    * klass: An ES6 class without angular decorator
-    * component: A class with @Component decorato
-    * directive: A class with @Directive decoratorr
-    * injectable: A class with @Injectable decoratorr
-    * pipe: A class with @Pipe decoratorr
+    * klass: ejs template for an ES6 class without angular decorator.
+    * component: ejs template for an Angular component.
+    * directive: ejs template for an Angular directive.
+    * injectable: ejs template for an Angular service.
+    * pipe: ejs template for an Angular pipe.
 
     e.g., 
     ```javascript
@@ -35,12 +35,12 @@ You can override configuration by creating a file named as `ngentest.config.js` 
     }
     ```
 
-  * **directives**: Array of diretive names used for a component test. e.g., 
+  * **directives**: Array of diretive names, necessary for a component test. e.g., 
     ```javascript
     directives: ['myDirective']
     ```
 
-  * **pipes**: Array of pipe names used for a component test. e.g. 
+  * **pipes**: Array of pipe names, necessary for a component test. e.g. 
     ```javascript
     pipes: ['translate', 'phoneNumber', 'safeHtml']
     ```
@@ -54,7 +54,7 @@ You can override configuration by creating a file named as `ngentest.config.js` 
     ]
     ```
 
-  * **providerMocks**: When the following class is used in a constructor, create a mock class with the given statements.
+  * **providerMocks**: When the following class is used in a constructor parameter, create a mock class with the given statements.
     e.g.
     ```javascript
     providerMocks: {
@@ -127,7 +127,7 @@ You can override configuration by creating a file named as `ngentest.config.js` 
     * component provider: providers info used in @Component decorator.
     * selector: selector info used in @Component or @Directove decorator.
 
-2. Compile Typescript to Javascript, then parse the Javascript compiled, and get the following info.
+2. Compile Typescript to Javascript, then parse the Javascript, and get the following info.
 
     * constructor param data
     * provider mock data
