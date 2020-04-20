@@ -57,7 +57,9 @@ class FuncTestGen {
       'Identifier',
       'Literal',
       'ThisExpression',
-      'ThrowStatement'
+      'ThrowStatement',
+      'ContinueStatement',
+      'DebuggerStatement'
     ].includes(node.type)) {
       // ignore these expressions/statements, which is meaningless for mockData
     } else if (node.type === 'ArrayExpression') {
