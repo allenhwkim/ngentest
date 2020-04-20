@@ -249,13 +249,15 @@ class FuncTestGen {
       obj = Util.getObjectFromExpression(code, returns);
       [one, two] = code.split('.'); // this.prop
     }
-    Util.DEBUG && console.log('      ** setPropsOrParams', { one, two, code});
+    Util.DEBUG && console.log('      ** setPropsOrParams', { one, two, code });
 
     const variableExpression = code.replace(/\s+/g,'').replace(/\(.*\)/g,'');
     const mapKey = (variableExpression.match(/(this\.)?[a-zA-Z0-9_\$]+/) || [])[0]; // foo or this.foo
     const exprFoundInMap = Object.entries(map).find( // set map only if `expression.` is used
       ([k, v]) => variableExpression.startsWith(k + '.')
     );
+    const loopCondition = exprFoundInMap &&
+      exprFoundInMap[1].startsWith(exprFoundInMap[0]);
 
     if (map[mapKey] && params[map[mapKey]]) { // if param mapped
       if (one === 'this' && two && map[`this.${two}`]) { // if param map found
@@ -263,9 +265,9 @@ class FuncTestGen {
       } else {
         Util.merge(code, obj, params);
       }
-    } else if (map[mapKey] && exprFoundInMap) { // if non-param map found
+    } else if (map[mapKey] && exprFoundInMap && !loopCondition) { // if non-param map found
       const newlyMappedCode = code.replace(mapKey, map[mapKey]);
-      this.setPropsOrParams (newlyMappedCode, mockData, returns)
+      this.setPropsOrParams(newlyMappedCode, mockData, returns);
     } else {
       if (one === 'this' && two) {
         Util.merge(obj.this, props);

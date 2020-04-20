@@ -151,7 +151,7 @@ function run (tsFile) {
     const modjule = requireFromString(replacedOutputText);
     const Klass = modjule[ejsData.className];
     Util.DEBUG &&
-      console.warn('\x1b[36m%s\x1b[0m', `PROCESSING ${klass.ctor && klass.ctor.name} constructor`);
+      console.warn('\x1b[36m%s\x1b[0m', `PROCESSING ${Klass.ctor && Klass.ctor.name} constructor`);
     const ctorMockData = getFuncMockData(Klass, 'constructor', 'constructor');
 
     const ctorParamJs = Util.getFuncParamJS(ctorMockData.params);
