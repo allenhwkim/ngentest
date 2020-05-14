@@ -32,14 +32,14 @@ const argv = yargs.usage('Usage: $0 <tsFile> [options]')
     },
     'm': { alias: 'method', describe: 'Show code only for this method', type: 'string' },
     'v': { alias: 'verbose', describe: 'log verbose debug messages', type: 'boolean' },
-    'framework': { describe: 'test framework, jest or karma', type: 'string' }
+    'framework': { describe: 'test framework, jest or karma', type: 'string' },
+    'c': { alias: 'config', describe: 'The configuration file to load options from', type: 'string', default: 'ngentest.config.js' }
   })
   .example('$0 my.component.ts', 'generate Angular unit test for my.component.ts')
   .help('h')
   .argv;
 
 Util.DEBUG = argv.verbose;
-Util.FRAMEWORK = config.framework || argv.framework;
 const tsFile = argv._[0].replace(/\.spec\.ts$/, '.ts');
 // const writeToSpec = argv.spec;
 if (!(tsFile && fs.existsSync(tsFile))) {
@@ -47,13 +47,21 @@ if (!(tsFile && fs.existsSync(tsFile))) {
   process.exit(1);
 }
 
-if (fs.existsSync(path.join(appRoot.path, 'ngentest.config.js'))) {
-  const userConfig = require(path.join(appRoot.path, 'ngentest.config.js'));
+if (argv.c && fs.existsSync(path.resolve(argv.c))) {
+  loadConfig(path.resolve(argv.c));
+} else {
+  Util.DEBUG && console.log(`${argv.c} not found. Using default config instead.`)
+}
+Util.DEBUG && console.log('  *** config ***', config);
+
+Util.FRAMEWORK = config.framework || argv.framework;
+
+function loadConfig(filePath) {
+  const userConfig = require(filePath);
   for (var key in userConfig) {
     config[key] = userConfig[key];
   }
 }
-Util.DEBUG && console.log('  *** config ***', config);
 
 function getFuncMockData (Klass, funcName, funcType) {
   const funcTestGen = new FuncTestGen(Klass, funcName, funcType);
