@@ -28,9 +28,9 @@
   ],
   "author": "Allen Kim <allenhwkim@gmail.com>",
   "bugs": {
-    "url": "https://github.com/allenhwkim/ng-gen-test/issues"
+    "url": "https://github.com/allenhwkim/ngentest/issues"
   },
-  "homepage": "https://github.com/allenhwkim/ng-gen-test#readme",
+  "homepage": "https://github.com/allenhwkim/ngentest#readme",
   "dependencies": {
     "acorn": "^7.1.0",
     "app-root-path": "^3.0.0",
