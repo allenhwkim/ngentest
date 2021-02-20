@@ -132,8 +132,10 @@ function getImportMocks() {
       const emport = this.imports.find(el => el.name === exportName); // name , alias
 
       const importStr = emport.alias ? `${exportName} as ${emport.alias}` : exportName;
-      if (exportName === 'Inject') { // do not import Inject
-        imports[`@angular/core`] = (imports[`@angular/core`] || []).concat(decorator.param);
+      if (exportName === 'Inject') { // do not import Inject, but import Inject name
+        const commonTypes = ['APP_BASE_HREF', 'DOCUMENT', 'LOCATION_INITIALIZED', 'Time'];
+        const importLib = commonTypes.includes(decorator.param) ? '@angular/common' : '@angular/core';
+        imports[importLib] = (imports[importLib] || []).concat(decorator.param);
       } else {
         imports[emport.moduleName] = (imports[emport.moduleName] || []).concat(importStr);
       }
@@ -248,8 +250,12 @@ function getComponentProviderMocks() {
   const decorator = __getKlassDecorator(this.klass);
   if (decorator.providers) {
     const klassNames = decorator.providers.elements.map(el => el.escapedText);
-    const providerMocks = klassNames.map(name => `{ provide: ${name}, useClass: Mock${name} }`);
-    mocks.push(`set: { providers: [${providerMocks.join(',\n')}] }`);
+    const providerMocks = klassNames.filter(name => name).map(name =>  {
+      return `{ provide: ${name}, useClass: Mock${name} }`;
+    });
+    if (providerMocks.length) {
+      mocks.push(`set: { providers: [${providerMocks.join(',\n')}] }`);
+    }
   } 
 
   return mocks;
