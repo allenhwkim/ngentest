@@ -8,6 +8,9 @@
     "node": ">=8.6.0",
     "npm": ">=6.1"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.com/"
+  },
   "bin": {
     "gentest": "./index.js",
     "ngentest": "./index.js"

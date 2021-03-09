@@ -2,6 +2,12 @@ import { Component } from '@angular/core';
 
 @Component({})
 export class ExampleXComponent {
+  
+  private closeLoadJava() {
+    if (typeof window.closeLoad === "function") {
+      window.closeLoad();
+    }
+  }
 
   doMore(param) {
     this.dtDts = this.dtSv.getDtDts4Sh(this.usDts);

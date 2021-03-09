@@ -147,7 +147,7 @@ class Util {
       const sourceFuncRet = source[firstKey]();
 
       if (typeof sourceFuncRet === 'object') {
-        const targetFuncRet = typeof source[firstKey] === 'function' ? target[firstKey]() : {};
+        const targetFuncRet = typeof target[firstKey] === 'function' ? target[firstKey]() : {};
         const isTarget0EmptyObj =  targetFuncRet[0] && // e.g.,  { 0 : {} }
             Object.keys(targetFuncRet[0]).length === 0 && targetFuncRet[0].constructor === Object;
         const isTarget0Exists =  targetFuncRet[0] && // e.g.,  { 0 : {foo;bar} }

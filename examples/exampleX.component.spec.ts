@@ -61,6 +61,12 @@ describe('ExampleXComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should run #closeLoadJava()', async () => {
+    window.closeLoad = jest.fn();
+    component.closeLoadJava();
+    // expect(window.closeLoad).toHaveBeenCalled();
+  });
+
   it('should run #doMore()', async () => {
     component.dtSv = component.dtSv || {};
     component.dtSv.getDtDts4Sh = jest.fn().mockReturnValue({
