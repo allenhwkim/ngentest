@@ -1,9 +1,8 @@
-import {HTMLCustomElement} from 'html-custom-element';
-
+// @ts-nocheck
 import * as template from './my.html';
 import { loadingImage } from './loading';
 
-export class ExampleKlass extends HTMLCustomElement {
+export class ExampleKlass extends HTMLElement {
   for: any;
   i18n: any;
   userInfo: any;
@@ -22,11 +21,6 @@ export class ExampleKlass extends HTMLCustomElement {
       this.i18n = footerEl.i18n.userInfo;
       this.pppUuuu = footerEl.pppUuuu;
     }
-
-    super.renderWith(template).then(_ => {
-      this.render();
-      this.attachListeners();
-    });
   }
 
   setUserCode(userCode, isCurrent = true) {

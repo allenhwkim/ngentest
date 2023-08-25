@@ -98,7 +98,6 @@ You can override configuration by creating a file named as `ngentest.config.js` 
     ],
     // when convert to JS, some codes need to be replaced to work 
     replacements: [ // some 3rd party module causes an error
-      { from: 'require\\("html-custom-element"\\)', to: '{}'}, 
       { from: '^\\S+\\.define\\(.*\\);', to: ''} // some commands causes error
     ],
     // when constructor param type is as following, create a mock class with this properties

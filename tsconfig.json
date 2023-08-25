@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "lib": [ "es2015" ],
+    "lib": [ "es2016", "dom" ],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   }
