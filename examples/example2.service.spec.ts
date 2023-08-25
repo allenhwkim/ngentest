@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { async } from '@angular/core/testing';
 import { Injectable } from '@angular/core';
 import { Observable, of as observableOf, throwError } from 'rxjs';

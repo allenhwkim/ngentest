@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { async } from '@angular/core/testing';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
@@ -26,20 +27,8 @@ describe('ExampleKlass', () => {
       },
       userInfo: {}
     });
-    obj.renderWith = jest.fn().mockReturnValue({
-      then: function() {
-        return [
-          null
-        ];
-      }
-    });
-    obj.render = jest.fn();
-    obj.attachListeners = jest.fn();
     obj.connectedCallback();
     // expect(obj.closest).toHaveBeenCalled();
-    // expect(obj.renderWith).toHaveBeenCalled();
-    // expect(obj.render).toHaveBeenCalled();
-    // expect(obj.attachListeners).toHaveBeenCalled();
   });
 
   it('should run #setUserCode()', async () => {
