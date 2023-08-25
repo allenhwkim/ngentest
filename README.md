@@ -139,8 +139,28 @@ You can override configuration by creating a file named as `ngentest.config.js` 
 
 ## For Developers: To make it sure it does not break any feature
 
-Genearate spec files for all examples and compare if there is any difference.
-```bash
-$ sh tools/all-examples.sh
-$ git diff
+```
+$ npm i 
+$ npm test
+
+> ngentest@1.4.4 test /Users/allenkim/projects/ngentest
+> node test.js
+
+passed check examples/example.klass.ts
+passed check examples/example.component.ts
+passed check examples/example2.component.ts
+passed check examples/example3.component.ts
+passed check examples/example4.component.ts
+passed check examples/example5.component.ts
+passed check examples/example6.component.ts
+passed check examples/example7.component.ts
+passed check examples/example8.component.ts
+passed check examples/example9.component.ts
+passed check examples/exampleX.component.ts
+passed check examples/example.directive.ts
+passed check examples/example.service.ts
+passed check examples/example.pipe.ts
+passed check examples/example2.pipe.ts
+
+projects/ngentest (master) $
 ```
