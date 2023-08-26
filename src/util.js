@@ -53,8 +53,6 @@ class Util {
   }
 
   static indent (str, prefix = '') {
-    // const opts = Object.assign({ indent_size: 2 }, moreOpts);
-    // return beautify(str, opts);
     str = indentJs.ts(str, { tabString: '  ' });
     str = str + prefix;
     str = str.replace(/\n/gm, '\n' + prefix);
