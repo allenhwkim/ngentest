@@ -40,7 +40,7 @@ const argv = yargs.usage('Usage: $0 <tsFile> [options]')
   .argv;
 
 Util.DEBUG = argv.verbose;
-const tsFile = argv._[0].replace(/\.spec\.ts$/, '.ts');
+const tsFile = argv._[0]?.replace(/\.spec\.ts$/, '.ts');
 // const writeToSpec = argv.spec;
 if (!(tsFile && fs.existsSync(tsFile))) {
   console.error('Error. invalid typescript file. e.g., Usage $0 <tsFile> [options]');
@@ -145,19 +145,21 @@ function run (tsFile) {
       }
     });
 
-    // replace invalid require statements
-    let replacedOutputText = result.outputText
-      .replace(/require\("\.(.*)"\)/gm, '{}') // replace require statement to a variable, {}
+    const klassText = (
+      result.outputText.match(/(class .*?{.*});\n.*?__decorate/ms) || /* Angular syntax */
+      result.outputText.match(/(class .*?{.*})\nexports/ms) /* generic syntax */
+    )[1];
+
+    let replacedOutputText = klassText
       .replace(/super\(.*\);/gm, '') // remove inheritance code
       .replace(/super\./gm, 'this.') // change inheritance call to this call
       .replace(/\s+extends\s\S+ {/gm, ' extends Object {') // rchange inheritance to an Object
-
     config.replacements.forEach( ({from,to}) => {
       replacedOutputText = replacedOutputText.replace(new RegExp(from, 'gm'), to);
     })
 
-    const modjule = requireFromString(replacedOutputText);
-    const Klass = modjule[ejsData.className];
+    const Klass = new Function(`return ${replacedOutputText}`)();
+
     Util.DEBUG &&
       console.warn('\x1b[36m%s\x1b[0m', `PROCESSING ${Klass.ctor && Klass.ctor.name} constructor`);
     const ctorMockData = getFuncMockData(Klass, 'constructor', 'constructor');
