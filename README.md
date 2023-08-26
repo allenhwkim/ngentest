@@ -139,12 +139,11 @@ You can override configuration by creating a file named as `ngentest.config.js` 
 ## For Developers: To make it sure it does not break any feature
 
 ```
-$ npm i 
+$ npm i
+
 $ npm test
-
-> ngentest@1.4.4 test /Users/allenkim/projects/ngentest
+> ngentest@1.4.4 test
 > node test.js
-
 passed check examples/example.klass.ts
 passed check examples/example.component.ts
 passed check examples/example2.component.ts
@@ -161,5 +160,30 @@ passed check examples/example.service.ts
 passed check examples/example.pipe.ts
 passed check examples/example2.pipe.ts
 
-projects/ngentest (master) $
+$ ./index.js                    
+Error. invalid typescript file. e.g., Usage $0 <tsFile> [options]
+
+$ ./index.js -h          
+Usage: index.js <tsFile> [options]
+
+Options:
+      --version     Show version number                                [boolean]
+  -s, --spec        write the spec file along with source file         [boolean]
+  -f, --force       It prints out a new test file, and it does not ask a
+                    question when overwrite spec file                  [boolean]
+  -F, --forcePrint  It prints out to console, and it does not ask a question
+                                                                       [boolean]
+  -m, --method      Show code only for this method                      [string]
+  -v, --verbose     log verbose debug messages                         [boolean]
+      --framework   test framework, jest or karma                       [string]
+  -c, --config      The configuration file to load options from
+                                        [string] [default: "ngentest.config.js"]
+  -h                Show help                                          [boolean]
+
+Examples:
+  index.js my.component.ts  generate Angular unit test for my.component.ts
+
+$ ./index.js examples/example.component.ts 
+// @ts-nocheck
+...
 ```
