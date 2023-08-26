@@ -1,6 +1,6 @@
 {
   "name": "ngentest",
-  "version": "1.4.4",
+  "version": "1.5.0",
   "description": "Angular5+ Unit Test Generator For Components, Directive, Services, and Pipes",
   "main": "index.js",
   "license": "MIT",
@@ -44,4 +44,3 @@
     "yargs": "^17.7.2"
   }
 }
-
