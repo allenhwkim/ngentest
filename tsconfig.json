@@ -1,8 +1,0 @@
-{
-  "compilerOptions": {
-    "module": "commonjs",
-    "lib": [ "es2016", "dom" ],
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
-  }
-}
