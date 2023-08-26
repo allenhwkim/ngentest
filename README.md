@@ -3,7 +3,7 @@ Angular5,6,7,8,9,10,11,12,13,14,15,16 Unit Test Generator For Components, Direct
 
 ## Install & Run
 ```bash
-$ npm install ngentest -D # to run this command anywhere
+$ npm install ngentest -D
 $ npx ngentest my.component.ts 
 $ npx ngentest my.directive.ts -s # write unit test to my.directive.spec.ts
 $ npx ngentest my.directive.ts -c ../ngentest.config.js # use the given config file.
