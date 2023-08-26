@@ -3,9 +3,7 @@ const fs = require('fs');
 const path = require('path'); // eslint-disable-line
 const yargs = require('yargs');
 const ts = require('typescript');
-const requireFromString = require('require-from-string');
 const glob = require('glob');
-const appRoot = require('app-root-path');
 
 const config = require('./ngentest.config');
 const Util = require('./src/util.js');

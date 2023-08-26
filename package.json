@@ -36,27 +36,12 @@
   "homepage": "https://github.com/allenhwkim/ngentest#readme",
   "dependencies": {
     "acorn": "^7.4.1",
-    "app-root-path": "^3.0.0",
     "check-engines": "^1.5.0",
     "ejs": "^3.1.9",
+    "glob": "^10.3.3",
     "indent.js": "^0.3.4",
-    "js-beautify": "^1.10.2",
-    "require-from-string": "^2.0.2",
     "typescript": "^3.7.2",
     "yargs": "^17.7.2"
-  },
-  "devDependencies": {
-    "@angular/animations": "^16.2.2",
-    "@angular/common": "^16.2.2",
-    "@angular/core": "^16.2.2",
-    "@angular/forms": "^16.2.2",
-    "@angular/platform-browser": "^16.2.2",
-    "@angular/router": "^16.2.2",
-    "@ngx-translate/core": "^11.0.1",
-    "chart.js": "^2.9.4",
-    "crypto-js": "^3.1.9-1",
-    "date-fns": "^2.0.0",
-    "rxjs": "^6.5.3",
-    "ts-node": "^8.4.1"
   }
 }
+
