@@ -4,16 +4,10 @@ const fs = require('fs');
 const CommonTestGen = require('../common-test-gen.js');
 
 class ClassTestGen {
-  constructor (tsPath, config) {
-    if (tsPath && fs.existsSync(tsPath)) {
-      this.tsPath = tsPath;
-      this.config = config;
-    } else {
-      throw new Error(`Error. invalid typescript file. e.g., Usage $0 ${tsPath} [options]`);
-    }
-
-    this.tsPath = tsPath;
-    this.typescript = fs.readFileSync(path.resolve(tsPath), 'utf8');
+  constructor (typescript, config) {
+    this.config = config;
+    this.tsPath = config.tsPath;
+    this.typescript = typescript;
     this.template = config.templates.klass;
 
     this.klass = CommonTestGen.getKlass.bind(this)();
@@ -26,7 +20,6 @@ class ClassTestGen {
 
     this.getProviderMocks = CommonTestGen.getProviderMocks.bind(this);
     this.getGenerated = CommonTestGen.getGenerated.bind(this);
-    this.writeGenerated = CommonTestGen.writeGenerated.bind(this);
   }
 
   getData () {

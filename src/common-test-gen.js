@@ -288,46 +288,14 @@ function getExistingTests(ejsData, existingTestCodes) {
   return existingTests;
 }
 
-function getGenerated (ejsData, options) {
-  let generated;
-  const funcName = options.method;
-  const specPath = path.resolve(this.tsPath.replace(/\.ts$/, '.spec.ts')); 
-  const existingTestCodes = fs.existsSync(specPath) && fs.readFileSync(specPath, 'utf8');
-  if (funcName) {
-    // if user asks to generate only one function
-    generated = ejsData.functionTests[funcName] || ejsData.accessorTests[funcName];
-  } else if (existingTestCodes && specPath && !options.force && !options.forcePrint) {
-    // if there is existing tests, then add only new function tests at the end
-    const existingTests = getExistingTests(ejsData, existingTestCodes);
-    const newTests = [];
-    const allTests = Object.assign({}, ejsData.accessorTests || {}, ejsData.functionTests || {});
-    // get only new tests
-    for (var method in existingTests) {
-      (existingTests[method] !== true) && newTests.push('  // new test by ngentest' + allTests[method]); 
-    }
-    if (newTests.length) {
-      // add new tests at the end
-      const re = /(\s+}\);?\s+)(}\);?\s*)$/;
-      const testEndingMatch = existingTestCodes.match(re); // file ending parts
-      if (testEndingMatch) {
-        generated = existingTestCodes.replace(re, (m0, m1, m2) => {
-          const newCodes = newTests.join('\n').replace(/[ ]+$/, '');
-          return `${m1}${newCodes}${m2}`;
-        });
-      }
-    } else {
-      generated = ejs.render(this.template, ejsData).replace(/\n\s+$/gm, '\n');
-    }
-  } else {
-    // if no existing tests
-    generated = ejs.render(this.template, ejsData).replace(/\n\s+$/gm, '\n');
-  }
+function getGenerated (ejsData) {
+  const generated = ejs.render(this.template, ejsData).replace(/\n\s+$/gm, '\n');
   return generated;
 }
 
 function writeToSpecFile (specPath, generated) {
   fs.writeFileSync(specPath, generated);
-  console.log('Generated unit test to', specPath);
+  console.info('Generated unit test to', specPath);
 }
 
 function backupExistingFile (specPath, generated) {
@@ -336,44 +304,11 @@ function backupExistingFile (specPath, generated) {
     const backupContents = fs.readFileSync(specPath, 'utf8');
     if (backupContents !== generated) {
       fs.writeFileSync(`${specPath}.${backupTime}`, backupContents, 'utf8'); // write backup
-      console.log('Backup the exisiting file to', `${specPath}.${backupTime}`);
+      console.info('Backup the exisiting file to', `${specPath}.${backupTime}`);
     }
   }
 };
 
-function writeGenerated (generated, options) {
-  const toFile = options.spec;
-  const force = options.force;
-  const specPath = path.resolve(this.tsPath.replace(/\.ts$/, '.spec.ts'));
-  generated = generated.replace(/\r\n/g, '\n');
-
-  const specFileExists = fs.existsSync(specPath);
-
-  if (toFile && specFileExists && force) {
-    backupExistingFile(specPath, generated);
-    writeToSpecFile(specPath, generated);
-  } else if (toFile && specFileExists && !force) {
-    const readline = require('readline');
-    const rl = readline.createInterface(process.stdin, process.stdout);
-    console.warn('\x1b[33m%s\x1b[0m',
-      `WARNING!!, Spec file, ${specPath} already exists. Overwrite it?`);
-    rl.question('Continue? ', answer => {
-      if (answer.match(/y/i)) {
-        backupExistingFile(specPath, generated);
-        writeToSpecFile(specPath, generated);
-      } else {
-        process.stdout.write(generated);
-      }
-      rl.close();
-    });
-  } else if (toFile && !specFileExists) {
-    backupExistingFile(specPath, generated);
-    writeToSpecFile(specPath, generated);
-  } else if (!toFile) {
-    process.stdout.write(generated);
-  }
-}
- 
 const CommonGenFunctions = {
   getKlass,
   getImports,
@@ -390,8 +325,7 @@ const CommonGenFunctions = {
   getComponentProviderMocks,
   getDirectiveSelector,
 
-  getGenerated,
-  writeGenerated
+  getGenerated
 };
 
 module.exports = CommonGenFunctions;

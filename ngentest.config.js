@@ -37,9 +37,5 @@ module.exports = {
     HttpClient: ['post() {};'],
     TranslateService: ['translate() {};'],
     EncryptionService: [],
-  },
-  // when ngentest runs with a directory, include only these files
-  includeMatch: [/(component|directive|pipe|service).ts/],
-  // when ngentest runs with a directory, exclude these files
-  excludeMatch: []
+  }
 }
