@@ -171,9 +171,6 @@ Options:
   -s, --spec        write the spec file along with source file         [boolean]
   -f, --force       It prints out a new test file, and it does not ask a
                     question when overwrite spec file                  [boolean]
-  -F, --forcePrint  It prints out to console, and it does not ask a question
-                                                                       [boolean]
-  -m, --method      Show code only for this method                      [string]
   -v, --verbose     log verbose debug messages                         [boolean]
       --framework   test framework, jest or karma                       [string]
   -c, --config      The configuration file to load options from

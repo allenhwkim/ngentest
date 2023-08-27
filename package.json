@@ -12,8 +12,8 @@
     "registry": "https://registry.npmjs.com/"
   },
   "bin": {
-    "gentest": "./index.js",
-    "ngentest": "./index.js"
+    "gentest": "./cli.js",
+    "ngentest": "./cli.js"
   },
   "scripts": {
     "test": "node test.js"

@@ -23,7 +23,7 @@ const srcFiles = [
 ];
 
 srcFiles.forEach(filePath => {
-  const output = ('' + execSync(`./index.js ${filePath} -F`))
+  const output = ('' + execSync(`./cli.js ${filePath} -F`))
     .replace(/\r\n/g, '\n');
   const expected = ('' + fs.readFileSync(filePath.replace('.ts', '.spec.ts')))
     .replace(/\r\n/g, '\n');
