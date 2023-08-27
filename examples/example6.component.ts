@@ -15,7 +15,7 @@ import { Component63 } from '../comp63.component'
 import { serviceThreeOptions, ServiceThree, Component64, Component65 } from './my-components';
 import { Component66, Component67 } from './my-components';
 import { ServiceFour } from './four.service';
-import { serviceOne } from '../one.service';
+import { serviceOne } from '../one.service';
 import { Service61 } from '../sixty-one.service';
 import { Service62 } from './sixty-two.service';
 import { ServiceEleven } from '../../evleven.service';
@@ -51,7 +51,7 @@ export class Example6Component implements OnInit {
     private sanitize: DomSanitizer,
     private serviceFour: ServiceFour,
     private service64: Service61,
-    private serviceOne:  serviceOne,
+    private serviceOne: serviceOne,
     private service8: ServiceEight,
     private router: Router,
     private route: ActivatedRoute,
@@ -212,8 +212,8 @@ export class Example6Component implements OnInit {
     );
 
     this.serviceOne.getHhhPppp().subscribe(
-      resp => this.hhhPppp =  resp,
-      error => console.log('error: ',  error)
+      resp => this.hhhPppp = resp,
+      error => console.error('error: ', error)
     );
 
     this.serviceFour.getmyConfig().subscribe(
@@ -353,7 +353,7 @@ export class Example6Component implements OnInit {
           }
         }, 500);
     } else {
-      console.log('Error accessing iframe');
+      console.error('Error accessing iframe');
     }
   }
 

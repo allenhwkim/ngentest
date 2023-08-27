@@ -295,7 +295,7 @@ function getGenerated (ejsData) {
 
 function writeToSpecFile (specPath, generated) {
   fs.writeFileSync(specPath, generated);
-  console.log('Generated unit test to', specPath);
+  console.info('Generated unit test to', specPath);
 }
 
 function backupExistingFile (specPath, generated) {
@@ -304,35 +304,11 @@ function backupExistingFile (specPath, generated) {
     const backupContents = fs.readFileSync(specPath, 'utf8');
     if (backupContents !== generated) {
       fs.writeFileSync(`${specPath}.${backupTime}`, backupContents, 'utf8'); // write backup
-      console.log('Backup the exisiting file to', `${specPath}.${backupTime}`);
+      console.info('Backup the exisiting file to', `${specPath}.${backupTime}`);
     }
   }
 };
 
-function writeGenerated (generated, options) {
-  const specPath = path.resolve(this.tsPath.replace(/\.ts$/, '.spec.ts'));
-  generated = generated.replace(/\r\n/g, '\n');
-
-  const specFileExists = fs.existsSync(specPath);
-  
-  if (options.spec) {
-    if (specFileExists) {
-      if (options.force) {
-        backupExistingFile(specPath, generated);
-        writeToSpecFile(specPath, generated);
-      } else {
-        console.error('\x1b[33m%s\x1b[0m', `ERROR!, ${specPath} already exists.`);
-        process.stdout.write(generated);
-      }
-    } else {
-      backupExistingFile(specPath, generated);
-      writeToSpecFile(specPath, generated);
-    }
-  } else {
-    process.stdout.write(generated);
-  }
-}
- 
 const CommonGenFunctions = {
   getKlass,
   getImports,
@@ -349,8 +325,7 @@ const CommonGenFunctions = {
   getComponentProviderMocks,
   getDirectiveSelector,
 
-  getGenerated,
-  writeGenerated
+  getGenerated
 };
 
 module.exports = CommonGenFunctions;

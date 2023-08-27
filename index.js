@@ -1,23 +1,59 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const path = require('path'); // eslint-disable-line
 const ts = require('typescript');
-const glob = require('glob');
-
 const Util = require('./src/util.js');
 const FuncTestGen = require('./src/func-test-gen.js');
-
 const ComponentTestGen = require('./src/component/component-test-gen.js');
 const DirectiveTestGen = require('./src/directive/directive-test-gen.js');
 const InjectableTestGen = require('./src/injectable/injectable-test-gen.js');
 const PipeTestGen = require('./src/pipe/pipe-test-gen.js');
 const ClassTestGen = require('./src/class/class-test-gen.js');
 
-module.exports = function(tsFile, config) {
+/**
+ * Returns generated unit test contents from the given typescript 
+ * 
+ * @param {String} typescript 
+ * @param {Object} config 
+ *    framework: 'jest' | 'karma',
+ *    tsPath: string,  // e.g. './my-component.component.ts'
+ *    templates: {
+ *      klass: string,
+ *      component: string,
+ *      directive: string,
+ *      injectable: string,
+ *      pipe: string
+ *    },
+ *    directives: [ // necessary directives used for a component test
+ *      'my-custom-directive' 
+ *    ], 
+ *    pipes: [ // necessary pipes used for a component test
+ *      'translate', 'phoneNumber', 'safeHtml'
+ *    ],
+ *    replacements: [ // when convert to JS, some codes need to be replaced to work 
+ *      { from: '^\\S+\\.define\\(.*\\);', to: ''} // some commands causes error
+ *    ],
+ *    // when constructor typs is as following, create a mock class with this properties
+ *    // e.g. @Injectable() MockElementRef { nativeElement = {}; }
+ *    providerMocks: {
+ *      ElementRef: ['nativeElement = {};'],
+ *      Router: ['navigate() {};'],
+ *      Document: ['querySelector() {};'],
+ *      HttpClient: ['post() {};'],
+ *      TranslateService: ['translate() {};'],
+ *      EncryptionService: [],
+ *    }
+ * }
+ */
+module.exports = function(typescript, config) {
   try {
-    const testGenerator = getTestGenerator(tsFile, config);
-    const typescript = fs.readFileSync(path.resolve(tsFile), 'utf8');
     const angularType = Util.getAngularType(typescript).toLowerCase();
+    config.tsPath ||= `./my-${angularType}.${angularType}.ts`;
+    const testGenerator = 
+      angularType === 'component' ? new ComponentTestGen(typescript, config) :
+        angularType === 'directive' ? new DirectiveTestGen(typescript, config) :
+          angularType === 'service' ? new InjectableTestGen(typescript, config) :
+            angularType === 'pipe' ? new PipeTestGen(typescript, config) :
+              new ClassTestGen(typescript, config);
+
     const {ejsData} = testGenerator.getData();
 
     ejsData.config = config;
@@ -64,12 +100,10 @@ module.exports = function(tsFile, config) {
       }
     });
 
-    const generated = testGenerator.getGenerated(ejsData);
-    if (generated) {
-      testGenerator.writeGenerated(generated, config);
-    }
+    const generated = 
+      testGenerator.getGenerated(ejsData) + errors.join('\n');
 
-    errors.forEach( e => console.error(e) );
+    return generated;
   } catch (e) {
     console.error(e);
     process.exit(1);
@@ -117,28 +151,15 @@ function getFuncMockData (Klass, funcName, funcType) {
   };
   funcTestGen.getExpressionStatements().forEach((expr, ndx) => {
     const code = funcTestGen.classCode.substring(expr.start, expr.end);
-    Util.DEBUG && console.log('  *** EXPRESSION ***', ndx, code.replace(/\n+/g, '').replace(/\s+/g, ' '));
+    Util.DEBUG && console.debug('  *** EXPRESSION ***', ndx, code.replace(/\n+/g, '').replace(/\s+/g, ' '));
     funcTestGen.setMockData(expr, funcMockData);
   });
 
   return funcMockData;
 }
 
-function getTestGenerator (tsPath, config) {
-  const typescript = fs.readFileSync(path.resolve(tsPath), 'utf8');
-  const angularType = Util.getAngularType(typescript).toLowerCase();
-  const testGenerator = /* eslint-disable */
-    angularType === 'component' ? new ComponentTestGen(tsPath, config) :
-    angularType === 'directive' ? new DirectiveTestGen(tsPath, config) :
-    angularType === 'service' ? new InjectableTestGen(tsPath, config) :
-    angularType === 'pipe' ? new PipeTestGen(tsPath, config) :
-    new ClassTestGen(tsPath, config); /* eslint-enable */
-  return testGenerator;
-}
-
 function getFuncTest(Klass, funcName, funcType, angularType) {
-  Util.DEBUG &&
-    console.log('\x1b[36m%s\x1b[0m', `\nPROCESSING #${funcName}`);
+  Util.DEBUG && console.debug('\x1b[36m%s\x1b[0m', `\nPROCESSING #${funcName}`);
 
   const funcMockData = getFuncMockData(Klass, funcName, funcType);
   const [allFuncMockJS, asserts] = Util.getFuncMockJS(funcMockData, angularType);

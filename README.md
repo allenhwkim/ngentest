@@ -68,15 +68,6 @@ You can override configuration by creating a file named as `ngentest.config.js` 
     }
     ```
 
-  * **includeMatch**: When ngentest runs with a directory, include only these files. e.g.,
-    ```javascript
-    includeMatch: [/(component|directive|pipe|service).ts/],
-    ````
-  
-  * **excludeMatch**: When ngentest runs with a directory, exclude these files. e.g., 
-    ```javascript
-    excludeMatch: [/.*module.ts$/]
-    ```
   ### Full Example (https://github.com/allenhwkim/ngentest/blob/master/ngentest.config.js)
   ```javascript
   module.exports = {
@@ -109,11 +100,7 @@ You can override configuration by creating a file named as `ngentest.config.js` 
       HttpClient: ['post() {};'],
       TranslateService: ['translate() {};'],
       EncryptionService: [],
-    },
-    // when ngentest runs with a directory, include only these files
-    includeMatch: [/(component|directive|pipe|service).ts/],
-    // when ngentest runs with a directory, exclude these files
-    excludeMatch: []
+    }
   }
   ```
 

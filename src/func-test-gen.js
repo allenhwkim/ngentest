@@ -51,7 +51,7 @@ class FuncTestGen {
   setMockData (node, mockData, returnValue) { // node: ExpressionStatement
     if (!node) return;
 
-    Util.DEBUG && console.log('    *** EXPRESSION ' + node.type + ' ***', this.getCode(node));
+    Util.DEBUG && console.debug('    *** EXPRESSION ' + node.type + ' ***', this.getCode(node));
     if ([
       'BreakStatement',
       'Identifier',
@@ -251,7 +251,7 @@ class FuncTestGen {
       obj = Util.getObjectFromExpression(code, returns);
       [one, two] = code.split('.'); // this.prop
     }
-    Util.DEBUG && console.log('      ** setPropsOrParams', { one, two, code });
+    Util.DEBUG && console.debug('      ** setPropsOrParams', { one, two, code });
 
     const variableExpression = code.replace(/\s+/g,'').replace(/\(.*\)/g,'');
     const mapKey = (variableExpression.match(/(this\.)?[a-zA-Z0-9_\$]+/) || [])[0]; // foo or this.foo

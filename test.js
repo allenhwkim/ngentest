@@ -28,7 +28,7 @@ srcFiles.forEach(filePath => {
   const expected = ('' + fs.readFileSync(filePath.replace('.ts', '.spec.ts')))
     .replace(/\r\n/g, '\n');
   if (output === expected) {
-    console.log('passed check', filePath);
+    console.info('passed check', filePath);
   } else {
     fs.writeFileSync(filePath + '.before.txt', expected);
     fs.writeFileSync(filePath + '.after.txt', output);
