@@ -152,12 +152,6 @@ function getKlass(typescript, config) {
     }
   });
 
-  // console.log('-----------------replacedTypescript--------------------');
-  // console.log(replacedTypescript);
-  // console.log('-----------------result.outputText --------------------');
-  // console.log(result.outputText);
-  // console.log('-------------------------------------');
-
   let klassText = result.outputText
     .replace(/super\(.*\);/gm, '') // remove inheritance code.
     .replace(/super\./gm, 'this.'); // change inheritance call to this call
@@ -165,10 +159,6 @@ function getKlass(typescript, config) {
     klassText.match(/(class .*?{.*});?\n.*?__decorate/ms)?.[1] || /* with decorators */
     klassText.match(/(class .*?{.*});?$/ms)?.[1] || /* generic */
     klassText;
-
-  // console.log('---------------- klassText ---------------------');
-  // console.log(klassText);
-  // console.log('-------------------------------------');
 
   const Klass = new Function(`return ${klassText}`)();
   return Klass;
