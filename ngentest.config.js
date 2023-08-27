@@ -18,7 +18,7 @@ module.exports = {
   },
   // necessary directives used for a component test
   directives: [
-    'oneviewPermitted'
+    'oneviewPermitted' // my custom directive used over application
   ], 
   // necessary pipes used for a component test
   pipes: [

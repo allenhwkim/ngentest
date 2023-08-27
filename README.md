@@ -90,7 +90,7 @@ You can override configuration by creating a file named as `ngentest.config.js` 
     },
     // necessary directives used for a component test
     directives: [
-      'oneviewPermitted'
+      'oneviewPermitted' // my custom directive used over application
     ], 
     // necessary pipes used for a component test
     pipes: [
