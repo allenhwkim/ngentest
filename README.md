@@ -172,3 +172,4 @@ $ ./cli.js examples/example.component.ts
 // @ts-nocheck
 ...
 ```
+
