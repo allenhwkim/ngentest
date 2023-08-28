@@ -10,9 +10,9 @@ import { Component, LOCALE_ID } from '@angular/core';
 import { Example2Component } from './example2.component';
 import { FormBuilder } from '@angular/forms';
 
-@Directive({ selector: '[oneviewPermitted]' })
-class OneviewPermittedDirective {
-  @Input() oneviewPermitted;
+@Directive({ selector: '[myCustom]' })
+class MyCustomDirective {
+  @Input() myCustom;
 }
 
 @Pipe({name: 'translate'})
@@ -40,7 +40,7 @@ describe('Example2Component', () => {
       declarations: [
         Example2Component,
         TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
-        OneviewPermittedDirective
+        MyCustomDirective
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [

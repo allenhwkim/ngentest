@@ -27,9 +27,9 @@ class MockEncryptionService {
   decrypt = function() {};
 }
 
-@Directive({ selector: '[oneviewPermitted]' })
-class OneviewPermittedDirective {
-  @Input() oneviewPermitted;
+@Directive({ selector: '[myCustom]' })
+class MyCustomDirective {
+  @Input() myCustom;
 }
 
 @Pipe({name: 'translate'})
@@ -57,7 +57,7 @@ describe('TotalDataDetailsComponent', () => {
       declarations: [
         TotalDataDetailsComponent,
         TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
-        OneviewPermittedDirective
+        MyCustomDirective
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [
