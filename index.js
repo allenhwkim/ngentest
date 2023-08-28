@@ -44,7 +44,7 @@ const defaultOptions = require('./ngentest.config');
  *    }
  * }
  */
-module.exports = function(typescript, options) {
+function ngentest(typescript, options) {
   const angularType = Util.getAngularType(typescript).toLowerCase();
   const tsPath = options.tsPath ||= `./my-${angularType}.${angularType}.ts`;
   options = Object.assign({}, defaultOptions, options, {tsPath});
@@ -189,3 +189,5 @@ function getFuncTest(Klass, funcName, funcType, angularType) {
     });
     `;
 }
+
+module.exports = ngentest;
