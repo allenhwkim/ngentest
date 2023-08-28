@@ -16,7 +16,6 @@
     "ngentest": "./cli.js"
   },
   "scripts": {
-    "--build:server": "esbuild api/index.js --platform=node --bundle --outfile=dist/server.js",
     "test": "node --test src/* && node test.js"
   },
   "repository": {
