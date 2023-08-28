@@ -44,15 +44,15 @@ const defaultOptions = require('../ngentest.config');
  *    }
  */
 function ngentest(typescript, options={}) {
-  const Klass = getKlass(typescript, options);
-  const klassName = Klass.prototype.constructor.name;
-  const angularType = Util.getAngularType(typescript).toLowerCase();
   // const tsPath = options.tsPath || `./my-${angularType}.${angularType}.ts`;
   // console.log(klassName, Util.getFilePathAssumed(klassName));
-  const tsPath = options.tsPath || Util.getFilePathAssumed(klassName);
-  options = Object.assign({}, defaultOptions, options, {tsPath});
+  options = Object.assign({}, defaultOptions, options);
+  const Klass = getKlass(typescript, options);
+  const klassName = Klass.prototype.constructor.name;
+  options.tsPath = options.tsPath || Util.getFilePathAssumed(klassName);
   Util.DEBUG && console.debug('  *** options ***', options);
 
+  const angularType = Util.getAngularType(typescript).toLowerCase();
   try {
     const testGenerator = 
       angularType === 'component' ? new ComponentTestGen(typescript, options) :
