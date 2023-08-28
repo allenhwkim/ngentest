@@ -28,7 +28,7 @@ You can override configuration by creating a file named as `ngentest.config.js` 
     e.g., 
     ```javascript
     templates: {
-      klass: myKlassTemplate,
+      klass: myKlassTemplate, 
       component: myComponentTemplate,
       directive: myDirectiveTemplate,
       injectable: myInjectableTemplate, 
@@ -81,7 +81,7 @@ You can override configuration by creating a file named as `ngentest.config.js` 
     },
     // necessary directives used for a component test
     directives: [
-      'oneviewPermitted' // my custom directive used over application
+      // 'myCustomDirective' // my custom directive used over application
     ], 
     // necessary pipes used for a component test
     pipes: [
@@ -147,10 +147,10 @@ passed check examples/example.service.ts
 passed check examples/example.pipe.ts
 passed check examples/example2.pipe.ts
 
-$ ./index.js                    
+$ ./cli.js                    
 Error. invalid typescript file. e.g., Usage $0 <tsFile> [options]
 
-$ ./index.js -h          
+$ ./cii.js -h          
 Usage: index.js <tsFile> [options]
 
 Options:
@@ -167,7 +167,7 @@ Options:
 Examples:
   index.js my.component.ts  generate Angular unit test for my.component.ts
 
-$ ./index.js examples/example.component.ts 
+$ ./cli.js examples/example.component.ts 
 // @ts-nocheck
 ...
 ```

@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 const ts = require('typescript');
-const Util = require('./src/util.js');
-const FuncTestGen = require('./src/func-test-gen.js');
-const ComponentTestGen = require('./src/component/component-test-gen.js');
-const DirectiveTestGen = require('./src/directive/directive-test-gen.js');
-const InjectableTestGen = require('./src/injectable/injectable-test-gen.js');
-const PipeTestGen = require('./src/pipe/pipe-test-gen.js');
-const ClassTestGen = require('./src/class/class-test-gen.js');
-const defaultOptions = require('./ngentest.config');
+const Util = require('./util.js');
+const FuncTestGen = require('./func-test-gen.js');
+const ComponentTestGen = require('./component-test-gen.js');
+const DirectiveTestGen = require('./directive-test-gen.js');
+const InjectableTestGen = require('./injectable-test-gen.js');
+const PipeTestGen = require('./pipe-test-gen.js');
+const ClassTestGen = require('./class-test-gen.js');
+const defaultOptions = require('../ngentest.config');
 
 /**
  * Returns generated unit test code from the given typescript 
@@ -42,7 +42,6 @@ const defaultOptions = require('./ngentest.config');
  *      TranslateService: ['translate() {};'],
  *      EncryptionService: [],
  *    }
- * }
  */
 function ngentest(typescript, options) {
   const angularType = Util.getAngularType(typescript).toLowerCase();

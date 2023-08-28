@@ -11,9 +11,9 @@ import { Example4Component } from './example4.component';
 import { ActivatedRoute } from '@angular/router';
 import { ServiceFive } from '@ngx-serviceFive/core';
 
-@Directive({ selector: '[oneviewPermitted]' })
-class OneviewPermittedDirective {
-  @Input() oneviewPermitted;
+@Directive({ selector: '[myCustom]' })
+class MyCustomDirective {
+  @Input() myCustom;
 }
 
 @Pipe({name: 'translate'})
@@ -41,7 +41,7 @@ describe('Example4Component', () => {
       declarations: [
         Example4Component,
         TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
-        OneviewPermittedDirective
+        MyCustomDirective
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [

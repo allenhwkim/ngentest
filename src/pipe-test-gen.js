@@ -1,14 +1,11 @@
-const path = require('path');
-const fs = require('fs');
+const CommonTestGen = require('./common-test-gen.js');
 
-const CommonTestGen = require('../common-test-gen.js');
-
-class InjectableTestGen {
+class PipeTestGen {
   constructor (typescript, config) {
     this.config = config;
     this.typescript = typescript;
     this.tsPath = config.tsPath;
-    this.template = config.templates.injectable;
+    this.template = config.templates.pipe;
 
     this.klass = CommonTestGen.getKlass.bind(this)();
     this.imports = CommonTestGen.getImports.bind(this)();
@@ -39,7 +36,6 @@ class InjectableTestGen {
 
     return {ejsData};
   }
-
 }
 
-module.exports = InjectableTestGen;
+module.exports = PipeTestGen;

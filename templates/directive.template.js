@@ -1,16 +1,16 @@
-// @ts-nocheck
+module.exports = `// @ts-nocheck
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, Injectable, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { By } from '@angular/platform-browser';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
-<%- importMocks.join('\n') -%>
+<%- importMocks.join('\\n') -%>
 
-<%- providerMocks.mocks.join('\n') %>
+<%- providerMocks.mocks.join('\\n') %>
 
 @Component({
-  template: `
+  template: \`
 <% if (selector.type === 'element') { -%>
   <<%- selector.name -%> <%- inputMocks.html.join(' ') -%> <%- outputMocks.html.join(' ') -%>></<%- selector.name %>>
 <% } else if (selector.type === 'attribute') { -%>
@@ -18,7 +18,7 @@ import { Observable, of as observableOf, throwError } from 'rxjs';
 <% } else if (selector.type === 'class') { -%>
   <div class="<%- selector.name -%>" <%- inputMocks.html.join(' ') -%> <%- outputMocks.html.join(' ') -%>></div>
 <% } -%>
-  `
+  \`
 })
 class DirectiveTestComponent {
 <% inputMocks.js.forEach(function(prop) { -%>
@@ -39,7 +39,7 @@ describe('<%- className %>', () => {
     TestBed.configureTestingModule({
       declarations: [<%- className %>, DirectiveTestComponent],
       providers: [
-        <%- providerMocks.providers.join(',\n        ') %>
+        <%- providerMocks.providers.join(',\\n        ') %>
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     }).compileComponents();
@@ -58,4 +58,4 @@ describe('<%- className %>', () => {
   <%- functionTests[key] -%>
   <% } -%>
 
-});
+});`;

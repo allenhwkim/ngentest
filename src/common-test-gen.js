@@ -1,5 +1,4 @@
 const path = require('path');
-const fs = require('fs');
 const ejs = require('ejs');
 const ts = require('typescript');
 const TypescriptParser = require('./typescript-parser');
@@ -288,22 +287,6 @@ function getGenerated (ejsData) {
   const generated = ejs.render(this.template, ejsData).replace(/\n\s+$/gm, '\n');
   return generated;
 }
-
-function writeToSpecFile (specPath, generated) {
-  fs.writeFileSync(specPath, generated);
-  console.info('Generated unit test to', specPath);
-}
-
-function backupExistingFile (specPath, generated) {
-  if (fs.existsSync(specPath)) {
-    const backupTime = (new Date()).toISOString().replace(/[^\d]/g, '').slice(0, -5);
-    const backupContents = fs.readFileSync(specPath, 'utf8');
-    if (backupContents !== generated) {
-      fs.writeFileSync(`${specPath}.${backupTime}`, backupContents, 'utf8'); // write backup
-      console.info('Backup the exisiting file to', `${specPath}.${backupTime}`);
-    }
-  }
-};
 
 const CommonGenFunctions = {
   getKlass,

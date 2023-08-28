@@ -1,10 +1,10 @@
-// @ts-nocheck
+module.exports = `// @ts-nocheck
 import { async } from '@angular/core/testing';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
-<%- importMocks.join('\n') -%>
+<%- importMocks.join('\\n') -%>
 
-<%- providerMocks.mocks.join('\n') %>
+<%- providerMocks.mocks.join('\\n') %>
 
 describe('<%- className %>', () => {
   let pipe;
@@ -17,4 +17,4 @@ describe('<%- className %>', () => {
   <%- functionTests[key] -%>
   <% } -%>
 
-});
+});`;

@@ -1,5 +1,4 @@
 const jsParser = require('acorn').Parser;
-const path = require('path');
 const indentJs = require('indent.js');
 
 const strFuncRE = /^(slice|trim|substr|replace|split|toLowerCase|toUpperCase|match)$/;

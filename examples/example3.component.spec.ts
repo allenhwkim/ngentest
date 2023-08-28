@@ -31,9 +31,9 @@ class MockServiceOne {}
 @Injectable()
 class MockServiceFour {}
 
-@Directive({ selector: '[oneviewPermitted]' })
-class OneviewPermittedDirective {
-  @Input() oneviewPermitted;
+@Directive({ selector: '[myCustom]' })
+class MyCustomDirective {
+  @Input() myCustom;
 }
 
 @Pipe({name: 'translate'})
@@ -61,7 +61,7 @@ describe('Example3Component', () => {
       declarations: [
         Example3Component,
         TranslatePipe, PhoneNumberPipe, SafeHtmlPipe,
-        OneviewPermittedDirective
+        MyCustomDirective
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [

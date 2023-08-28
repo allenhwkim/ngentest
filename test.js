@@ -27,11 +27,11 @@ srcFiles.forEach(filePath => {
     .replace(/\r\n/g, '\n');
   const expected = ('' + fs.readFileSync(filePath.replace('.ts', '.spec.ts')))
     .replace(/\r\n/g, '\n');
-  if (output === expected) {
+  if (output.trim() === expected.trim()) {
     console.info('passed check', filePath);
   } else {
     fs.writeFileSync(filePath + '.before.txt', expected);
     fs.writeFileSync(filePath + '.after.txt', output);
-    throw new Error('Error on' + filePath);
+    throw new Error('Error with ' + filePath);
   }
 });

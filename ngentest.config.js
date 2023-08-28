@@ -1,15 +1,12 @@
-const fs = require('fs');
-const path = require('path');
-const klassTemplate = fs.readFileSync(path.join(__dirname, 'src', 'class', 'class.template.ts.ejs'), 'utf8');
-const componentTemplate = fs.readFileSync(path.join(__dirname, 'src', 'component', 'component.template.ts.ejs'), 'utf8');
-const directiveTemplate = fs.readFileSync(path.join(__dirname, 'src', 'directive', 'directive.template.ts.ejs'), 'utf8');
-const injectableTemplate = fs.readFileSync(path.join(__dirname, 'src', 'injectable', 'injectable.template.ts.ejs'), 'utf8');
-const pipeTemplate = fs.readFileSync(path.join(__dirname, 'src', 'pipe', 'pipe.template.ts.ejs'), 'utf8');
+const klassTemplate = require('./templates/class.template.js');
+const componentTemplate = require('./templates/component.template.js');
+const directiveTemplate = require('./templates/directive.template.js');
+const injectableTemplate = require('./templates/injectable.template.js');
+const pipeTemplate = require('./templates/pipe.template.js');
 
 module.exports = {
-  // framework: 'karma', // or 'jest'
-  // .spec file EJS templtes
-  templates: {
+  framework: 'jest',
+  templates: { // .spec file EJS templtes. Update this for differnet format
     klass: klassTemplate,
     component: componentTemplate,
     directive: directiveTemplate,
@@ -18,7 +15,7 @@ module.exports = {
   },
   // necessary directives used for a component test
   directives: [
-    'oneviewPermitted' // my custom directive used over application
+    'myCustom' // my custom directive used over application
   ], 
   // necessary pipes used for a component test
   pipes: [

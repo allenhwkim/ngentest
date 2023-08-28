@@ -1,4 +1,4 @@
-// @ts-nocheck
+module.exports = `// @ts-nocheck
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Pipe, PipeTransform, Injectable, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, Directive, Input, Output } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
@@ -6,9 +6,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { Observable, of as observableOf, throwError } from 'rxjs';
 
-<%- importMocks.join('\n') -%>
+<%- importMocks.join('\\n') -%>
 
-<%- providerMocks.mocks.join('\n') %>
+<%- providerMocks.mocks.join('\\n') %>
 
 <% config.directives.forEach(directive => { %>
 @Directive({ selector: '[<%- directive -%>]' })
@@ -38,7 +38,7 @@ describe('<%- className %>', () => {
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [
-        <%- providerMocks.providers.join(',\n        ') %>
+        <%- providerMocks.providers.join(',\\n        ') %>
       ]
     }).overrideComponent(<%- className %>, {
     <% componentProviderMocks.forEach(mock => { %>
@@ -66,4 +66,4 @@ describe('<%- className %>', () => {
   <%- functionTests[key] -%>
   <% } %>
   
-});
+});`;
