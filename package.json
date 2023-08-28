@@ -46,6 +46,7 @@
   },
   "devDependencies": {
     "esbuild": "^0.19.2",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "uuid": "^9.0.0"
   }
 }
