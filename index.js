@@ -42,7 +42,6 @@ const defaultOptions = require('./ngentest.config');
  *      TranslateService: ['translate() {};'],
  *      EncryptionService: [],
  *    }
- * }
  */
 function ngentest(typescript, options) {
   const angularType = Util.getAngularType(typescript).toLowerCase();
