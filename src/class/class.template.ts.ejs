@@ -10,7 +10,7 @@ describe('<%- className %>', () => {
   <%- providerMocks.mocks.join('\n') %>
 
   beforeEach(() => {
-    obj = new <%- className %>(<%- ctorParamJs %>);
+    obj = new <%- className %>(<%- constructorParamJs %>);
   });
 
   <% for(var key in accessorTests) { %>

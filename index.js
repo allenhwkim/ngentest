@@ -61,8 +61,7 @@ function ngentest(typescript, options) {
     const {ejsData} = testGenerator.getData();
 
     ejsData.config = options;
-    // mockMetaData is set after each statement is being analyzed from getFuncMockMetaData
-    ejsData.ctorParamJs; // declarition only, will be set from mockData
+    ejsData.constructorParamJs; // declarition only, will be set from mockData
     ejsData.providerMocks; //  declarition only, will be set from mockData
     ejsData.accessorTests = {}; //  declarition only, will be set from mockData
     ejsData.functionTests = {}; //  declarition only, will be set from mockData
@@ -70,14 +69,15 @@ function ngentest(typescript, options) {
     const Klass = getKlass(typescript, options);
 
     Util.DEBUG &&
-      console.warn('\x1b[36m%s\x1b[0m', `PROCESSING ${Klass.ctor && Klass.ctor.name} constructor`);
-    const ctorMockData = getFuncMockMetaData(Klass, 'constructor', 'constructor');
+      console.warn('\x1b[36m%s\x1b[0m', `PROCESSING ${Klass.prototype?.contructor?.name} constructor`);
+    
+    /* process constructor */
+    const constructorMockData = getFuncMockData(Klass, 'constructor', 'constructor');
+    const constructorParamJs = Util.getFuncParamJS(constructorMockData.params);
+    ejsData.constructorParamJs = Util.indent(constructorParamJs, ' '.repeat(6)).trim();
+    ejsData.providerMocks = testGenerator.getProviderMocks(constructorMockData.params);
 
-    const ctorParamJs = Util.getFuncParamJS(ctorMockData.params);
-    ejsData.ctorParamJs = Util.indent(ctorParamJs, ' '.repeat(6)).trim();
-    ejsData.providerMocks = testGenerator.getProviderMocks(ctorMockData.params);
-
-    const errors = [];
+    /* process getters and setters */
     testGenerator.klassSetters.forEach(setter => {
       const setterName = setter.node.name.escapedText;
       ejsData.accessorTests[`${setterName} SetterDeclaration`] =
@@ -89,6 +89,8 @@ function ngentest(typescript, options) {
         Util.indent(getFuncTest(Klass, getterName, 'get', angularType), '  ');
     });
 
+    /* process class methods */
+    const errors = [];
     testGenerator.klassMethods.forEach(method => {
       const methodName = method.node.name.escapedText;
       try {
@@ -148,7 +150,7 @@ function getKlass(typescript, options) {
 function getFuncTest(Klass, funcName, funcType, angularType) {
   Util.DEBUG && console.debug('\x1b[36m%s\x1b[0m', `\nPROCESSING #${funcName}`);
 
-  const funcMockData = getFuncMockMetaData(Klass, funcName, funcType);
+  const funcMockData = getFuncMockData(Klass, funcName, funcType);
   const [allFuncMockJS, asserts] = Util.getFuncMockJS(funcMockData, angularType);
   const funcMockJS = [...new Set(allFuncMockJS)];
   const funcParamJS = Util.getFuncParamJS(funcMockData.params);
@@ -173,9 +175,9 @@ function getFuncTest(Klass, funcName, funcType, angularType) {
     `;
 }
 
-function getFuncMockMetaData (Klass, funcName, funcType) {
+function getFuncMockData (Klass, funcName, funcType) {
   const funcTestGen = new FuncTestGen(Klass, funcName, funcType);
-  const funcMockMetaData = {
+  const funcMockData = {
     isAsync: funcTestGen.isAsync,
     props: {},
     params: funcTestGen.getInitialParameters(),
@@ -185,10 +187,10 @@ function getFuncMockMetaData (Klass, funcName, funcType) {
   funcTestGen.getExpressionStatements().forEach((expr, ndx) => {
     const code = funcTestGen.classCode.substring(expr.start, expr.end);
     Util.DEBUG && console.debug('  *** EXPRESSION ***', ndx, code.replace(/\n+/g, '').replace(/\s+/g, ' '));
-    funcTestGen.setMockData(expr, funcMockMetaData);
+    funcTestGen.setMockData(expr, funcMockData);
   });
 
-  return funcMockMetaData;
+  return funcMockData;
 }
 
 

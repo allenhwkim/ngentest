@@ -11,7 +11,7 @@ describe('<%- className %>', () => {
   let service;
 
   beforeEach(() => {
-    service = new <%- className %>(<%- ctorParamJs %>);
+    service = new <%- className %>(<%- constructorParamJs %>);
   });
 
   <% for(var key in functionTests) { -%>

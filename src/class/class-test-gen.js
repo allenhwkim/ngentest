@@ -30,7 +30,7 @@ class ClassTestGen {
       outpuMocks: CommonTestGen.getOutputMocks.bind(this)(),
       componentProviderMocks: CommonTestGen.getComponentProviderMocks.bind(this)(),
 
-      ctorParamJs: undefined, // declarition only, will be set from mockData
+      constructorParamJs: undefined, // declarition only, will be set from mockData
       providerMocks: undefined, //  declarition only, will be set from mockData
       accessorTests: undefined, //  declarition only, will be set from mockData
       functionTests: undefined, //  declarition only, will be set from mockData

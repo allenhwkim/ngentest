@@ -10,7 +10,7 @@ describe('<%- className %>', () => {
   let pipe;
 
   beforeEach(() => {
-    pipe = new <%- className %>(<%- ctorParamJs %>);
+    pipe = new <%- className %>(<%- constructorParamJs %>);
   });
 
   <% for(var key in functionTests) { -%>
