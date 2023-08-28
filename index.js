@@ -7,12 +7,13 @@ const DirectiveTestGen = require('./src/directive/directive-test-gen.js');
 const InjectableTestGen = require('./src/injectable/injectable-test-gen.js');
 const PipeTestGen = require('./src/pipe/pipe-test-gen.js');
 const ClassTestGen = require('./src/class/class-test-gen.js');
+const defaultOptions = require('./ngentest.config');
 
 /**
- * Returns generated unit test contents from the given typescript 
+ * Returns generated unit test code from the given typescript 
  * 
  * @param {String} typescript 
- * @param {Object} config 
+ * @param {Object} options 
  *    framework: 'jest' | 'karma',
  *    tsPath: string,  // e.g. './my-component.component.ts'
  *    templates: {
@@ -43,27 +44,30 @@ const ClassTestGen = require('./src/class/class-test-gen.js');
  *    }
  * }
  */
-module.exports = function(typescript, config) {
+module.exports = function(typescript, options) {
+  const angularType = Util.getAngularType(typescript).toLowerCase();
+  const tsPath = options.tsPath ||= `./my-${angularType}.${angularType}.ts`;
+  options = Object.assign({}, defaultOptions, options, {tsPath});
+  Util.DEBUG && console.debug('  *** options ***', options);
+
   try {
-    const angularType = Util.getAngularType(typescript).toLowerCase();
-    config.tsPath ||= `./my-${angularType}.${angularType}.ts`;
     const testGenerator = 
-      angularType === 'component' ? new ComponentTestGen(typescript, config) :
-        angularType === 'directive' ? new DirectiveTestGen(typescript, config) :
-          angularType === 'service' ? new InjectableTestGen(typescript, config) :
-            angularType === 'pipe' ? new PipeTestGen(typescript, config) :
-              new ClassTestGen(typescript, config);
+      angularType === 'component' ? new ComponentTestGen(typescript, options) :
+        angularType === 'directive' ? new DirectiveTestGen(typescript, options) :
+          angularType === 'service' ? new InjectableTestGen(typescript, options) :
+            angularType === 'pipe' ? new PipeTestGen(typescript, options) :
+              new ClassTestGen(typescript, options);
 
     const {ejsData} = testGenerator.getData();
 
-    ejsData.config = config;
+    ejsData.config = options;
     // mockData is set after each statement is being analyzed from getFuncMockData
     ejsData.ctorParamJs; // declarition only, will be set from mockData
     ejsData.providerMocks; //  declarition only, will be set from mockData
     ejsData.accessorTests = {}; //  declarition only, will be set from mockData
     ejsData.functionTests = {}; //  declarition only, will be set from mockData
 
-    const Klass = getKlass(typescript, config);
+    const Klass = getKlass(typescript, options);
 
     Util.DEBUG &&
       console.warn('\x1b[36m%s\x1b[0m', `PROCESSING ${Klass.ctor && Klass.ctor.name} constructor`);
@@ -103,19 +107,19 @@ module.exports = function(typescript, config) {
     const generated = 
       testGenerator.getGenerated(ejsData) + errors.join('\n');
 
-    return generated;
+    return generated.replace(/\r\n/g, '\n'); /* remove blank lines */
   } catch (e) {
     console.error(e);
     process.exit(1);
   }
 }
 
-function getKlass(typescript, config) {
+function getKlass(typescript, options) {
   let replacedTypescript = 
     typescript.match(/class .*?{.*}$/ms)[0]
       .replace(/\s+extends\s\S+ {/gm, ' extends Object {') // rchange inheritance to an Object
 
-  config.replacements.forEach( ({from,to}) => {
+  options.replacements.forEach( ({from,to}) => {
     replacedTypescript = replacedTypescript.replace(new RegExp(from, 'gm'), to);
   })
 

@@ -7,8 +7,11 @@ const arrFuncRE = /^(forEach|map|reduce|slice|filter)$/;
 const obsFuncRE = /^(subscribe|pipe|post|put)$/;
 
 class Util {
-  static get DEBUG () { return !!Util.__debug; }
-  static set DEBUG (bool) { Util.__debug = bool; }
+  static get DEBUG() { return !!Util.__debug; }
+  static set DEBUG(val) { Util.__debug = val; }
+
+  static get FRAMEWORK() { return !!Util.__framework || 'jest'; }
+  static set FRAMEWORK(val) { Util.__framework = val; }
 
   static getCode(node, code) {
     return code.substring(node.start, node.end);
@@ -42,14 +45,6 @@ class Util {
       typescript.match(/^\s*@Directive\s*\(/m) ? 'directive' :
       typescript.match(/^\s*@Injectable\s*\(/m) ? 'service' :
       typescript.match(/^\s*@Pipe\s*\(/m) ? 'pipe' : 'obj'; /* eslint-enable */
-  }
-
-  static getClassName (tsPath) {
-    return path.basename(tsPath)
-      .replace(/\.[a-z]+$/, '') // remove extension
-      .split(/[^a-z0-9]/i) // each word
-      .map(el => el[0].toUpperCase() + el.slice(1)) // capitalize 1st ch.
-      .join('');
   }
 
   static indent (str, prefix = '') {

@@ -93,16 +93,12 @@ function getKlassMethods() { return __toArray(this.klass.get('MethodDeclaration'
 
 function getKlass() {
   const parsed = new TypescriptParser(this.typescript);
-  const fileBasedKlassName = Util.getClassName(this.tsPath);
   
   const klassDeclarations = __toArray(parsed.rootNode.get('ClassDeclaration'));
-  const klass =
-    klassDeclarations.find(decl => decl.node.name.escapedText === fileBasedKlassName) ||
-    klassDeclarations[0];
+  const klass = klassDeclarations[0];
 
   if (!klass) {
-    throw new Error(`Error:TypeScriptParser Could not find ` +
-      `${fileBasedKlassName || 'a class'} from ${this.tsPath}`);
+    throw new Error(`Error:there is no class in typescript source`);
   }
 
   return klass;

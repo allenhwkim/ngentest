@@ -1,12 +1,10 @@
 #!/usr/bin/env node
 const fs = require('fs');
-const path = require('path'); // eslint-disable-line
+const path = require('path'); 
 const yargs = require('yargs');
 
-const config = require('./ngentest.config');
 const Util = require('./src/util.js');
 const ngentest = require('./index.js');
-const ts = require('typescript');
 
 const argv = yargs.usage('Usage: $0 <tsFile> [options]')
   .options({
@@ -24,33 +22,25 @@ const argv = yargs.usage('Usage: $0 <tsFile> [options]')
   .help('h')
   .argv;
 
-if (argv.config) {
-  if (fs.existsSync(path.resolve(argv.config))) {
-    const userConfig = require(path.resolve(argv.config));
-    for (var key in userConfig) {
-      config[key] = userConfig[key];
-    }
-  } else {
-    console.error(`ERROR: ${argv.config} not found`);
-    exit(1);
-  }
-}
-
-Util.DEBUG = argv.verbose;
-Util.DEBUG && console.debug('  *** config ***', config);
-Util.FRAMEWORK = config.framework || argv.framework;
-
-const tsFilePath = argv._[0]?.replace(/\.spec\.ts$/, '.ts');
-if (!tsFilePath || !(tsFilePath && fs.existsSync(tsFilePath))) {
+const tsPath = argv._[0];
+if (!tsPath || !(tsPath && fs.existsSync(tsPath))) {
   console.error('Error. invalid typescript file. e.g., Usage $0 <tsFile> [options]');
   process.exit(1);
 }
 
-const options = Object.assign({}, config, {tsPath: tsFilePath});
-const typescript = fs.readFileSync(path.resolve(tsFilePath), 'utf8');
-const generated = ngentest(typescript, options).replace(/\r\n/g, '\n');
+/* user config from config files */
+const options = argv.config ? require(path.resolve(argv.config)) : {};
 
-if (argv.spec) {
+/* global DEBUG / FRAMEWORK setting*/
+Util.DEBUG = argv.verbose;
+Util.FRAMEWORK = argv.framework || options.framework;
+
+/* read tsFile and generate unit test */
+const typescript = fs.readFileSync(path.resolve(tsPath), 'utf8');
+const generated = ngentest(typescript, {...options, tsPath});
+
+/* write unit test file out */
+if (argv.spec) { /* write to .spec.ts */
   const specPath = path.resolve(tsFilePath.replace(/\.ts$/, '.spec.ts'));
   const specFileExists = fs.existsSync(specPath);
   if (specFileExists) {
@@ -65,6 +55,6 @@ if (argv.spec) {
     backupExistingFile(specPath, generated);
     writeToSpecFile(specPath, generated);
   }
-} else {
+} else { /* write to console */
   process.stdout.write(generated);
 }
