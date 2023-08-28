@@ -16,7 +16,7 @@
     "ngentest": "./cli.js"
   },
   "scripts": {
-    "build:server": "esbuild server/index.js",
+    "build:server": "esbuild server/index.js --platform=node --bundle --outfile=dist/server.js",
     "test": "node --test src/* && node test.js"
   },
   "repository": {
@@ -43,5 +43,9 @@
     "indent.js": "^0.3.4",
     "typescript": "^3.7.2",
     "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "esbuild": "^0.19.2",
+    "express": "^4.18.2"
   }
 }
