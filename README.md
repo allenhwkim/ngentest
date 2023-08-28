@@ -14,6 +14,7 @@ https://github.com/allenhwkim/ngentest/tree/master/examples
 
 ## Config
 You can override configuration by creating a file named as `ngentest.config.js` in your application directory and running ngentest from that directory. You can also provide a configuration file using `-c my.config.js`.
+If you want to use your own config, refer [the default config file](https://github.com/allenhwkim/ngentest/blob/main/ngentest.config.js)
 
   * **framework**: `jest` or `karma`. The default is `jest`. This value determines how function mock and assert is to be done.
 
