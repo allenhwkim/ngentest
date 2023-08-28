@@ -1,6 +1,3 @@
-const path = require('path');
-const fs = require('fs');
-
 const CommonTestGen = require('../common-test-gen.js');
 
 class ComponentTestGen {

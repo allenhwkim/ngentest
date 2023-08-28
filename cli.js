@@ -45,15 +45,15 @@ if (argv.spec) { /* write to .spec.ts */
   const specFileExists = fs.existsSync(specPath);
   if (specFileExists) {
     if (argv.force) {
-      backupExistingFile(specPath, generated);
-      writeToSpecFile(specPath, generated);
+      fs.writeFileSync(specPath, generated);
+      console.info('Generated unit test to', specPath);
     } else {
       console.error('\x1b[33m%s\x1b[0m', `ERROR!, ${specPath} already exists.`);
       process.stdout.write(generated);
     }
   } else {
-    backupExistingFile(specPath, generated);
-    writeToSpecFile(specPath, generated);
+    fs.writeFileSync(specPath, generated);
+    console.info('Generated unit test to', specPath);
   }
 } else { /* write to console */
   process.stdout.write(generated);
