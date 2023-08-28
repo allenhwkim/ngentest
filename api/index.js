@@ -4,7 +4,8 @@
  *   "rewrites": [{ "source": "/api/(.*)", "destination": "/api" }]
  * }
  */
-const app = require('express')();
+const express = require('express');
+const app = express();
 const ngentest = require('../src/index.js');
 const package = require('../package.json');
 
