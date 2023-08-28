@@ -16,6 +16,7 @@
     "ngentest": "./cli.js"
   },
   "scripts": {
+    "start:server": "vercel dev",
     "test": "node --test src/* && node test.js"
   },
   "repository": {
@@ -46,6 +47,7 @@
   "devDependencies": {
     "esbuild": "^0.19.2",
     "express": "^4.18.2",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "vercel": "^32.1.0"
   }
 }

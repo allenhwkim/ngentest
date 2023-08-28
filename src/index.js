@@ -45,7 +45,7 @@ const defaultOptions = require('../ngentest.config');
  */
 function ngentest(typescript, options={}) {
   const angularType = Util.getAngularType(typescript).toLowerCase();
-  const tsPath = options.tsPath ||= `./my-${angularType}.${angularType}.ts`;
+  const tsPath = options.tsPath || `./my-${angularType}.${angularType}.ts`;
   options = Object.assign({}, defaultOptions, options, {tsPath});
   Util.DEBUG && console.debug('  *** options ***', options);
 
