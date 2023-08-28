@@ -61,7 +61,7 @@ function ngentest(typescript, options) {
     const {ejsData} = testGenerator.getData();
 
     ejsData.config = options;
-    // mockData is set after each statement is being analyzed from getFuncMockData
+    // mockMetaData is set after each statement is being analyzed from getFuncMockMetaData
     ejsData.ctorParamJs; // declarition only, will be set from mockData
     ejsData.providerMocks; //  declarition only, will be set from mockData
     ejsData.accessorTests = {}; //  declarition only, will be set from mockData
@@ -71,7 +71,7 @@ function ngentest(typescript, options) {
 
     Util.DEBUG &&
       console.warn('\x1b[36m%s\x1b[0m', `PROCESSING ${Klass.ctor && Klass.ctor.name} constructor`);
-    const ctorMockData = getFuncMockData(Klass, 'constructor', 'constructor');
+    const ctorMockData = getFuncMockMetaData(Klass, 'constructor', 'constructor');
 
     const ctorParamJs = Util.getFuncParamJS(ctorMockData.params);
     ejsData.ctorParamJs = Util.indent(ctorParamJs, ' '.repeat(6)).trim();
@@ -114,6 +114,7 @@ function ngentest(typescript, options) {
   }
 }
 
+/* returns class object from typescript */
 function getKlass(typescript, options) {
   let replacedTypescript = 
     typescript.match(/class .*?{.*}$/ms)[0]
@@ -144,28 +145,10 @@ function getKlass(typescript, options) {
   return Klass;
 }
 
-function getFuncMockData (Klass, funcName, funcType) {
-  const funcTestGen = new FuncTestGen(Klass, funcName, funcType);
-  const funcMockData = {
-    isAsync: funcTestGen.isAsync,
-    props: {},
-    params: funcTestGen.getInitialParameters(),
-    map: {},
-    globals: {}
-  };
-  funcTestGen.getExpressionStatements().forEach((expr, ndx) => {
-    const code = funcTestGen.classCode.substring(expr.start, expr.end);
-    Util.DEBUG && console.debug('  *** EXPRESSION ***', ndx, code.replace(/\n+/g, '').replace(/\s+/g, ' '));
-    funcTestGen.setMockData(expr, funcMockData);
-  });
-
-  return funcMockData;
-}
-
 function getFuncTest(Klass, funcName, funcType, angularType) {
   Util.DEBUG && console.debug('\x1b[36m%s\x1b[0m', `\nPROCESSING #${funcName}`);
 
-  const funcMockData = getFuncMockData(Klass, funcName, funcType);
+  const funcMockData = getFuncMockMetaData(Klass, funcName, funcType);
   const [allFuncMockJS, asserts] = Util.getFuncMockJS(funcMockData, angularType);
   const funcMockJS = [...new Set(allFuncMockJS)];
   const funcParamJS = Util.getFuncParamJS(funcMockData.params);
@@ -189,5 +172,24 @@ function getFuncTest(Klass, funcName, funcType, angularType) {
     });
     `;
 }
+
+function getFuncMockMetaData (Klass, funcName, funcType) {
+  const funcTestGen = new FuncTestGen(Klass, funcName, funcType);
+  const funcMockMetaData = {
+    isAsync: funcTestGen.isAsync,
+    props: {},
+    params: funcTestGen.getInitialParameters(),
+    map: {},
+    globals: {}
+  };
+  funcTestGen.getExpressionStatements().forEach((expr, ndx) => {
+    const code = funcTestGen.classCode.substring(expr.start, expr.end);
+    Util.DEBUG && console.debug('  *** EXPRESSION ***', ndx, code.replace(/\n+/g, '').replace(/\s+/g, ' '));
+    funcTestGen.setMockData(expr, funcMockMetaData);
+  });
+
+  return funcMockMetaData;
+}
+
 
 module.exports = ngentest;
