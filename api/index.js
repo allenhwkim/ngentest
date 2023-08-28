@@ -14,6 +14,7 @@
  * }
  */
 const app = require('express')();
+const ngnetest = require('../src/index.js');
 
 app.get('/api', (req, res) => {
   res.setHeader('Content-Type', 'text/html');
@@ -22,8 +23,16 @@ app.get('/api', (req, res) => {
 });
 
 app.get('/api/ngentest', (req, res) => {
-  const { slug } = req.params;
-  res.end(`Item: ${slug}`);
+  const typescript = `
+    @Component({
+      selector: 'app-root',
+      template: '<div>Example Component</div>',
+      styles: [''],
+      providers: [FooKlass],
+      x: {foo:1, bar:2}
+    })
+    class X {}`;
+  res.end(ngentest(typescript));
 });
 
 module.exports = app;
