@@ -15,23 +15,23 @@ app.get('/api', (req, res) => {
   res.setHeader('Content-Type', 'text/html');
   res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate');
   res.end(`
-    <h1>Welcome to ngentest@${package.version} on Vercel</h1>
-    <b>Usage Example</b>
-    <pre>
-      fetch('/api/ngentest', {
-        method: 'POST',
-        headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          typescript: 
-            "@Component({selector: 'app-root'})" +
-            "class MyTestComponent {}",
-          options: {
-            tsPath: './my.test.component.ts'
-          } 
-        })
-       }).then(resp => resp.json())
-       .then(resp => console.log(resp.output))
-     </pre>
+<h1>Welcome to ngentest@${package.version} on Vercel</h1>
+<b>Usage Example</b>
+<pre>
+  fetch('/api/ngentest', {
+    method: 'POST',
+    headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      typescript: 
+        "@Component({selector: 'app-root'})" +
+        "class MyTestComponent {}",
+      options: {
+        tsPath: './my.test.component.ts'
+      } 
+    })
+    }).then(resp => resp.json())
+    .then(resp => console.log(resp.output))
+</pre>
   `);
 });
 
