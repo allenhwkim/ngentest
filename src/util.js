@@ -621,16 +621,6 @@ class Util {
     const firstKey = typeof obj === 'object' && Object.keys(obj).filter(k => k !== 'undefined')[0];
     return firstKey || undefined;
   }
-
-  static getFilePathAssumed(klassName) {
-    const ngType = klassName.match(/(Component|Directive|Pipe|Service)$/)?.[0];
-    klassName = klassName.replace(ngType, '');
-    const dasherized = klassName.replace(/[A-Z0-9]/g, function(char, index) {
-        return (index !== 0 ? '-' : '') + char.toLowerCase();
-      }) ;
-
-    return `./${dasherized}${ngType ? '.'+ngType.toLowerCase(): ''}.ts`
-  }
 }
 
 module.exports = Util;
