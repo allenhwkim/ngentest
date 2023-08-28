@@ -15,7 +15,6 @@ const defaultOptions = require('../ngentest.config');
  * @param {String} typescript 
  * @param {Object} options 
  *    framework: 'jest' | 'karma',
- *    tsPath: string,  // e.g. './my-component.component.ts'
  *    templates: {
  *      klass: string,
  *      component: string,
@@ -44,11 +43,12 @@ const defaultOptions = require('../ngentest.config');
  *    }
  */
 function ngentest(typescript, options={}) {
-  const angularType = Util.getAngularType(typescript).toLowerCase();
-  const tsPath = options.tsPath || `./my-${angularType}.${angularType}.ts`;
+  const Klass = getKlass(typescript, options); // e.g. ExampleKlass
+  const tsPath = options.tsPath || Util.getFilePathAssumed(Klass.prototype.constructor.name);
   options = Object.assign({}, defaultOptions, options, {tsPath});
   Util.DEBUG && console.debug('  *** options ***', options);
 
+  const angularType = Util.getAngularType(typescript).toLowerCase();
   try {
     const testGenerator = 
       angularType === 'component' ? new ComponentTestGen(typescript, options) :
@@ -64,8 +64,6 @@ function ngentest(typescript, options={}) {
     ejsData.providerMocks; //  declarition only, will be set from mockData
     ejsData.accessorTests = {}; //  declarition only, will be set from mockData
     ejsData.functionTests = {}; //  declarition only, will be set from mockData
-
-    const Klass = getKlass(typescript, options);
 
     Util.DEBUG &&
       console.warn('\x1b[36m%s\x1b[0m', `PROCESSING ${Klass.prototype?.contructor?.name} constructor`);

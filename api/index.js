@@ -24,11 +24,8 @@ app.get('/api', (req, res) => {
     body: JSON.stringify({
       typescript: 
         "@Component({selector: 'app-root'})" +
-        "class MyTestComponent {}",
-      options: {
-        tsPath: './my.test.component.ts'
-      } 
-    })
+        "class MyTestComponent {}"
+      })
     }).then(resp => resp.json())
     .then(resp => console.log(resp.output))
 </pre>
@@ -51,10 +48,7 @@ app.get('/api', (req, res) => {
  *         providers: [FooKlass],
  *         x: {foo:1, bar:2}
  *       })
- *       class MyTestComponent {}`,
- *       options: { 
- *         tsPath: './my-test.component.ts' 
- *       }
+ *       class MyTestComponent {}`
  *     })
  * }).then(resp => resp.json())
  * .then(resp => console.log(resp))
