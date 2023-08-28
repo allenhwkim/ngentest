@@ -44,8 +44,12 @@ const defaultOptions = require('../ngentest.config');
  *    }
  */
 function ngentest(typescript, options={}) {
+  const Klass = getKlass(typescript, options);
+  const klassName = Klass.prototype.constructor.name;
   const angularType = Util.getAngularType(typescript).toLowerCase();
-  const tsPath = options.tsPath || `./my-${angularType}.${angularType}.ts`;
+  // const tsPath = options.tsPath || `./my-${angularType}.${angularType}.ts`;
+  // console.log(klassName, Util.getFilePathAssumed(klassName));
+  const tsPath = options.tsPath || Util.getFilePathAssumed(klassName);
   options = Object.assign({}, defaultOptions, options, {tsPath});
   Util.DEBUG && console.debug('  *** options ***', options);
 
@@ -65,7 +69,7 @@ function ngentest(typescript, options={}) {
     ejsData.accessorTests = {}; //  declarition only, will be set from mockData
     ejsData.functionTests = {}; //  declarition only, will be set from mockData
 
-    const Klass = getKlass(typescript, options);
+    // const Klass = getKlass(typescript, options);
 
     Util.DEBUG &&
       console.warn('\x1b[36m%s\x1b[0m', `PROCESSING ${Klass.prototype?.contructor?.name} constructor`);
