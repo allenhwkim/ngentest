@@ -31,8 +31,8 @@ app.get('/api/ngentest', (req, res) => {
       providers: [FooKlass],
       x: {foo:1, bar:2}
     })
-    class X {}`;
-  res.end(ngentest(typescript));
+    class MyTestComponent {}`;
+  res.end(ngentest(typescript, {tsPath: './my-test.component.ts'}));
 });
 
 module.exports = app;
