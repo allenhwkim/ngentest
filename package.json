@@ -16,7 +16,7 @@
     "ngentest": "./cli.js"
   },
   "scripts": {
-    "test": "node test.js"
+    "test": "node --test src/* && node test.js"
   },
   "repository": {
     "type": "git",

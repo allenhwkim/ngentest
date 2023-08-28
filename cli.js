@@ -4,7 +4,7 @@ const path = require('path');
 const yargs = require('yargs');
 
 const Util = require('./src/util.js');
-const ngentest = require('./index.js');
+const ngentest = require('./src/index.js');
 
 const argv = yargs.usage('Usage: $0 <tsFile> [options]')
   .options({

@@ -1,8 +1,8 @@
-const klassTemplate = require('./src/class/class.template.js');
-const componentTemplate = require('./src/component/component.template.js');
-const directiveTemplate = require('./src/directive/directive.template.js');
-const injectableTemplate = require('./src/injectable/injectable.template.js');
-const pipeTemplate = require('./src/pipe/pipe.template.js');
+const klassTemplate = require('./templates/class.template.js');
+const componentTemplate = require('./templates/component.template.js');
+const directiveTemplate = require('./templates/directive.template.js');
+const injectableTemplate = require('./templates/injectable.template.js');
+const pipeTemplate = require('./templates/pipe.template.js');
 
 module.exports = {
   framework: 'jest',
