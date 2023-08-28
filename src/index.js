@@ -43,9 +43,9 @@ const defaultOptions = require('../ngentest.config');
  *      EncryptionService: [],
  *    }
  */
-function ngentest(typescript, options) {
+function ngentest(typescript, options={}) {
   const angularType = Util.getAngularType(typescript).toLowerCase();
-  const tsPath = options.tsPath ||= `./my-${angularType}.${angularType}.ts`;
+  const tsPath = options.tsPath || `./my-${angularType}.${angularType}.ts`;
   options = Object.assign({}, defaultOptions, options, {tsPath});
   Util.DEBUG && console.debug('  *** options ***', options);
 
