@@ -15,7 +15,6 @@ const defaultOptions = require('../ngentest.config');
  * @param {String} typescript 
  * @param {Object} options 
  *    framework: 'jest' | 'karma',
- *    tsPath: string,  // e.g. './my-component.component.ts'
  *    templates: {
  *      klass: string,
  *      component: string,
@@ -44,12 +43,12 @@ const defaultOptions = require('../ngentest.config');
  *    }
  */
 function ngentest(typescript, options={}) {
-  // const tsPath = options.tsPath || `./my-${angularType}.${angularType}.ts`;
-  // console.log(klassName, Util.getFilePathAssumed(klassName));
   options = Object.assign({}, defaultOptions, options);
+
   const Klass = getKlass(typescript, options);
   const klassName = Klass.prototype.constructor.name;
   options.tsPath = options.tsPath || Util.getFilePathAssumed(klassName);
+
   Util.DEBUG && console.debug('  *** options ***', options);
 
   const angularType = Util.getAngularType(typescript).toLowerCase();

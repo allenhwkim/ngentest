@@ -22,13 +22,10 @@ app.get('/api', (req, res) => {
     method: 'POST',
     headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
     body: JSON.stringify({
-      typescript: 
-        "@Component({selector: 'app-root'})" +
-        "class MyTestComponent {}",
-      options: {
-        tsPath: './my.test.component.ts'
-      } 
-    })
+        typescript: 
+          "@Component({selector: 'app-root'})" +
+          "class MyTestComponent {}"
+      })
     }).then(resp => resp.json())
     .then(resp => console.log(resp.output))
 </pre>
