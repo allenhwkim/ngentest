@@ -12,8 +12,7 @@ const package = require('../package.json');
 
 app.use(express.json());
 app.use(cors({
-  // origin: ["http://example1.com"]
-  origin: '*',
+  origin: '*', // e.g., ["http://example1.com"]
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
 }));
 
