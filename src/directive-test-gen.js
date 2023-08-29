@@ -5,7 +5,7 @@ class DirectiveTestGen {
     this.config = config;
     this.typescript = typescript;
     this.tsPath = config.tsPath;
-    this.template = config.templates.directive;
+    this.template = (config.templates || config.outputTemplates).directive;
 
     this.klass = CommonTestGen.getKlass.bind(this)();
     this.imports = CommonTestGen.getImports.bind(this)();

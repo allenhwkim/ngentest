@@ -5,7 +5,7 @@ class InjectableTestGen {
     this.config = config;
     this.typescript = typescript;
     this.tsPath = config.tsPath;
-    this.template = config.templates.injectable;
+    this.template = (config.templates || config.outputTemplates).injectable;
 
     this.klass = CommonTestGen.getKlass.bind(this)();
     this.imports = CommonTestGen.getImports.bind(this)();

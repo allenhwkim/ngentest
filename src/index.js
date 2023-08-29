@@ -15,7 +15,7 @@ const defaultOptions = require('../ngentest.config');
  * @param {String} typescript 
  * @param {Object} options 
  *    framework: 'jest' | 'karma',
- *    templates: {
+ *    outputTemplates: {
  *      klass: string,
  *      component: string,
  *      directive: string,
@@ -123,10 +123,6 @@ function getKlass(typescript, options) {
   let replacedTypescript = 
     typescript.match(/class .*?{.*}$/ms)[0]
       .replace(/\s+extends\s\S+ {/gm, ' extends Object {') // rchange inheritance to an Object
-
-  options.replacements.forEach( ({from,to}) => {
-    replacedTypescript = replacedTypescript.replace(new RegExp(from, 'gm'), to);
-  })
 
   const result = ts.transpileModule(replacedTypescript, {
     compilerOptions: {

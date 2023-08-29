@@ -5,7 +5,7 @@ class PipeTestGen {
     this.config = config;
     this.typescript = typescript;
     this.tsPath = config.tsPath;
-    this.template = config.templates.pipe;
+    this.template = (config.templates || config.outputTemplates).pipe;
 
     this.klass = CommonTestGen.getKlass.bind(this)();
     this.imports = CommonTestGen.getImports.bind(this)();

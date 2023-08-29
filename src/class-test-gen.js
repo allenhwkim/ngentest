@@ -5,7 +5,7 @@ class ClassTestGen {
     this.config = config;
     this.tsPath = config.tsPath;
     this.typescript = typescript;
-    this.template = config.templates.klass;
+    this.template = (config.templates || config.outputTemplates).klass;
 
     this.klass = CommonTestGen.getKlass.bind(this)();
     this.imports = CommonTestGen.getImports.bind(this)();

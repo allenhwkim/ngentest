@@ -10,14 +10,14 @@ import { Observable, of as observableOf, throwError } from 'rxjs';
 
 <%- providerMocks.mocks.join('\\n') %>
 
-<% config.directives.forEach(directive => { %>
+<% (config.requiredComponentTestDeclarations.directives || config.directives).forEach(directive => { %>
 @Directive({ selector: '[<%- directive -%>]' })
 class <%- directive.charAt(0).toUpperCase() + directive.slice(1) -%>Directive {
   @Input() <%- directive -%>;
 }
 <% }) -%>
 
-<% config.pipes.forEach(pipe => { %>
+<% (config.requiredComponentTestDeclarations.pipes || config.pipes).forEach(pipe => { %>
 @Pipe({name: '<%- pipe -%>'})
 class <%- pipe.charAt(0).toUpperCase() + pipe.slice(1) -%>Pipe implements PipeTransform {
   transform(value) { return value; }
@@ -33,8 +33,8 @@ describe('<%- className %>', () => {
       imports: [ FormsModule, ReactiveFormsModule ],
       declarations: [
         <%- className %>,
-        <%- config.pipes.map(e => e.charAt(0).toUpperCase() + e.slice(1) + 'Pipe').join(', ') %>,
-        <%- config.directives.map(e => e.charAt(0).toUpperCase() + e.slice(1) + 'Directive').join(', ') %>
+        <%- (config.requiredComponentTestDeclarations.pipes || config.pipes).map(e => e.charAt(0).toUpperCase() + e.slice(1) + 'Pipe').join(', ') %>,
+        <%- (config.requiredComponentTestDeclarations.directives || config.directives).map(e => e.charAt(0).toUpperCase() + e.slice(1) + 'Directive').join(', ') %>
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
       providers: [

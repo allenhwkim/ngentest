@@ -9,8 +9,8 @@ $ npx ngentest my.directive.ts -s # write unit test to my.directive.spec.ts
 $ npx ngentest my.directive.ts -c ../ngentest.config.js # use the given config file.
 ```
 
-To see the source file and generated examples, please take a look at examples directory.
-https://github.com/allenhwkim/ngentest/tree/master/examples
+To see the source file and generated examples, please take a look at `test-examples` directory.
+https://github.com/allenhwkim/ngentest/tree/master/test-examples
 
 ## Config
 You can override configuration by creating a file named as `ngentest.config.js` in your application directory and running ngentest from that directory. You can also provide a configuration file using `-c my.config.js`.
@@ -18,8 +18,7 @@ If you want to use your own config, refer [the default config file](https://gith
 
   * **framework**: `jest` or `karma`. The default is `jest`. This value determines how function mock and assert is to be done.
 
-  * **templates**: template string for each type. Please specify your own template if you want to override
-    the default template. There are five types;
+  * **outputTemplates**: template string for each type. Please specify your own template if you want to override the default template. There are five types;
     * klass: ejs template for an ES6 class without angular decorator.
     * component: ejs template for an Angular component.
     * directive: ejs template for an Angular directive.
@@ -28,7 +27,7 @@ If you want to use your own config, refer [the default config file](https://gith
 
     e.g., 
     ```javascript
-    templates: {
+    outputTemplates: {
       klass: myKlassTemplate, 
       component: myComponentTemplate,
       directive: myDirectiveTemplate,
@@ -73,7 +72,7 @@ If you want to use your own config, refer [the default config file](https://gith
   ```javascript
   module.exports = {
     framework: 'karma', // or 'jest'
-    templates: {
+    outputTemplates: {
       klass: klassTemplate,  // ejs contents read from file
       component: componentTemplate,
       directive: directiveTemplate,
@@ -126,27 +125,31 @@ If you want to use your own config, refer [the default config file](https://gith
 
 ## For Developers: To make it sure it does not break any feature
 
+* `vercel.json` is used to deploy to `https://ngentest.vercel.com/api/ngentest`
+* `api/index.js` is a structure [used by Vercel](https://vercel.com/guides/using-express-with-vercel#standalone-express)
+
+
 ```
 $ npm i
 
 $ npm test
 > ngentest@1.4.4 test
 > node test.js
-passed check examples/example.klass.ts
-passed check examples/example.component.ts
-passed check examples/example2.component.ts
-passed check examples/example3.component.ts
-passed check examples/example4.component.ts
-passed check examples/example5.component.ts
-passed check examples/example6.component.ts
-passed check examples/example7.component.ts
-passed check examples/example8.component.ts
-passed check examples/example9.component.ts
-passed check examples/exampleX.component.ts
-passed check examples/example.directive.ts
-passed check examples/example.service.ts
-passed check examples/example.pipe.ts
-passed check examples/example2.pipe.ts
+passed check test-examples/example.klass.ts
+passed check test-examples/example.component.ts
+passed check test-examples/example2.component.ts
+passed check test-examples/example3.component.ts
+passed check test-examples/example4.component.ts
+passed check test-examples/example5.component.ts
+passed check test-examples/example6.component.ts
+passed check test-examples/example7.component.ts
+passed check test-examples/example8.component.ts
+passed check test-examples/example9.component.ts
+passed check test-examples/exampleX.component.ts
+passed check test-examples/example.directive.ts
+passed check test-examples/example.service.ts
+passed check test-examples/example.pipe.ts
+passed check test-examples/example2.pipe.ts
 
 $ ./cli.js                    
 Error. invalid typescript file. e.g., Usage $0 <tsFile> [options]
@@ -168,7 +171,7 @@ Options:
 Examples:
   index.js my.component.ts  generate Angular unit test for my.component.ts
 
-$ ./cli.js examples/example.component.ts 
+$ ./cli.js test-examples/example.component.ts 
 // @ts-nocheck
 ...
 ```

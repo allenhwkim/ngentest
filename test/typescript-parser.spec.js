@@ -1,6 +1,6 @@
 const { describe, it, beforeEach } = require('node:test');
 const assert = require('assert');
-const Parser = require('./typescript-parser.js');
+const Parser = require('../src/typescript-parser.js');
 
 const typescript = `
   @Component({
