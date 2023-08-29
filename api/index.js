@@ -13,7 +13,8 @@ const package = require('../package.json');
 app.use(express.json());
 app.use(cors({
   // origin: ["http://example1.com"]
-  origin: '*' 
+  origin: '*',
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
 }));
 
 app.get('/api', (req, res) => {
