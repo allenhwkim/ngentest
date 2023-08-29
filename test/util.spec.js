@@ -1,7 +1,7 @@
 const { describe, it, beforeEach } = require('node:test');
 const assert = require('assert');
 const jsParser = require('acorn').Parser;
-const Util = require('../src/util.js');
+const Util = require('../lib/util.js');
 
 describe('Util', () => {
 

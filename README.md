@@ -4,9 +4,26 @@ Angular6,7,8,9,10,11,12,13,14,15,16 Unit Test Generator For Components, Directiv
 ## Install & Run
 ```bash
 $ npm install ngentest -D
+$ npx ngentest -h          
+Usage: index.js <tsFile> [options]
+
+Options:
+      --version     Show version number                                [boolean]
+  -s, --spec        write the spec file along with source file         [boolean]
+  -f, --force       It prints out a new test file, and it does not ask a
+                    question when overwrite spec file                  [boolean]
+  -v, --verbose     log verbose debug messages                         [boolean]
+      --framework   test framework, jest or karma                       [string]
+  -c, --config      The configuration file to load options from
+                                        [string] [default: "ngentest.config.js"]
+  -h                Show help                                          [boolean]
+
+Examples:
+  index.js my.component.ts  generate Angular unit test for my.component.ts
+
 $ npx ngentest my.component.ts 
 $ npx ngentest my.directive.ts -s # write unit test to my.directive.spec.ts
-$ npx ngentest my.directive.ts -c ../ngentest.config.js # use the given config file.
+$ npx ngentest my.directive.ts -c ../ngentest.config.js # use different config file.
 ```
 
 To see the source file and generated examples, please take a look at `test-examples` directory.
@@ -123,56 +140,51 @@ If you want to use your own config, refer [the default config file](https://gith
 
 3. build ejs data from #1 and #2, and generate test code.
 
-## For Developers: To make it sure it does not break any feature
+## For Developers: 
 
-* `vercel.json` is used to deploy to `https://ngentest.vercel.com/api/ngentest`
-* `api/index.js` is a structure [used by Vercel](https://vercel.com/guides/using-express-with-vercel#standalone-express)
+### Directory structure
+* `api` directory:
+  - source code to run this as an API
+  - To run local express server, `node api/express-server.js`
+  - `api/index.js` is a structure [used by Vercel](https://vercel.com/guides/using-express-with-vercel#standalone-express)
 
+* `ejs-template` directory:
+  - default EJS templates for unit test generation
+* `test` directory:
+  - All test files including unit test goes here
+* `cli.js`: 
+  - used as `ngentest` command
+* `ngentest.config.js`: 
+  - The default configuration file used by `cli.js`
+* `vercel.json`: 
+  - Used to deploy to `https://ngentest.vercel.com/api/ngentest`
 
+### To make it sure it does not break any feature
 ```
 $ npm i
 
 $ npm test
-> ngentest@1.4.4 test
-> node test.js
-passed check test-examples/example.klass.ts
-passed check test-examples/example.component.ts
-passed check test-examples/example2.component.ts
-passed check test-examples/example3.component.ts
-passed check test-examples/example4.component.ts
-passed check test-examples/example5.component.ts
-passed check test-examples/example6.component.ts
-passed check test-examples/example7.component.ts
-passed check test-examples/example8.component.ts
-passed check test-examples/example9.component.ts
-passed check test-examples/exampleX.component.ts
-passed check test-examples/example.directive.ts
-passed check test-examples/example.service.ts
-passed check test-examples/example.pipe.ts
-passed check test-examples/example2.pipe.ts
-
-$ ./cli.js                    
-Error. invalid typescript file. e.g., Usage $0 <tsFile> [options]
-
-$ ./cii.js -h          
-Usage: index.js <tsFile> [options]
-
-Options:
-      --version     Show version number                                [boolean]
-  -s, --spec        write the spec file along with source file         [boolean]
-  -f, --force       It prints out a new test file, and it does not ask a
-                    question when overwrite spec file                  [boolean]
-  -v, --verbose     log verbose debug messages                         [boolean]
-      --framework   test framework, jest or karma                       [string]
-  -c, --config      The configuration file to load options from
-                                        [string] [default: "ngentest.config.js"]
-  -h                Show help                                          [boolean]
-
-Examples:
-  index.js my.component.ts  generate Angular unit test for my.component.ts
-
-$ ./cli.js test-examples/example.component.ts 
-// @ts-nocheck
+> ngentest@2.1.1 test
+> node --test test/*.spec.js && node test/index.js
+▶ TypescriptParser
 ...
+▶ Util
+...
+passed check /Users/allenkim/projects/ngentest/test/test-examples/example.klass.ts
+passed check /Users/allenkim/projects/ngentest/test/test-examples/example.component.ts
+passed check /Users/allenkim/projects/ngentest/test/test-examples/example2.component.ts
+passed check /Users/allenkim/projects/ngentest/test/test-examples/example3.component.ts
+passed check /Users/allenkim/projects/ngentest/test/test-examples/example4.component.ts
+passed check /Users/allenkim/projects/ngentest/test/test-examples/example5.component.ts
+passed check /Users/allenkim/projects/ngentest/test/test-examples/example6.component.ts
+passed check /Users/allenkim/projects/ngentest/test/test-examples/example7.component.ts
+passed check /Users/allenkim/projects/ngentest/test/test-examples/example8.component.ts
+passed check /Users/allenkim/projects/ngentest/test/test-examples/example9.component.ts
+passed check /Users/allenkim/projects/ngentest/test/test-examples/exampleX.component.ts
+passed check /Users/allenkim/projects/ngentest/test/test-examples/example.directive.ts
+passed check /Users/allenkim/projects/ngentest/test/test-examples/example.service.ts
+passed check /Users/allenkim/projects/ngentest/test/test-examples/example.pipe.ts
+passed check /Users/allenkim/projects/ngentest/test/test-examples/example2.pipe.ts
+
 ```
 

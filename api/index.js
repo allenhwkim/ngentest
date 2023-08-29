@@ -6,7 +6,7 @@
  */
 const express = require('express');
 const app = express();
-const ngentest = require('../src/index.js');
+const ngentest = require('../lib/index.js');
 const package = require('../package.json');
 
 app.use(express.json());
