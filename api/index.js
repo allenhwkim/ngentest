@@ -5,11 +5,16 @@
  * }
  */
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const ngentest = require('../lib/index.js');
 const package = require('../package.json');
 
 app.use(express.json());
+app.use(cors({
+  // origin: ["http://example1.com"]
+  origin: '*' 
+}));
 
 app.get('/api', (req, res) => {
   res.setHeader('Content-Type', 'text/html');
