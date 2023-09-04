@@ -41,7 +41,7 @@ const generated = ngentest(typescript, {...options, tsPath});
 
 /* write unit test file out */
 if (argv.spec) { /* write to .spec.ts */
-  const specPath = path.resolve(tsFilePath.replace(/\.ts$/, '.spec.ts'));
+  const specPath = path.resolve(tsPath.replace(/\.ts$/, '.spec.ts'));
   const specFileExists = fs.existsSync(specPath);
   if (specFileExists) {
     if (argv.force) {
