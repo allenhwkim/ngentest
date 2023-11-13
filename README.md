@@ -158,6 +158,11 @@ If you want to use your own config, refer [the default config file](https://gith
   - The default configuration file used by `cli.js`
 * `vercel.json`: 
   - Used to deploy to `https://ngentest.vercel.com/api/ngentest`
+ 
+### Deployment to Vercel
+Whenever `main` branch is updated, API `https://ngentest.vercel.app/api/ngentest` will be deployed.  
+Deployment setting: https://vercel.com/allenhwkim/ngentest/Dd16oSozmEMdqy7wozeYPHdPiCmd  
+Project setting https://vercel.com/allenhwkim/ngentest  
 
 ### To make it sure it does not break any feature
 ```
