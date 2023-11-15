@@ -1,6 +1,6 @@
 {
   "name": "ngentest",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "Angular Unit Test Generator For Components, Directive, Services, and Pipes",
   "main": "./lib/index.js",
   "license": "MIT",
