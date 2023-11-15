@@ -63,8 +63,12 @@ app.get('/api', (req, res) => {
  */
 app.post('/api/ngentest', (req, res) => {
   const {typescript, options = {}} = req.body;
-  const output = ngentest(typescript, options);
-  res.send({output})
+  try{
+    const output = ngentest(typescript, options);
+    res.send({output})
+  } catch(e) {
+    res.send({output: e.toString()})
+  }
 });
 
 module.exports = app;
