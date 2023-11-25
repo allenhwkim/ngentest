@@ -25,11 +25,11 @@ module.exports = {
   // The follow object will tell test generator to mock those services with your own code
   // e.g. @Injectable() MockElementRef { nativeElement = {}; }
   providerMocks: {
-    ElementRef: ['nativeElement = {};'],
-    Router: ['navigate() {};'],
-    Document: ['querySelector() {};'],
-    HttpClient: ['post() {};'],
-    TranslateService: ['translate() {};'],
-    EncryptionService: [],
+    ElementRef: `nativeElement = {};`,
+    Router: `navigate() {};`,
+    Document: `querySelector() {};`,
+    HttpClient: `post() {};`,
+    TranslateService: `translate() {};`,
+    EncryptionService: [] 
   }
 }

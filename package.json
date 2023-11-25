@@ -9,7 +9,7 @@
     "npm": ">=9"
   },
   "scripts": {
-    "start:server": "node api/express-server.js",
+    "start": "node api/express-server.js",
     "test": "node --test test/*.spec.js && node test/index.js"
   },
   "publishConfig": {
